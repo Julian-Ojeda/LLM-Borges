@@ -1,0 +1,47 @@
+# ==============================================================================
+# CONFIGURACIÓN CENTRALIZADA DEL MODELO CBOW Y ENTRENAMIENTO DE EMBEDDINGS
+# Todos los parámetros están escritos en español sin abreviar.
+# El entrenamiento es muestra a muestra (una actualización de W y W' por cada palabra central).
+# ==============================================================================
+
+# Ruta al archivo de texto que contiene el corpus de entrenamiento (ejemplo: 'datos/corpus.txt')
+ruta_corpus: corpus_ApAvAu.txt
+
+# Directorio donde se guardarán las copias de respaldo .npz y el CSV de métricas (ejemplo: 'respaldos')
+directorio_respaldos: respaldos
+
+# Incluir signos de puntuación, números y caracteres especiales: true o false
+incluir_puntuacion_y_numeros: true
+
+# Apariciones mínimas para que una palabra entre al vocabulario; las demás se reemplazan por <UNK> (ejemplo: 1, 3, 5)
+frecuencia_minima: 1
+
+# Tamaño de la ventana de contexto m = C/2 a izquierda y a derecha (ejemplo: 2, 4, 5)
+tamanio_ventana: 4
+
+# Dimensión del vector de embedding o neuronas en la capa oculta N, mucho menor que |V| (ejemplo: 30, 100, 300)
+dimension_embedding: 80
+
+# Tasa de aprendizaje (eta) para la actualización de los pesos W y W' (ejemplo: 0.025, 0.05, 0.1)
+tasa_aprendizaje: 0.05
+
+# Cantidad de ejemplos negativos |P_sel| por muestra. 0 = softmax completo sobre todo |V| (ejemplo: 0, 5, 10, 20)
+cantidad_negativos: 0
+
+# Cantidad total de épocas de entrenamiento a ejecutar (ejemplo: 10, 50, 100)
+cantidad_epocas: 17
+
+# Realizar copias de seguridad automáticas durante el entrenamiento: true o false
+hacer_respaldo: true
+
+# Frecuencia (en número de épocas) para guardar respaldos automáticos si hacer_respaldo es true (ejemplo: 2, 5)
+frecuencia_respaldo: 1
+
+# Semilla aleatoria para garantizar la reproducibilidad de la inicialización y muestreo (ejemplo: 26)
+semilla_aleatoria: 26
+
+# Reanudar entrenamiento desde una copia de seguridad preexistente: true o false
+reanudar_entrenamiento: true
+
+# Ruta al archivo .npz de respaldo desde el cual reanudar si reanudar_entrenamiento es true
+ruta_checkpoint: respaldos/modelo_cbow_w4_epoca_8.npz

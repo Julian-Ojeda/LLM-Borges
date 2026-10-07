@@ -1,0 +1,46 @@
+# ==============================================================================
+# CONFIGURACIÓN PARA entrenar_cuda.py (kernels CUDA, softmax completo, muestra a muestra)
+# Mismos parámetros que configuracion.yaml. Reanuda desde los pesos de la época 25 hasta la 150.
+# ==============================================================================
+
+# Ruta al archivo de texto que contiene el corpus de entrenamiento
+ruta_corpus: corpus_ApAvAu.txt
+
+# Directorio donde se guardarán las copias de respaldo .npz y el CSV de métricas
+directorio_respaldos: respaldos
+
+# Incluir signos de puntuación, números y caracteres especiales: true o false
+incluir_puntuacion_y_numeros: true
+
+# Apariciones mínimas para que una palabra entre al vocabulario (solo se usa en un entrenamiento limpio)
+frecuencia_minima: 1
+
+# Tamaño de la ventana de contexto m = C/2 a izquierda y a derecha
+tamanio_ventana: 4
+
+# Dimensión del vector de embedding N (al reanudar se toma de los pesos guardados)
+dimension_embedding: 80
+
+# Tasa de aprendizaje (eta) para la actualización de los pesos W y W'
+tasa_aprendizaje: 0.05
+
+# entrenar_cuda.py solo implementa softmax completo
+cantidad_negativos: 0
+
+# Épocas a entrenar desde el checkpoint (25 + 125 = 150)
+cantidad_epocas: 125
+
+# Realizar copias de seguridad automáticas durante el entrenamiento: true o false
+hacer_respaldo: true
+
+# Frecuencia (en número de épocas) para guardar respaldos automáticos
+frecuencia_respaldo: 1
+
+# Semilla aleatoria (el orden de las muestras de cada época depende de semilla + época)
+semilla_aleatoria: 26
+
+# Reanudar entrenamiento desde una copia de seguridad preexistente: true o false
+reanudar_entrenamiento: true
+
+# Ruta al archivo .npz de respaldo desde el cual reanudar
+ruta_checkpoint: respaldos/modelo_cbow_w4_epoca_25.npz
