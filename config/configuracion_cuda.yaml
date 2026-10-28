@@ -4,7 +4,7 @@
 # ==============================================================================
 
 # Ruta al archivo de texto que contiene el corpus de entrenamiento
-ruta_corpus: corpus_ApAvAu.txt
+ruta_corpus: datos/corpus_ApAvAu.txt
 
 # Directorio donde se guardarán las copias de respaldo .npz y el CSV de métricas
 directorio_respaldos: respaldos

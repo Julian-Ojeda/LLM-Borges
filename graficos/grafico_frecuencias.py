@@ -15,7 +15,7 @@ CARPETA_PROYECTO = Path(__file__).resolve().parent.parent
 sys.path.append(str(CARPETA_PROYECTO))
 from codigo.tokenizador import tokenizar_corpus
 
-ARCHIVO_CORPUS = CARPETA_PROYECTO / "corpus_ApAvAu.txt"
+ARCHIVO_CORPUS = CARPETA_PROYECTO / "datos" / "corpus_ApAvAu.txt"
 ARCHIVO_SALIDA = CARPETA_PROYECTO / "graficos" / "distribucion_frecuencias.png"
 
 # 1. Contar cuántas veces aparece cada palabra (con la misma tokenización del entrenamiento)

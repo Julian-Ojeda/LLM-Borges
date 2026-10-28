@@ -5,13 +5,16 @@ Permite iniciar un entrenamiento desde cero o reanudar un checkpoint (.npz) desd
 """
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
-# Asegurar acceso a los modulos del directorio codigo/
-ruta_raiz = Path(__file__).resolve().parent
+# Asegurar acceso a los modulos del directorio codigo/ y trabajar desde la raiz del proyecto,
+# para que las rutas relativas (config/, datos/, respaldos/) funcionen desde cualquier carpeta
+ruta_raiz = Path(__file__).resolve().parent.parent
 if str(ruta_raiz) not in sys.path:
     sys.path.append(str(ruta_raiz))
+os.chdir(ruta_raiz)
 
 from codigo.configuracion import cargar_configuracion
 from codigo.entrenador_cbow import entrenar
@@ -29,8 +32,8 @@ def parsear_argumentos() -> argparse.Namespace:
     parser.add_argument(
         "--config",
         type=str,
-        default="configuracion.yaml",
-        help="Ruta al archivo YAML de configuracion (por defecto: configuracion.yaml).",
+        default="config/configuracion.yaml",
+        help="Ruta al archivo YAML de configuracion (por defecto: config/configuracion.yaml).",
     )
     parser.add_argument(
         "--epocas",

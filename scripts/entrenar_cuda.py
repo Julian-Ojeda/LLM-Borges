@@ -2,7 +2,7 @@
 """
 Entrenamiento CBOW con kernels CUDA propios (compilados en tiempo de ejecucion con CuPy RawModule).
 
-Usa los mismos parametros (configuracion.yaml y argumentos de consola), el mismo formato de respaldos (.npz)
+Usa los mismos parametros (config/configuracion.yaml y argumentos de consola), el mismo formato de respaldos (.npz)
 y el mismo archivo de metricas (CSV) que entrenar.py, asi que los pesos son intercambiables: se puede reanudar
 desde un respaldo generado por entrenar.py y viceversa.
 
@@ -23,16 +23,19 @@ Solo implementa el modo softmax completo (cantidad_negativos: 0).
 """
 
 import argparse
+import os
 import sys
 import time
 from pathlib import Path
 import numpy as np
 from tqdm import tqdm
 
-# Asegurar acceso a los modulos del directorio codigo/
-ruta_raiz = Path(__file__).resolve().parent
+# Asegurar acceso a los modulos del directorio codigo/ y trabajar desde la raiz del proyecto,
+# para que las rutas relativas (config/, datos/, respaldos/) funcionen desde cualquier carpeta
+ruta_raiz = Path(__file__).resolve().parent.parent
 if str(ruta_raiz) not in sys.path:
     sys.path.append(str(ruta_raiz))
+os.chdir(ruta_raiz)
 
 from codigo.configuracion import cargar_configuracion
 from codigo.tokenizador import tokenizar_corpus
@@ -420,8 +423,8 @@ def parsear_argumentos() -> argparse.Namespace:
     :return: Objeto Namespace con los argumentos parseados.
     """
     parser = argparse.ArgumentParser(description="Entrenamiento CBOW con kernels CUDA propios (softmax completo).")
-    parser.add_argument("--config", type=str, default="configuracion_cuda.yaml",
-                        help="Ruta al archivo YAML de configuracion (por defecto: configuracion_cuda.yaml).")
+    parser.add_argument("--config", type=str, default="config/configuracion_cuda.yaml",
+                        help="Ruta al archivo YAML de configuracion (por defecto: config/configuracion_cuda.yaml).")
     parser.add_argument("--epocas", type=int, default=None, help="Sobrescribe la cantidad de epocas a entrenar.")
     parser.add_argument("--tasa", type=float, default=None, help="Sobrescribe la tasa de aprendizaje eta.")
     parser.add_argument("--reanudar", action="store_true", help="Activa el modo de reanudacion desde un checkpoint .npz.")

@@ -4,8 +4,8 @@ Grafica la perdida y el accuracy por época a partir del CSV de metricas (se pue
 o de un modelo guardado (.npz).
 
 Uso:
-    python graficar_metricas.py respaldos/metricas_w4.csv
-    python graficar_metricas.py respaldos/modelo_cbow_w4_epoca_50.npz
+    python scripts/graficar_metricas.py respaldos/metricas_w4.csv
+    python scripts/graficar_metricas.py respaldos/modelo_cbow_w4_epoca_50.npz
 """
 
 import argparse

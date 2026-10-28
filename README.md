@@ -40,31 +40,47 @@ uv pip install -e .
 ```text
 cbow_nlp/
 ├── README.md                               # Instrucciones de instalacion, configuracion y uso
-├── pyproject.toml                          # Dependencias del proyecto para uv
-├── configuracion.yaml                      # Hiperparametros centralizados por defecto
-├── entrenar.py                             # Script ejecutable por consola para entrenamiento local
-├── TP1_CBOW_Procesamiento_Lenguaje_Natural.ipynb  # Notebook interactivo para analisis y evaluacion
-└── codigo/                                 # Modulos Python reutilizables
-    ├── __init__.py                         # Identificador del paquete de Python
-    ├── configuracion.py                    # Carga y guardado de hiperparametros YAML
-    ├── tokenizador.py                      # Tokenizacion por Palabra (Regex)
-    ├── generador_vocabulario.py            # Construccion del vocabulario (indices one-hot)
-    ├── modelo_cbow_cupy.py                 # Red CBOW matricial acelerada por GPU (CuPy / NumPy)
-    └── entrenador_cbow.py                  # Bucle de entrenamiento por lotes y resguardos
+├── pyproject.toml, uv.lock                 # Dependencias del proyecto para uv
+├── scripts/                                # Scripts que se ejecutan por consola
+│   ├── entrenar.py                         # Entrenamiento por consola (CuPy / NumPy)
+│   ├── entrenar_cuda.py                    # Mismo entrenamiento con kernels CUDA propios (pesos intercambiables)
+│   ├── graficar_metricas.py                # Grafica perdida y accuracy desde el CSV o un .npz
+│   └── pruebas.py                          # Vecinos y analogias con los embeddings entrenados
+├── config/
+│   ├── configuracion.yaml                  # Hiperparametros para entrenar.py
+│   └── configuracion_cuda.yaml             # Hiperparametros para entrenar_cuda.py
+├── notebooks/
+│   └── TP1_CBOW_Procesamiento_Lenguaje_Natural.ipynb  # Notebook interactivo para analisis y evaluacion
+├── codigo/                                 # Modulos Python reutilizables
+│   ├── configuracion.py                    # Carga y guardado de hiperparametros YAML
+│   ├── tokenizador.py                      # Tokenizacion por Palabra (Regex)
+│   ├── generador_vocabulario.py            # Construccion del vocabulario
+│   ├── modelo_cbow_cupy.py                 # Red CBOW (softmax completo y muestreo negativo)
+│   └── entrenador_cbow.py                  # Bucle de entrenamiento muestra a muestra y resguardos
+├── graficos/                               # Scripts de graficos y las imagenes generadas
+├── datos/                                  # corpus_ApAvAu.txt (corpus de entrenamiento) y corpus_prueba.txt
+├── respaldos/                              # Checkpoints .npz y metricas_w*.csv (no se sube al repo)
+│   └── logs/                               # Logs de cada corrida de entrenamiento
+└── material/                               # Material de la catedra
+    ├── cbow/                               # Calculo de representacion contextual, codificacion, fragmentacion
+    ├── transformadores/                    # Laminas de Transformadores (a, b, c, d)
+    └── autograd/                           # Autograd escalar, microgpt.py y su dataset de nombres
 ```
 
-> **Nota**: El archivo del corpus de entrenamiento (`datos/corpus.txt`) se ubica en el directorio `datos/` y está excluido del control de versiones mediante `.gitignore`.
+> **Nota**: Los corpus se ubican en `datos/`. Solo `datos/corpus_ApAvAu.txt` se sube al repositorio; cualquier otro archivo de esa carpeta queda excluido mediante `.gitignore`.
+>
+> Los scripts de `scripts/` se ejecutan desde cualquier carpeta: `entrenar.py` y `entrenar_cuda.py` trabajan siempre desde la raíz del proyecto, así que las rutas relativas (`--config`, `--checkpoint`, las del YAML) son relativas a la raíz.
 
 ---
 
 ## ⚙️ Configuración del Corpus y Parámetros del Proyecto
 
-Todos los parámetros del proyecto (ruta del corpus, tamaño de lote, semilla aleatoria, tamaño de ventana, etc.) están centralizados en `configuracion.yaml`.
+Todos los parámetros del proyecto (ruta del corpus, tamaño de lote, semilla aleatoria, tamaño de ventana, etc.) están centralizados en `config/configuracion.yaml` (y en `config/configuracion_cuda.yaml` para `entrenar_cuda.py`).
 
 ### 1. Selección de Fuente del Corpus de Texto
 Para entrenar el modelo con tu propio corpus de texto o con el archivo provisto por la cátedra:
 1. Coloca tu archivo de texto dentro de la carpeta `datos/` (por ejemplo `datos/corpus.txt`).
-2. Modifica el atributo `ruta_corpus` en `configuracion.yaml`:
+2. Modifica el atributo `ruta_corpus` en `config/configuracion.yaml`:
    ```yaml
    ruta_corpus: datos/corpus.txt
    ```
@@ -94,7 +110,7 @@ El entrenamiento es por descenso por el gradiente **muestra a muestra** (sin lot
 ### 4. Métricas: pérdida y accuracy
 Por cada época se registra la pérdida promedio y el *accuracy* (fracción de muestras en que la palabra central fue la más probable según la red, medido sobre cada muestra antes de su actualización). Se guardan en el `.npz` (`historial_perdida`, `historial_accuracy`) y en `respaldos/metricas_w{ventana}.csv`, que se actualiza al terminar cada época:
 ```bash
-uv run python graficar_metricas.py respaldos/metricas_w4.csv   # genera respaldos/metricas_w4.png
+uv run python scripts/graficar_metricas.py respaldos/metricas_w4.csv   # genera respaldos/metricas_w4.png
 ```
 
 ---
@@ -105,15 +121,15 @@ uv run python graficar_metricas.py respaldos/metricas_w4.csv   # genera respaldo
 Para ejecutar el pipeline de entrenamiento desde la terminal:
 ```bash
 # Ejecutar entrenamiento con la configuracion por defecto
-uv run python entrenar.py
+uv run python scripts/entrenar.py
 
 # O bien especificando parametros de consola
-uv run python entrenar.py --epocas 10 --tasa 0.05
+uv run python scripts/entrenar.py --epocas 10 --tasa 0.05
 ```
 Al finalizar, se guardará automáticamente la copia de respaldo `.npz` en la carpeta `respaldos/`.
 
 ### 2. Análisis y Evaluación en Jupyter Notebook
-Abre el notebook `TP1_CBOW_Procesamiento_Lenguaje_Natural.ipynb` para:
+Abre el notebook `notebooks/TP1_CBOW_Procesamiento_Lenguaje_Natural.ipynb` para:
 1. Cargar modelos resguardados `.npz`.
 2. Graficar las curvas de pérdida por época.
 3. Buscar palabras más similares mediante producto interno o similaridad de coseno sobre la matriz $W$.
@@ -126,7 +142,7 @@ Abre el notebook `TP1_CBOW_Procesamiento_Lenguaje_Natural.ipynb` para:
 Para continuar entrenando un modelo existente a partir de una copia de seguridad en formato `.npz`:
 
 ```bash
-uv run python entrenar.py --reanudar --checkpoint respaldos/modelo_cbow_w5_epoca_10.npz --epocas 5
+uv run python scripts/entrenar.py --reanudar --checkpoint respaldos/modelo_cbow_w5_epoca_10.npz --epocas 5
 ```
 
 Al reanudar, se restaurarán las matrices de pesos $W$ y $W'$, el vocabulario de palabras, la época actual y el historial de pérdida acumulado.

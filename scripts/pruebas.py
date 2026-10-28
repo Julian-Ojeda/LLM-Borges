@@ -7,10 +7,10 @@ Los vectores son las filas de W (la representacion contextual v_p de cada palabr
 Solo usa NumPy: no necesita GPU.
 
 Uso:
-    python pruebas.py                                   # ejemplos con el ultimo respaldo
-    python pruebas.py "madre - mujer + hombre"          # una combinacion
-    python pruebas.py "casa" --k 15                     # vecinos de una palabra
-    python pruebas.py "rey - hombre + mujer" --modelo respaldos/modelo_cbow_w4_epoca_70.npz
+    python scripts/pruebas.py                                   # ejemplos con el ultimo respaldo
+    python scripts/pruebas.py "madre - mujer + hombre"          # una combinacion
+    python scripts/pruebas.py "casa" --k 15                     # vecinos de una palabra
+    python scripts/pruebas.py "rey - hombre + mujer" --modelo respaldos/modelo_cbow_w4_epoca_70.npz
 """
 
 import argparse
@@ -18,7 +18,7 @@ import re
 from pathlib import Path
 import numpy as np
 
-RUTA_RAIZ = Path(__file__).resolve().parent
+RUTA_RAIZ = Path(__file__).resolve().parent.parent
 
 
 def ultimo_respaldo(directorio: Path = RUTA_RAIZ / "respaldos") -> Path:

@@ -5,8 +5,9 @@
 env/
 venv/
 
-# Datos del corpus (se mantienen unicamente locales)
-datos/
+# Datos del corpus: solo se sube el corpus de entrenamiento, el resto queda local
+datos/*
+!datos/corpus_ApAvAu.txt
 
 # Carpeta de respaldos y checkpoints .npz (archivos pesados de pesos)
 respaldos/
