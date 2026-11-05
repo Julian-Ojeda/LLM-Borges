@@ -243,10 +243,22 @@ def escalar_min_max(W, activacion_salida):
           <tr class="pablo"><td>Pablo</td><td>vocabulario</td><td class="n">5</td><td>200</td><td class="n">1</td><td>η 0,01</td><td class="n">4,32 (entren.)</td><td>no medido</td></tr>
           <tr class="pablo"><td>Pablo</td><td>vector (tanh)</td><td class="n">10</td><td>100 – 100 + LN</td><td class="n">64</td><td>η 0,05</td><td class="n">MSE</td><td>no medido</td></tr>
           <tr class="pablo"><td>Pablo</td><td>vector (tanh)</td><td class="n">5</td><td>1000</td><td class="n">1</td><td>η 0,01</td><td class="n">MSE</td><td>no medido</td></tr>
-          <tr class="julian"><td>Julián</td><td>vocabulario</td><td class="n">8</td><td>512 + LN, ReLU</td><td class="n">256</td><td>Adam 0,001, 10 épocas</td><td class="n" id="pmc-perdida"><span class="chip pend">entrenando</span></td><td id="pmc-top5"><span class="chip pend">entrenando</span></td></tr>
+          <tr class="julian"><td>Julián</td><td>vocabulario</td><td class="n">8</td><td>512 + LN, ReLU</td><td class="n">256</td><td>Adam 0,001, 10 épocas</td><td class="n" id="pmc-perdida">6,04 (valid.)</td><td id="pmc-top5" class="bien">34,6% <small>(top-10 43,0%, top-20 51,1%)</small></td></tr>
         </tbody>
       </table></div>
       <p class="explica">Pablo midió la pérdida sobre el mismo texto con el que entrenó. Julián separa el 5% final del corpus (52.681 predicciones) y mide ahí, sobre texto que el modelo nunca vio (ver <a href="#medir">§7</a>).</p>
+
+      <h3>Cómo evolucionó el PMC de Julián</h3>
+      <div class="tabla"><table>
+        <thead><tr><th>Época</th><th>Pérdida entren.</th><th>Pérdida valid.</th><th>Top-5</th><th>Top-10</th><th>Top-20</th><th>Exacta</th></tr></thead>
+        <tbody>
+          <tr class="julian"><td class="n">1</td><td class="n">6,04</td><td class="n bien">6,04</td><td class="n">34,6%</td><td class="n">43,0%</td><td class="n">51,1%</td><td class="n">15,4%</td></tr>
+          <tr class="julian"><td class="n">3</td><td class="n">5,27</td><td class="n">6,13</td><td class="n">35,5%</td><td class="n">44,0%</td><td class="n">52,2%</td><td class="n">16,0%</td></tr>
+          <tr class="julian"><td class="n">5</td><td class="n">5,05</td><td class="n">6,30</td><td class="n bien">35,7%</td><td class="n bien">44,3%</td><td class="n">52,2%</td><td class="n">16,0%</td></tr>
+          <tr class="julian"><td class="n">10</td><td class="n">4,76</td><td class="n mal">6,47</td><td class="n">35,2%</td><td class="n">43,6%</td><td class="n">51,6%</td><td class="n">15,8%</td></tr>
+        </tbody>
+      </table></div>
+      <p class="explica">Cada época tarda unos 4 minutos en la GTX 1050. Desde la época 2 la pérdida de entrenamiento sigue bajando y la de validación sube: un sobreajuste leve. Los contadores casi no cambian (34,6% → 35,7% → 35,2%), porque el modelo se vuelve más confiado en lo que ya ordenaba bien sin ordenar mejor. Se guardó la época 1, la de menor pérdida de validación. El PMC llega a lo mismo que el transformador en su mejor época (top-5 35,2%) con una arquitectura mucho más simple.</p>
     </section>
 
     <section id="microgpt">
@@ -306,7 +318,7 @@ for palabra, i in palabra_a_id.items():
           <li>0,3% del corpus: 3.161 tokens, vocabulario 1.158</li>
           <li>d = 40: su W de 80 reducida con PCA (conserva el 67,6% de la varianza), H = 4 (dk = 10)</li>
           <li>N = 6 tokens de contexto</li>
-          <li>1.500 pasos: unas 3 horas</li>
+          <li>1.500 pasos: 2 h 05 min (≈ 5 s por paso)</li>
           <li>Validación con el último 10% de las oraciones</li>
         </ul></div>
       </div>
@@ -324,9 +336,20 @@ W_cbow = W_centrada @ Vt[:40].T                 # (|V|, 80) -> (|V|, 40)</code><
         <thead><tr><th>microgpt</th><th>Validación: pérdida</th><th>Top-5</th><th>Top-10</th><th>Top-20</th></tr></thead>
         <tbody>
           <tr class="pablo"><td>Pablo (1%, d50, N5, 12.000 pasos)</td><td colspan="4">no medido (sin texto separado)</td></tr>
-          <tr class="julian"><td>Julián (0,3%, d40, N6, 1.500 pasos)</td><td class="n" id="mg-perdida"><span class="chip pend">entrenando</span></td><td class="n" id="mg-top5">—</td><td class="n" id="mg-top10">—</td><td class="n" id="mg-top20">—</td></tr>
+          <tr class="julian"><td>Julián (0,3%, d40, N6, 1.500 pasos)</td><td class="n" id="mg-perdida">6,35 (exacta 10,9%)</td><td class="n" id="mg-top5">29,6%</td><td class="n" id="mg-top10">39,0%</td><td class="n" id="mg-top20">47,9%</td></tr>
         </tbody>
       </table></div>
+      <p class="explica">Son 551 predicciones de validación (96 tramos del último 10% de las oraciones). El vocabulario es de solo 1.158 palabras, así que estos porcentajes no se comparan directamente con los del PMC, que elige entre 53.409.</p>
+
+      <h3>Curva de pérdida (promedio cada 100 pasos)</h3>
+      <div class="tabla"><table>
+        <thead><tr><th>Pasos</th><th>1–100</th><th>401–500</th><th>501–600</th><th>901–1000</th><th>1001–1100</th><th>1401–1500</th></tr></thead>
+        <tbody>
+          <tr class="julian"><td>Pérdida de entrenamiento</td><td class="n">6,28</td><td class="n">5,74</td><td class="n">4,52</td><td class="n">4,26</td><td class="n">3,67</td><td class="n">3,48</td></tr>
+        </tbody>
+      </table></div>
+      <p class="explica">Un paso es un solo tramo, así que la pérdida por paso salta mucho (de 0,09 a 4,9 en los últimos 20 pasos); por eso se promedia. Los saltos entre los pasos 500 y 600 y entre 1000 y 1100 coinciden con el momento en que el recorrido (<code>docs[step % len(docs)]</code>) vuelve a empezar por los mismos 482 tramos de entrenamiento: la pérdida promedio por vuelta es 6,15 → 4,55 → 3,66. Al final la pérdida de entrenamiento queda en 3,5 y la de validación en 6,35: con 3.161 tokens el modelo ya empieza a memorizar (<b>sobreajuste</b>), igual que el PMC.</p>
+      <p>Muestras generadas al final del entrenamiento (desde BOS, con temperatura): «de los colores de un suelo», «en la selva , y se», «los otros días , su estatura». Respetan la gramática local (artículo + sustantivo, «, y se») pero no tienen sentido global, como es de esperar con 6 tokens de contexto.</p>
     </section>
 
     <section id="frases">
@@ -339,12 +362,13 @@ W_cbow = W_centrada @ Vt[:40].T                 # (|V|, 80) -> (|V|, 40)</code><
           <tr class="pablo"><td>PMC k5 512 lote 1</td><td>acera 26%, ventana 12%, brisa 7%</td><td>el 20%, que 13%, los 11%</td><td>sexto 99%</td></tr>
           <tr class="pablo"><td>PMC vector k5 1000</td><td>sala, ventana, esclava (coseno ≈ 80%)</td><td>reprochara, su, obediente</td><td>choya, exornador, anaquel</td></tr>
           <tr class="pablo"><td>microgpt (1%)</td><td>selva 2,8%, hora 1,2%, noche 0,9%</td><td>que 17%, la 15%, el 12%</td><td>que 7%, su 6%, la 5%</td></tr>
-          <tr class="julian"><td>PMC k8 512 LN</td><td id="f-pmc-1"><span class="chip pend">entrenando</span></td><td id="f-pmc-2"><span class="chip pend">entrenando</span></td><td id="f-pmc-3"><span class="chip pend">entrenando</span></td></tr>
-          <tr class="julian"><td>microgpt (0,3%)</td><td id="f-mg-1"><span class="chip pend">entrenando</span></td><td id="f-mg-2"><span class="chip pend">entrenando</span></td><td id="f-mg-3"><span class="chip pend">entrenando</span></td></tr>
+          <tr class="julian"><td>PMC k8 512 LN</td><td id="f-pmc-1">puerta 5,5%, casa 4,8%, mano 3,5%</td><td id="f-pmc-2">el 23%, la 19%, su 5%</td><td id="f-pmc-3">la 2,7%, los 2,2%, que 1,7% (no memorizó «sexto»)</td></tr>
+          <tr class="julian"><td>microgpt (0,3%)</td><td id="f-mg-1">vida 9,7%, selva 6,1%, hora 4,2% (ve solo «ella la»: el resto no está en su vocabulario)</td><td id="f-mg-2">la 12%, que 11%, el 11% (sin «pensaba»)</td><td id="f-mg-3">los 6,4%, su 5,0%, las 3,7%</td></tr>
           <tr class="julian"><td>Transformador N16 (extra)</td><td>puerta 11%, vista 8%, ventana 8%</td><td>el 11%, su 10%, la 6%</td><td>felpa 0,8% (no aprendió «sexto»)</td></tr>
         </tbody>
       </table></div>
-      <p class="explica">«los enanos tienen una especie» → «de»: 82% en el mejor PMC de Pablo, 38% en su microgpt y 83% en el transformador de Julián. Con el orden invertido («especie una tienen enanos los») ninguno da algo sensato. Eso muestra que los modelos usan el orden de las palabras y no solo cuáles aparecen.</p>
+      <p class="explica">«los enanos tienen una especie» → «de»: 82% en el mejor PMC de Pablo, 38% en su microgpt, 29% en el PMC de Julián (época 1), <b>94%</b> en el microgpt de Julián (esa frase está en su 0,3% del corpus) y 83% en su transformador. Con el orden invertido («especie una tienen enanos los») el microgpt de Julián duda: indígenas 3,4%, tío 1,0%. La generación continua del PMC de Julián (ansiosa) da, por ejemplo, «ella caminaba lentamente hacia la <b>puerta , y el hombre</b>» y «el viejo escritor pensaba en <b>el fondo de la casa</b>». La de su microgpt se repite: «el viejo escritor pensaba en <b>la selva de los indígenas</b>», «enanos tienen una especie de <b>los indígenas de los indígenas</b>». Con un vocabulario y un corpus tan chicos cae enseguida en las mismas palabras frecuentes.</p>
+      <p class="explica">Con el orden invertido («especie una tienen enanos los») ninguno da algo sensato. Eso muestra que los modelos usan el orden de las palabras y no solo cuáles aparecen.</p>
     </section>
 
     <section id="medir">
