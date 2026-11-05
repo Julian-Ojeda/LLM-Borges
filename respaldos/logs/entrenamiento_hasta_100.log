@@ -1,0 +1,111 @@
+==========================================================================
+        ENTRENAMIENTO CBOW CON KERNELS CUDA - LINEA DE COMANDOS           
+==========================================================================
+Modelo cargado exitosamente desde: 'respaldos\modelo_cbow_w4_epoca_70.npz' (Epoca cargada: 70)
+
+================ CONFIGURACIÓN DEL ENTRENAMIENTO (CUDA) ================
+Estado: Reanudando desde 'respaldos/modelo_cbow_w4_epoca_70.npz' (Época 70)
+Ruta del corpus: corpus_ApAvAu.txt
+Incluir puntuación y números: True
+Tokens del corpus: 1,053,788
+Muestras por época: 1,053,780 (una actualización por muestra, sin lotes)
+Tamaño del vocabulario (|V|): 53,409
+Dimensión del embedding (N): 80
+Dimensiones: W (53409, 80), W' (80, 53409), h (80, 1), y (53409, 1)
+Ventana: 4 palabras a cada lado (C = 8)
+Modo de salida: Softmax completo sobre todo |V| (kernels CUDA)
+Tasa de aprendizaje (eta): 0.05
+Épocas a entrenar: 30
+Semilla aleatoria: 26
+Cómputo: GPU (kernels CUDA propios vía CuPy)
+Métricas por época: respaldos\metricas_w4.csv
+=================================================================
+
+Epoca 71 finalizada. Perdida Promedio: 2.7029 | Accuracy: 0.4642 | Tiempo: 876.22s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_71.npz'
+Epoca 72 finalizada. Perdida Promedio: 2.6877 | Accuracy: 0.4669 | Tiempo: 874.85s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_72.npz'
+Epoca 73 finalizada. Perdida Promedio: 2.6734 | Accuracy: 0.4690 | Tiempo: 874.76s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_73.npz'
+Epoca 74 finalizada. Perdida Promedio: 2.6601 | Accuracy: 0.4712 | Tiempo: 874.76s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_74.npz'
+Epoca 75 finalizada. Perdida Promedio: 2.6462 | Accuracy: 0.4740 | Tiempo: 874.76s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_75.npz'
+Epoca 76 finalizada. Perdida Promedio: 2.6334 | Accuracy: 0.4761 | Tiempo: 874.81s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_76.npz'
+Epoca 77 finalizada. Perdida Promedio: 2.6203 | Accuracy: 0.4786 | Tiempo: 874.72s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_77.npz'
+Epoca 78 finalizada. Perdida Promedio: 2.6085 | Accuracy: 0.4801 | Tiempo: 874.79s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_78.npz'
+Epoca 79 finalizada. Perdida Promedio: 2.5964 | Accuracy: 0.4821 | Tiempo: 874.79s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_79.npz'
+Epoca 80 finalizada. Perdida Promedio: 2.5837 | Accuracy: 0.4846 | Tiempo: 874.71s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_80.npz'
+Epoca 81 finalizada. Perdida Promedio: 2.5725 | Accuracy: 0.4866 | Tiempo: 874.76s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_81.npz'
+Epoca 82 finalizada. Perdida Promedio: 2.5606 | Accuracy: 0.4884 | Tiempo: 874.71s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_82.npz'
+Epoca 83 finalizada. Perdida Promedio: 2.5499 | Accuracy: 0.4905 | Tiempo: 874.72s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_83.npz'
+Epoca 84 finalizada. Perdida Promedio: 2.5395 | Accuracy: 0.4920 | Tiempo: 874.75s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_84.npz'
+Epoca 85 finalizada. Perdida Promedio: 2.5283 | Accuracy: 0.4940 | Tiempo: 874.71s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_85.npz'
+Epoca 86 finalizada. Perdida Promedio: 2.5184 | Accuracy: 0.4960 | Tiempo: 874.70s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_86.npz'
+Epoca 87 finalizada. Perdida Promedio: 2.5081 | Accuracy: 0.4973 | Tiempo: 874.67s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_87.npz'
+Epoca 88 finalizada. Perdida Promedio: 2.4984 | Accuracy: 0.4988 | Tiempo: 874.65s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_88.npz'
+Epoca 89 finalizada. Perdida Promedio: 2.4883 | Accuracy: 0.5009 | Tiempo: 874.70s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_89.npz'
+Epoca 90 finalizada. Perdida Promedio: 2.4792 | Accuracy: 0.5023 | Tiempo: 874.75s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_90.npz'
+Epoca 91 finalizada. Perdida Promedio: 2.4694 | Accuracy: 0.5041 | Tiempo: 874.83s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_91.npz'
+Epoca 92 finalizada. Perdida Promedio: 2.4610 | Accuracy: 0.5054 | Tiempo: 874.74s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_92.npz'
+Epoca 93 finalizada. Perdida Promedio: 2.4518 | Accuracy: 0.5071 | Tiempo: 874.80s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_93.npz'
+Epoca 94 finalizada. Perdida Promedio: 2.4433 | Accuracy: 0.5086 | Tiempo: 873.78s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_94.npz'
+Epoca 95 finalizada. Perdida Promedio: 2.4350 | Accuracy: 0.5104 | Tiempo: 873.75s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_95.npz'
+Epoca 96 finalizada. Perdida Promedio: 2.4262 | Accuracy: 0.5114 | Tiempo: 873.77s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_96.npz'
+Epoca 97 finalizada. Perdida Promedio: 2.4187 | Accuracy: 0.5128 | Tiempo: 873.88s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_97.npz'
+Epoca 98 finalizada. Perdida Promedio: 2.4109 | Accuracy: 0.5141 | Tiempo: 873.94s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_98.npz'
+Epoca 99 finalizada. Perdida Promedio: 2.4030 | Accuracy: 0.5155 | Tiempo: 873.74s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_99.npz'
+Epoca 100 finalizada. Perdida Promedio: 2.3954 | Accuracy: 0.5164 | Tiempo: 873.72s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_100.npz'
+
+================ RESUMEN FINAL DE CONFIGURACIÓN Y RESULTADOS (CUDA) ================
+Estado: Reanudando desde 'respaldos/modelo_cbow_w4_epoca_70.npz' (Época 70)
+Ruta del corpus: corpus_ApAvAu.txt
+Incluir puntuación y números: True
+Tokens del corpus: 1,053,788
+Muestras por época: 1,053,780 (una actualización por muestra, sin lotes)
+Tamaño del vocabulario (|V|): 53,409
+Dimensión del embedding (N): 80
+Dimensiones: W (53409, 80), W' (80, 53409), h (80, 1), y (53409, 1)
+Ventana: 4 palabras a cada lado (C = 8)
+Modo de salida: Softmax completo sobre todo |V| (kernels CUDA)
+Tasa de aprendizaje (eta): 0.05
+Épocas a entrenar: 30
+Semilla aleatoria: 26
+Cómputo: GPU (kernels CUDA propios vía CuPy)
+Métricas por época: respaldos\metricas_w4.csv
+Tiempo total de entrenamiento: 26286.86 s
+=================================================================
+
+
+==========================================================================
+                     ENTRENAMIENTO FINALIZADO CON ÉXITO                   
+==========================================================================
+Pérdida final alcanzada: 2.3954
+Accuracy final alcanzado: 0.5164
+Tiempo total transcurrido: 26286.86 s
+==========================================================================

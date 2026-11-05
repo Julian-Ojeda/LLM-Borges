@@ -1,0 +1,103 @@
+==========================================================================
+        ENTRENAMIENTO CBOW CON KERNELS CUDA - LINEA DE COMANDOS           
+==========================================================================
+Modelo cargado exitosamente desde: 'respaldos\modelo_cbow_w4_epoca_200.npz' (Epoca cargada: 200)
+
+================ CONFIGURACIÓN DEL ENTRENAMIENTO (CUDA) ================
+Estado: Reanudando desde 'respaldos/modelo_cbow_w4_epoca_200.npz' (Época 200)
+Ruta del corpus: corpus_ApAvAu.txt
+Incluir puntuación y números: True
+Tokens del corpus: 1,053,788
+Muestras por época: 1,053,780 (una actualización por muestra, sin lotes)
+Tamaño del vocabulario (|V|): 53,409
+Dimensión del embedding (N): 80
+Dimensiones: W (53409, 80), W' (80, 53409), h (80, 1), y (53409, 1)
+Ventana: 4 palabras a cada lado (C = 8)
+Modo de salida: Softmax completo sobre todo |V| (kernels CUDA)
+Tasa de aprendizaje (eta): 0.05
+Épocas a entrenar: 100
+Semilla aleatoria: 26
+Cómputo: GPU (kernels CUDA propios vía CuPy)
+Métricas por época: respaldos\metricas_w4.csv
+=================================================================
+
+Epoca 201 finalizada. Perdida Promedio: 2.0121 | Accuracy: 0.5784 | Tiempo: 875.83s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_201.npz'
+Epoca 202 finalizada. Perdida Promedio: 2.0100 | Accuracy: 0.5785 | Tiempo: 873.77s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_202.npz'
+Epoca 203 finalizada. Perdida Promedio: 2.0081 | Accuracy: 0.5788 | Tiempo: 873.79s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_203.npz'
+Epoca 204 finalizada. Perdida Promedio: 2.0065 | Accuracy: 0.5794 | Tiempo: 873.80s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_204.npz'
+Epoca 205 finalizada. Perdida Promedio: 2.0040 | Accuracy: 0.5796 | Tiempo: 873.84s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_205.npz'
+Epoca 206 finalizada. Perdida Promedio: 2.0027 | Accuracy: 0.5798 | Tiempo: 873.74s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_206.npz'
+Epoca 207 finalizada. Perdida Promedio: 2.0004 | Accuracy: 0.5802 | Tiempo: 873.74s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_207.npz'
+Epoca 208 finalizada. Perdida Promedio: 1.9991 | Accuracy: 0.5804 | Tiempo: 873.75s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_208.npz'
+Epoca 209 finalizada. Perdida Promedio: 1.9967 | Accuracy: 0.5808 | Tiempo: 874.96s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_209.npz'
+Epoca 210 finalizada. Perdida Promedio: 1.9952 | Accuracy: 0.5808 | Tiempo: 873.70s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_210.npz'
+Epoca 211 finalizada. Perdida Promedio: 1.9936 | Accuracy: 0.5809 | Tiempo: 873.74s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_211.npz'
+Epoca 212 finalizada. Perdida Promedio: 1.9921 | Accuracy: 0.5809 | Tiempo: 873.74s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_212.npz'
+Epoca 213 finalizada. Perdida Promedio: 1.9903 | Accuracy: 0.5818 | Tiempo: 873.69s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_213.npz'
+Epoca 214 finalizada. Perdida Promedio: 1.9882 | Accuracy: 0.5820 | Tiempo: 873.72s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_214.npz'
+Epoca 215 finalizada. Perdida Promedio: 1.9860 | Accuracy: 0.5825 | Tiempo: 873.69s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_215.npz'
+Epoca 216 finalizada. Perdida Promedio: 1.9847 | Accuracy: 0.5824 | Tiempo: 873.79s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_216.npz'
+Epoca 217 finalizada. Perdida Promedio: 1.9831 | Accuracy: 0.5831 | Tiempo: 873.79s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_217.npz'
+Epoca 218 finalizada. Perdida Promedio: 1.9819 | Accuracy: 0.5832 | Tiempo: 873.73s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_218.npz'
+Epoca 219 finalizada. Perdida Promedio: 1.9802 | Accuracy: 0.5830 | Tiempo: 873.82s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_219.npz'
+Epoca 220 finalizada. Perdida Promedio: 1.9781 | Accuracy: 0.5836 | Tiempo: 873.87s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_220.npz'
+Epoca 221 finalizada. Perdida Promedio: 1.9768 | Accuracy: 0.5833 | Tiempo: 874.74s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_221.npz'
+Epoca 222 finalizada. Perdida Promedio: 1.9747 | Accuracy: 0.5841 | Tiempo: 873.74s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_222.npz'
+Epoca 223 finalizada. Perdida Promedio: 1.9730 | Accuracy: 0.5848 | Tiempo: 873.69s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_223.npz'
+Epoca 224 finalizada. Perdida Promedio: 1.9718 | Accuracy: 0.5848 | Tiempo: 873.72s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_224.npz'
+Epoca 225 finalizada. Perdida Promedio: 1.9701 | Accuracy: 0.5845 | Tiempo: 873.75s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_225.npz'
+Epoca 226 finalizada. Perdida Promedio: 1.9684 | Accuracy: 0.5849 | Tiempo: 873.65s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_226.npz'
+Epoca 227 finalizada. Perdida Promedio: 1.9669 | Accuracy: 0.5849 | Tiempo: 873.71s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_227.npz'
+Epoca 228 finalizada. Perdida Promedio: 1.9657 | Accuracy: 0.5854 | Tiempo: 873.70s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_228.npz'
+Epoca 229 finalizada. Perdida Promedio: 1.9641 | Accuracy: 0.5857 | Tiempo: 873.83s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_229.npz'
+Epoca 230 finalizada. Perdida Promedio: 1.9624 | Accuracy: 0.5858 | Tiempo: 874.72s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_230.npz'
+Epoca 231 finalizada. Perdida Promedio: 1.9606 | Accuracy: 0.5858 | Tiempo: 874.65s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_231.npz'
+Epoca 232 finalizada. Perdida Promedio: 1.9590 | Accuracy: 0.5864 | Tiempo: 873.93s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_232.npz'
+Epoca 233 finalizada. Perdida Promedio: 1.9580 | Accuracy: 0.5862 | Tiempo: 873.89s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_233.npz'
+Epoca 234 finalizada. Perdida Promedio: 1.9570 | Accuracy: 0.5867 | Tiempo: 873.80s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_234.npz'
+Epoca 235 finalizada. Perdida Promedio: 1.9551 | Accuracy: 0.5869 | Tiempo: 873.76s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_235.npz'
+Epoca 236 finalizada. Perdida Promedio: 1.9531 | Accuracy: 0.5872 | Tiempo: 873.97s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_236.npz'
+Epoca 237 finalizada. Perdida Promedio: 1.9522 | Accuracy: 0.5874 | Tiempo: 873.97s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_237.npz'
+Epoca 238 finalizada. Perdida Promedio: 1.9507 | Accuracy: 0.5877 | Tiempo: 873.92s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_238.npz'
+Epoca 239 finalizada. Perdida Promedio: 1.9498 | Accuracy: 0.5876 | Tiempo: 873.96s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_239.npz'
+Epoca 240 finalizada. Perdida Promedio: 1.9480 | Accuracy: 0.5881 | Tiempo: 874.71s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_240.npz'

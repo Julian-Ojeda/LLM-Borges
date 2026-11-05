@@ -1,0 +1,38 @@
+==========================================================================
+      ENTRENAMIENTO CBOW LOCAL - LINEA DE COMANDOS (TERMINAL IDE)        
+==========================================================================
+
+================ CONFIGURACIÓN DEL ENTRENAMIENTO ================
+Estado: Entrenamiento limpio desde el corpus
+Ruta del corpus: corpus_ApAvAu.txt
+Incluir puntuación y números: True
+Tokens del corpus: 1,053,788
+Muestras por época: 1,053,780 (una actualización por muestra, sin lotes)
+Tamaño del vocabulario (|V|): 53,409
+Dimensión del embedding (N): 80
+Dimensiones: W (53409, 80), W' (80, 53409), h (80, 1), y (53409, 1)
+Ventana: 4 palabras a cada lado (C = 8)
+Modo de salida: Softmax completo sobre todo |V|
+Tasa de aprendizaje (eta): 0.05
+Épocas a entrenar: 10
+Semilla aleatoria: 26
+Cómputo: GPU (CuPy)
+Métricas por época: respaldos\metricas_w4.csv
+=================================================================
+
+Epoca 1 finalizada. Perdida Promedio: 6.9346 | Accuracy: 0.0906 | Tiempo: 2206.56s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_1.npz'
+Epoca 2 finalizada. Perdida Promedio: 6.3542 | Accuracy: 0.1203 | Tiempo: 2188.96s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_2.npz'
+Epoca 3 finalizada. Perdida Promedio: 6.0927 | Accuracy: 0.1365 | Tiempo: 2188.99s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_3.npz'
+Epoca 4 finalizada. Perdida Promedio: 5.8968 | Accuracy: 0.1491 | Tiempo: 2189.09s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_4.npz'
+Epoca 5 finalizada. Perdida Promedio: 5.7319 | Accuracy: 0.1592 | Tiempo: 2188.49s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_5.npz'
+Epoca 6 finalizada. Perdida Promedio: 5.5858 | Accuracy: 0.1692 | Tiempo: 2188.94s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_6.npz'
+Epoca 7 finalizada. Perdida Promedio: 5.4547 | Accuracy: 0.1781 | Tiempo: 2188.76s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_7.npz'
+Epoca 8 finalizada. Perdida Promedio: 5.3353 | Accuracy: 0.1862 | Tiempo: 2188.48s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_8.npz'

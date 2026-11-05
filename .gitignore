@@ -10,8 +10,19 @@ datos/*
 !datos/corpus_ApAvAu.txt
 
 # Carpeta de respaldos y checkpoints .npz (archivos pesados de pesos)
-respaldos/
+respaldos/**
 *.npz
+
+# Excepciones: se suben los resultados livianos (métricas, tablas, gráficos, logs)
+# y los pesos chicos que hacen falta para reproducir el TP2.
+# Los demás .npz quedan locales: son 8,7 GB y GitHub rechaza archivos de más de 100 MB.
+!respaldos/**/
+!respaldos/**/*.csv
+!respaldos/**/*.md
+!respaldos/**/*.png
+!respaldos/**/*.log
+!respaldos/modelo_cbow_w4_epoca_254.npz
+!respaldos/microgpt/**/*.npz
 
 # Documentos locales de desarrollo solicitados para ignorar
 rules.md

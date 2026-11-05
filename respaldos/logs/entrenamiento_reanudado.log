@@ -1,0 +1,86 @@
+==========================================================================
+      ENTRENAMIENTO CBOW LOCAL - LINEA DE COMANDOS (TERMINAL IDE)        
+==========================================================================
+Modelo cargado exitosamente desde: 'respaldos\modelo_cbow_w4_epoca_8.npz' (Epoca cargada: 8)
+
+================ CONFIGURACIÓN DEL ENTRENAMIENTO ================
+Estado: Reanudando desde 'respaldos/modelo_cbow_w4_epoca_8.npz' (Época 8)
+Ruta del corpus: corpus_ApAvAu.txt
+Incluir puntuación y números: True
+Tokens del corpus: 1,053,788
+Muestras por época: 1,053,780 (una actualización por muestra, sin lotes)
+Tamaño del vocabulario (|V|): 53,409
+Dimensión del embedding (N): 80
+Dimensiones: W (53409, 80), W' (80, 53409), h (80, 1), y (53409, 1)
+Ventana: 4 palabras a cada lado (C = 8)
+Modo de salida: Softmax completo sobre todo |V|
+Tasa de aprendizaje (eta): 0.05
+Épocas a entrenar: 17
+Semilla aleatoria: 26
+Cómputo: GPU (CuPy)
+Métricas por época: respaldos\metricas_w4.csv
+=================================================================
+
+Epoca 9 finalizada. Perdida Promedio: 5.2251 | Accuracy: 0.1936 | Tiempo: 2184.87s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_9.npz'
+Epoca 10 finalizada. Perdida Promedio: 5.1224 | Accuracy: 0.2007 | Tiempo: 2181.14s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_10.npz'
+Epoca 11 finalizada. Perdida Promedio: 5.0266 | Accuracy: 0.2070 | Tiempo: 2180.88s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_11.npz'
+Epoca 12 finalizada. Perdida Promedio: 4.9361 | Accuracy: 0.2130 | Tiempo: 2181.12s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_12.npz'
+Epoca 13 finalizada. Perdida Promedio: 4.8508 | Accuracy: 0.2191 | Tiempo: 2181.14s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_13.npz'
+Epoca 14 finalizada. Perdida Promedio: 4.7687 | Accuracy: 0.2247 | Tiempo: 2180.87s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_14.npz'
+Epoca 15 finalizada. Perdida Promedio: 4.6924 | Accuracy: 0.2293 | Tiempo: 2180.77s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_15.npz'
+Epoca 16 finalizada. Perdida Promedio: 4.6179 | Accuracy: 0.2351 | Tiempo: 2181.00s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_16.npz'
+Epoca 17 finalizada. Perdida Promedio: 4.5469 | Accuracy: 0.2398 | Tiempo: 2180.85s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_17.npz'
+Epoca 18 finalizada. Perdida Promedio: 4.4781 | Accuracy: 0.2452 | Tiempo: 2180.89s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_18.npz'
+Epoca 19 finalizada. Perdida Promedio: 4.4126 | Accuracy: 0.2501 | Tiempo: 2181.45s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_19.npz'
+Epoca 20 finalizada. Perdida Promedio: 4.3487 | Accuracy: 0.2553 | Tiempo: 2181.21s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_20.npz'
+Epoca 21 finalizada. Perdida Promedio: 4.2869 | Accuracy: 0.2603 | Tiempo: 2181.42s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_21.npz'
+Epoca 22 finalizada. Perdida Promedio: 4.2273 | Accuracy: 0.2651 | Tiempo: 2182.79s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_22.npz'
+Epoca 23 finalizada. Perdida Promedio: 4.1701 | Accuracy: 0.2704 | Tiempo: 2181.45s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_23.npz'
+Epoca 24 finalizada. Perdida Promedio: 4.1142 | Accuracy: 0.2756 | Tiempo: 2182.00s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_24.npz'
+Epoca 25 finalizada. Perdida Promedio: 4.0604 | Accuracy: 0.2807 | Tiempo: 2181.90s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_25.npz'
+
+================ RESUMEN FINAL DE CONFIGURACIÓN Y RESULTADOS ================
+Estado: Reanudando desde 'respaldos/modelo_cbow_w4_epoca_8.npz' (Época 8)
+Ruta del corpus: corpus_ApAvAu.txt
+Incluir puntuación y números: True
+Tokens del corpus: 1,053,788
+Muestras por época: 1,053,780 (una actualización por muestra, sin lotes)
+Tamaño del vocabulario (|V|): 53,409
+Dimensión del embedding (N): 80
+Dimensiones: W (53409, 80), W' (80, 53409), h (80, 1), y (53409, 1)
+Ventana: 4 palabras a cada lado (C = 8)
+Modo de salida: Softmax completo sobre todo |V|
+Tasa de aprendizaje (eta): 0.05
+Épocas a entrenar: 17
+Semilla aleatoria: 26
+Cómputo: GPU (CuPy)
+Métricas por época: respaldos\metricas_w4.csv
+Tiempo total de entrenamiento: 37117.85 s
+=================================================================
+
+
+==========================================================================
+                     ENTRENAMIENTO FINALIZADO CON ÉXITO                   
+==========================================================================
+Pérdida final alcanzada: 4.0604
+Accuracy final alcanzado: 0.2807
+Tiempo total transcurrido: 37117.85 s (618 m 37.85 s)
+Copias de respaldo: Activadas (frecuencia: cada 1 épocas en 'respaldos')
+==========================================================================

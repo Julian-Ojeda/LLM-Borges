@@ -1,0 +1,43 @@
+==========================================================================
+        ENTRENAMIENTO CBOW CON KERNELS CUDA - LINEA DE COMANDOS           
+==========================================================================
+Modelo cargado exitosamente desde: 'respaldos\modelo_cbow_w4_epoca_240.npz' (Epoca cargada: 240)
+
+================ CONFIGURACIÓN DEL ENTRENAMIENTO (CUDA) ================
+Estado: Reanudando desde 'respaldos/modelo_cbow_w4_epoca_240.npz' (Época 240)
+Ruta del corpus: corpus_ApAvAu.txt
+Incluir puntuación y números: True
+Tokens del corpus: 1,053,788
+Muestras por época: 1,053,780 (una actualización por muestra, sin lotes)
+Tamaño del vocabulario (|V|): 53,409
+Dimensión del embedding (N): 80
+Dimensiones: W (53409, 80), W' (80, 53409), h (80, 1), y (53409, 1)
+Ventana: 4 palabras a cada lado (C = 8)
+Modo de salida: Softmax completo sobre todo |V| (kernels CUDA)
+Tasa de aprendizaje (eta): 0.05
+Épocas a entrenar: 60
+Semilla aleatoria: 26
+Cómputo: GPU (kernels CUDA propios vía CuPy)
+Métricas por época: respaldos\metricas_w4.csv
+=================================================================
+
+Epoca 241 finalizada. Perdida Promedio: 1.9470 | Accuracy: 0.5878 | Tiempo: 1096.01s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_241.npz'
+Epoca 242 finalizada. Perdida Promedio: 1.9456 | Accuracy: 0.5882 | Tiempo: 872.45s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_242.npz'
+Epoca 243 finalizada. Perdida Promedio: 1.9437 | Accuracy: 0.5888 | Tiempo: 872.19s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_243.npz'
+Epoca 244 finalizada. Perdida Promedio: 1.9424 | Accuracy: 0.5887 | Tiempo: 873.71s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_244.npz'
+Epoca 245 finalizada. Perdida Promedio: 1.9411 | Accuracy: 0.5885 | Tiempo: 872.60s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_245.npz'
+Epoca 246 finalizada. Perdida Promedio: 1.9399 | Accuracy: 0.5889 | Tiempo: 872.58s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_246.npz'
+Epoca 247 finalizada. Perdida Promedio: 1.9387 | Accuracy: 0.5891 | Tiempo: 872.55s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_247.npz'
+Epoca 248 finalizada. Perdida Promedio: 1.9374 | Accuracy: 0.5892 | Tiempo: 872.64s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_248.npz'
+Epoca 249 finalizada. Perdida Promedio: 1.9360 | Accuracy: 0.5895 | Tiempo: 872.60s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_249.npz'
+Epoca 250 finalizada. Perdida Promedio: 1.9341 | Accuracy: 0.5899 | Tiempo: 872.58s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_250.npz'

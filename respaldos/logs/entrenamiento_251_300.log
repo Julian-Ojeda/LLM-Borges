@@ -1,0 +1,31 @@
+==========================================================================
+        ENTRENAMIENTO CBOW CON KERNELS CUDA - LINEA DE COMANDOS           
+==========================================================================
+Modelo cargado exitosamente desde: 'respaldos\modelo_cbow_w4_epoca_250.npz' (Epoca cargada: 250)
+
+================ CONFIGURACIÓN DEL ENTRENAMIENTO (CUDA) ================
+Estado: Reanudando desde 'respaldos/modelo_cbow_w4_epoca_250.npz' (Época 250)
+Ruta del corpus: corpus_ApAvAu.txt
+Incluir puntuación y números: True
+Tokens del corpus: 1,053,788
+Muestras por época: 1,053,780 (una actualización por muestra, sin lotes)
+Tamaño del vocabulario (|V|): 53,409
+Dimensión del embedding (N): 80
+Dimensiones: W (53409, 80), W' (80, 53409), h (80, 1), y (53409, 1)
+Ventana: 4 palabras a cada lado (C = 8)
+Modo de salida: Softmax completo sobre todo |V| (kernels CUDA)
+Tasa de aprendizaje (eta): 0.05
+Épocas a entrenar: 50
+Semilla aleatoria: 26
+Cómputo: GPU (kernels CUDA propios vía CuPy)
+Métricas por época: respaldos\metricas_w4.csv
+=================================================================
+
+Epoca 251 finalizada. Perdida Promedio: 1.9334 | Accuracy: 0.5900 | Tiempo: 875.18s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_251.npz'
+Epoca 252 finalizada. Perdida Promedio: 1.9318 | Accuracy: 0.5904 | Tiempo: 874.74s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_252.npz'
+Epoca 253 finalizada. Perdida Promedio: 1.9306 | Accuracy: 0.5907 | Tiempo: 874.71s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_253.npz'
+Epoca 254 finalizada. Perdida Promedio: 1.9293 | Accuracy: 0.5908 | Tiempo: 874.70s
+Modelo guardado exitosamente en: 'respaldos\modelo_cbow_w4_epoca_254.npz'

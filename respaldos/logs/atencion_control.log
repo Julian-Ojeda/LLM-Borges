@@ -1,0 +1,52 @@
+Modelo cargado exitosamente desde: 'respaldos\ajuste_puntuacion\modelo_cbow_w4_ajuste_epoca_289.npz' (Epoca cargada: 289)
+
+================ CBOW + AUTO-ATENCIÓN (PyTorch) ================
+Respaldo de partida: respaldos\ajuste_puntuacion\modelo_cbow_w4_ajuste_epoca_289.npz (solo lectura)
+Directorio de salida: respaldos\atencion_control
+Atención: CONGELADA (control: promedio del contexto)
+Contexto: 4 palabras a cada lado (C = 8), con embeddings posicionales
+Muestras por época: 916,668 (objetivo = palabra)
+Tamaño de lote: 256 (3,581 pasos por época)
+Optimizador: Adam (beta1 0.85, beta2 0.99), decaimiento lineal
+Tasas: atención 0, W' 0.0001, W 0
+Épocas: 10
+=================================================================
+
+Evaluación época 0: perdida_palabras 1.6524 | acc_palabras 0.6672 | acc_palabras_sin_signos 0.6672 | acc_signos 0.0004 | pred_signos 0.0001 | masa_signos 0.1304 | masa_nula 0.0000
+  atención media por posición: p-4 0.125 p-3 0.125 p-2 0.125 p-1 0.125 p+1 0.125 p+2 0.125 p+3 0.125 p+4 0.125 nulo 0.000
+Epoca 1 finalizada. Perdida: 1.6298 | Accuracy: 0.6695 | Tiempo: 55.67s
+Evaluación época 1: perdida_palabras 1.6269 | acc_palabras 0.6725 | acc_palabras_sin_signos 0.6725 | acc_signos 0.0004 | pred_signos 0.0001 | masa_signos 0.1304 | masa_nula 0.0000
+  atención media por posición: p-4 0.125 p-3 0.125 p-2 0.125 p-1 0.125 p+1 0.125 p+2 0.125 p+3 0.125 p+4 0.125 nulo 0.000
+Epoca 2 finalizada. Perdida: 1.6156 | Accuracy: 0.6741 | Tiempo: 55.63s
+Evaluación época 2: perdida_palabras 1.6190 | acc_palabras 0.6750 | acc_palabras_sin_signos 0.6750 | acc_signos 0.0004 | pred_signos 0.0001 | masa_signos 0.1304 | masa_nula 0.0000
+  atención media por posición: p-4 0.125 p-3 0.125 p-2 0.125 p-1 0.125 p+1 0.125 p+2 0.125 p+3 0.125 p+4 0.125 nulo 0.000
+Modelo guardado exitosamente en: 'respaldos\atencion_control\modelo_cbow_w4_atencion_epoca_2.npz'
+Epoca 3 finalizada. Perdida: 1.6105 | Accuracy: 0.6761 | Tiempo: 55.60s
+Evaluación época 3: perdida_palabras 1.6160 | acc_palabras 0.6761 | acc_palabras_sin_signos 0.6761 | acc_signos 0.0004 | pred_signos 0.0001 | masa_signos 0.1304 | masa_nula 0.0000
+  atención media por posición: p-4 0.125 p-3 0.125 p-2 0.125 p-1 0.125 p+1 0.125 p+2 0.125 p+3 0.125 p+4 0.125 nulo 0.000
+Epoca 4 finalizada. Perdida: 1.6086 | Accuracy: 0.6774 | Tiempo: 55.61s
+Evaluación época 4: perdida_palabras 1.6149 | acc_palabras 0.6768 | acc_palabras_sin_signos 0.6768 | acc_signos 0.0004 | pred_signos 0.0001 | masa_signos 0.1304 | masa_nula 0.0000
+  atención media por posición: p-4 0.125 p-3 0.125 p-2 0.125 p-1 0.125 p+1 0.125 p+2 0.125 p+3 0.125 p+4 0.125 nulo 0.000
+Modelo guardado exitosamente en: 'respaldos\atencion_control\modelo_cbow_w4_atencion_epoca_4.npz'
+Epoca 5 finalizada. Perdida: 1.6080 | Accuracy: 0.6780 | Tiempo: 55.61s
+Evaluación época 5: perdida_palabras 1.6148 | acc_palabras 0.6767 | acc_palabras_sin_signos 0.6767 | acc_signos 0.0004 | pred_signos 0.0001 | masa_signos 0.1304 | masa_nula 0.0000
+  atención media por posición: p-4 0.125 p-3 0.125 p-2 0.125 p-1 0.125 p+1 0.125 p+2 0.125 p+3 0.125 p+4 0.125 nulo 0.000
+Epoca 6 finalizada. Perdida: 1.6081 | Accuracy: 0.6783 | Tiempo: 55.59s
+Evaluación época 6: perdida_palabras 1.6152 | acc_palabras 0.6767 | acc_palabras_sin_signos 0.6767 | acc_signos 0.0004 | pred_signos 0.0001 | masa_signos 0.1304 | masa_nula 0.0000
+  atención media por posición: p-4 0.125 p-3 0.125 p-2 0.125 p-1 0.125 p+1 0.125 p+2 0.125 p+3 0.125 p+4 0.125 nulo 0.000
+Modelo guardado exitosamente en: 'respaldos\atencion_control\modelo_cbow_w4_atencion_epoca_6.npz'
+Epoca 7 finalizada. Perdida: 1.6083 | Accuracy: 0.6785 | Tiempo: 55.60s
+Evaluación época 7: perdida_palabras 1.6157 | acc_palabras 0.6771 | acc_palabras_sin_signos 0.6771 | acc_signos 0.0004 | pred_signos 0.0001 | masa_signos 0.1304 | masa_nula 0.0000
+  atención media por posición: p-4 0.125 p-3 0.125 p-2 0.125 p-1 0.125 p+1 0.125 p+2 0.125 p+3 0.125 p+4 0.125 nulo 0.000
+Epoca 8 finalizada. Perdida: 1.6084 | Accuracy: 0.6786 | Tiempo: 55.58s
+Evaluación época 8: perdida_palabras 1.6161 | acc_palabras 0.6772 | acc_palabras_sin_signos 0.6772 | acc_signos 0.0004 | pred_signos 0.0001 | masa_signos 0.1304 | masa_nula 0.0000
+  atención media por posición: p-4 0.125 p-3 0.125 p-2 0.125 p-1 0.125 p+1 0.125 p+2 0.125 p+3 0.125 p+4 0.125 nulo 0.000
+Modelo guardado exitosamente en: 'respaldos\atencion_control\modelo_cbow_w4_atencion_epoca_8.npz'
+Epoca 9 finalizada. Perdida: 1.6085 | Accuracy: 0.6787 | Tiempo: 55.58s
+Evaluación época 9: perdida_palabras 1.6164 | acc_palabras 0.6770 | acc_palabras_sin_signos 0.6770 | acc_signos 0.0004 | pred_signos 0.0001 | masa_signos 0.1304 | masa_nula 0.0000
+  atención media por posición: p-4 0.125 p-3 0.125 p-2 0.125 p-1 0.125 p+1 0.125 p+2 0.125 p+3 0.125 p+4 0.125 nulo 0.000
+Epoca 10 finalizada. Perdida: 1.6083 | Accuracy: 0.6788 | Tiempo: 55.91s
+Evaluación época 10: perdida_palabras 1.6165 | acc_palabras 0.6769 | acc_palabras_sin_signos 0.6769 | acc_signos 0.0004 | pred_signos 0.0001 | masa_signos 0.1304 | masa_nula 0.0000
+  atención media por posición: p-4 0.125 p-3 0.125 p-2 0.125 p-1 0.125 p+1 0.125 p+2 0.125 p+3 0.125 p+4 0.125 nulo 0.000
+Modelo guardado exitosamente en: 'respaldos\atencion_control\modelo_cbow_w4_atencion_epoca_10.npz'
+ENTRENAMIENTO FINALIZADO

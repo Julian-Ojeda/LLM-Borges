@@ -1,0 +1,84 @@
+Modelo cargado exitosamente desde: 'respaldos\modelo_cbow_w4_epoca_254.npz' (Epoca cargada: 254)
+
+================ TRANSFORMADOR PARA COMPLETAR FRASES (PyTorch) ================
+Respaldo de partida: respaldos\modelo_cbow_w4_epoca_254.npz (solo lectura; de ahí sale E)
+Directorio de salida: respaldos\transformador
+Entrada: ventana de N = 16 tokens + vectores posicionales sinusoidales
+Bloques: L = 1: auto-atención causal de h = 4 cabezas (dk = 20) + PMC 80 -> 320 -> 80 (GELU), residuales y normalización por capa
+Cabezal: h_N^L · E^t (la misma E de la entrada)
+Parámetros: 77,520 en los bloques + 4,272,720 en E
+Muestras: 1,001,083 de entrenamiento, 52,673 de validación (final del corpus)
+Tamaño de lote: 256 (3,911 pasos por época)
+Tasas (Adam, decaimiento lineal): bloques 0.001, E 0.0003
+Épocas: 30
+=================================================================
+
+Época 0: validación pérdida 12.0164 | perplejidad 165451.3 | top-5 0.0000 | top-10 0.0000 | top-20 0.0000 (exacta 0.0000)
+  ejemplo: volvió a su casa y → promulgar siquiatra torció torció torció torció maldije maldije maldije maldije maldije maldije maldije maldije maldije maldije maldije maldije maldije burguesía decencia decencia decencia decencia decencia
+Época 1: validación pérdida 5.9300 | perplejidad 376.2 | top-5 0.3524 | top-10 0.4438 | top-20 0.5270 (exacta 0.1473)
+  ejemplo: volvió a su casa y → a la calle de la luz de las gotas de la concha, que dormía y yo había perdido en la tierra y se quedaron
+Época 2: validación pérdida 6.1488 | perplejidad 468.2 | top-5 0.3316 | top-10 0.4190 | top-20 0.4983 (exacta 0.1353)
+  ejemplo: volvió a su casa y → el terror, un solo sobre el movimiento de un tesoro perfume de la ilustres; la vida de un compuesto pequeño marina de ingenieros
+Época 3: validación pérdida 6.3181 | perplejidad 554.5 | top-5 0.3358 | top-10 0.4241 | top-20 0.5044 (exacta 0.1330)
+  ejemplo: volvió a su casa y → también se le decía: “¿y no quiero que mis muchachos,. ¿y que pasa, por qué me ha ocurrido
+Época 4: validación pérdida 6.4239 | perplejidad 616.4 | top-5 0.3209 | top-10 0.4066 | top-20 0.4800 (exacta 0.1287)
+  ejemplo: volvió a su casa y → la rosa quedó mirando con las manos, arrastrando las precaución, a la galerie vivienne de busca en su vanguardia, las nubes de
+Época 5: validación pérdida 6.8075 | perplejidad 904.6 | top-5 0.3033 | top-10 0.3884 | top-20 0.4657 (exacta 0.1138)
+  ejemplo: volvió a su casa y → la madre de su padre, le decía: nada, ella está muy muerto, pero como por si no era un hombre que
+Modelo guardado exitosamente en: 'respaldos\transformador\modelo_completar_epoca_5.npz'
+Época 6: validación pérdida 7.0768 | perplejidad 1184.2 | top-5 0.3002 | top-10 0.3849 | top-20 0.4611 (exacta 0.1137)
+  ejemplo: volvió a su casa y → en la alta de la habitación, la linterna dejó caer en el dormitorio. me abrió y vio las preguntas en el rostro.
+Época 7: validación pérdida 7.1372 | perplejidad 1257.9 | top-5 0.2861 | top-10 0.3674 | top-20 0.4409 (exacta 0.1115)
+  ejemplo: volvió a su casa y → me recorría con el sol, su nieto aterrado insistió: el oficial. salió el umbral y lo peor, me miró con su
+Época 8: validación pérdida 7.3272 | perplejidad 1521.1 | top-5 0.2836 | top-10 0.3688 | top-20 0.4410 (exacta 0.1064)
+  ejemplo: volvió a su casa y → en la última habitación, su tía le sale. le dijo que yo sepa una palabra y no hay leer el papel para que
+Época 9: validación pérdida 7.5920 | perplejidad 1982.2 | top-5 0.2537 | top-10 0.3305 | top-20 0.3982 (exacta 0.0956)
+  ejemplo: volvió a su casa y → ya no era él, se volvió hacia el corazón. finalmente se inclinó y no. para mirar. cuando llegó a la casa
+Época 10: validación pérdida 7.7584 | perplejidad 2341.2 | top-5 0.2667 | top-10 0.3413 | top-20 0.4136 (exacta 0.1018)
+  ejemplo: volvió a su casa y → el viejo vino después de la tarde y el fin de la mina. hacía salir a la escuela se iban y a la escuela
+Modelo guardado exitosamente en: 'respaldos\transformador\modelo_completar_epoca_10.npz'
+Época 11: validación pérdida 7.8437 | perplejidad 2549.6 | top-5 0.2378 | top-10 0.3127 | top-20 0.3794 (exacta 0.0888)
+  ejemplo: volvió a su casa y → cuando llamaron al pie de la mano, sólo unos instantes al volver y saqué unos minutos y me quedaba enseguida; pero no me
+Época 12: validación pérdida 7.9500 | perplejidad 2835.7 | top-5 0.2344 | top-10 0.3070 | top-20 0.3738 (exacta 0.0891)
+  ejemplo: volvió a su casa y → las natillas se preguntó el capataz de abiertas resueltamente el eco y dio de nuevo el capataz, exclamó el oleaje: ¡qué cólera
+Época 13: validación pérdida 7.8893 | perplejidad 2668.7 | top-5 0.2358 | top-10 0.3104 | top-20 0.3837 (exacta 0.0891)
+  ejemplo: volvió a su casa y → fue la muchacha fue a su madre. la miró con rosa, una misma noche que me sentía la cara como a un río
+Época 14: validación pérdida 8.2605 | perplejidad 3868.2 | top-5 0.2328 | top-10 0.3039 | top-20 0.3701 (exacta 0.0854)
+  ejemplo: volvió a su casa y → lo dejé moverme, me di cuenta de que no me acordé de un árbol, pero en seguida. me sentí saludar a mi
+Época 15: validación pérdida 8.3243 | perplejidad 4122.6 | top-5 0.2516 | top-10 0.3323 | top-20 0.4061 (exacta 0.0909)
+  ejemplo: volvió a su casa y → la miró a su lado, ni la quinta que había jugar con él la nena y los contra delia se volvió a la cama
+Modelo guardado exitosamente en: 'respaldos\transformador\modelo_completar_epoca_15.npz'
+Época 16: validación pérdida 8.3576 | perplejidad 4262.5 | top-5 0.2345 | top-10 0.3055 | top-20 0.3745 (exacta 0.0872)
+  ejemplo: volvió a su casa y → luego, lo volvió a casarse, repitiendo en el viaje hasta la puerta de mi amigo. mi hija le daba a la cara
+Época 17: validación pérdida 8.5458 | perplejidad 5145.3 | top-5 0.2257 | top-10 0.2996 | top-20 0.3665 (exacta 0.0835)
+  ejemplo: volvió a su casa y → luego, cuando alguien es una pequeña mesa, mira en la cara. (¡ese día! ¡bruto, que no es
+Época 18: validación pérdida 8.4399 | perplejidad 4628.1 | top-5 0.2099 | top-10 0.2819 | top-20 0.3523 (exacta 0.0777)
+  ejemplo: volvió a su casa y → el hombre seguía quitarle el recordaron del plan, le robusto y sin pararse, de pueril de las profanado se acercó y no se
+Época 19: validación pérdida 8.7150 | perplejidad 6093.9 | top-5 0.2098 | top-10 0.2792 | top-20 0.3452 (exacta 0.0781)
+  ejemplo: volvió a su casa y → al pasar en la casa estaba haciendo, y mucho sobre el cual los prometida, el que ella también le tocaba la mano.
+Época 20: validación pérdida 8.7180 | perplejidad 6112.0 | top-5 0.2024 | top-10 0.2685 | top-20 0.3359 (exacta 0.0772)
+  ejemplo: volvió a su casa y → luego, “¿qué? estoy seguro de que no viera cómo si tenía. me quisiera usted decirme que se lo había hecho
+Modelo guardado exitosamente en: 'respaldos\transformador\modelo_completar_epoca_20.npz'
+Época 21: validación pérdida 8.8755 | perplejidad 7154.3 | top-5 0.1861 | top-10 0.2499 | top-20 0.3157 (exacta 0.0680)
+  ejemplo: volvió a su casa y → luego se corrió a la puerta de la casa. entonces abandonó su cuarto, la casa se alejaron al pasar puerta, el cuarto
+Época 22: validación pérdida 8.8953 | perplejidad 7297.4 | top-5 0.1962 | top-10 0.2608 | top-20 0.3271 (exacta 0.0737)
+  ejemplo: volvió a su casa y → los ya no conocía a su policía, se usaba unos huecos y las recuerdos de los años. yo me tocaba el que se
+Época 23: validación pérdida 9.1438 | perplejidad 9356.2 | top-5 0.1812 | top-10 0.2447 | top-20 0.3109 (exacta 0.0664)
+  ejemplo: volvió a su casa y → desde el principio en que un momento estaba la vieja por la última semana; el primer recuerdo que era sujeto. tenía un tiempo
+Época 24: validación pérdida 9.5203 | perplejidad 13633.5 | top-5 0.1613 | top-10 0.2163 | top-20 0.2731 (exacta 0.0608)
+  ejemplo: volvió a su casa y → lo debe ser que no sé menos, y hasta usted he sido tan serio en lo fácil. ese día de la noche,
+Época 25: validación pérdida 9.4508 | perplejidad 12718.1 | top-5 0.1763 | top-10 0.2354 | top-20 0.2944 (exacta 0.0662)
+  ejemplo: volvió a su casa y → después de pronto, un rato enseguida se pareció no me acarició. el caballero volvió con la mirada hacia arriba. fue un rostro
+Modelo guardado exitosamente en: 'respaldos\transformador\modelo_completar_epoca_25.npz'
+Época 26: validación pérdida 9.4980 | perplejidad 13333.6 | top-5 0.1716 | top-10 0.2304 | top-20 0.2912 (exacta 0.0643)
+  ejemplo: volvió a su casa y → la señora le respondió: “¿no es otra cosa? lo que son menos, me dijo la verdad”. “¿
+Época 27: validación pérdida 9.9515 | perplejidad 20983.6 | top-5 0.1577 | top-10 0.2132 | top-20 0.2696 (exacta 0.0589)
+  ejemplo: volvió a su casa y → luego, salí de la calle que en la tomé una operación. la cuenta de la pieza del vivía viejo de un lado de
+Época 28: validación pérdida 9.7776 | perplejidad 17634.9 | top-5 0.1689 | top-10 0.2272 | top-20 0.2895 (exacta 0.0621)
+  ejemplo: volvió a su casa y → después se dijo que no me citas a vaivenes trabar por su instante depósito. ¡a mi espíritu se rezar una vez en su
+Época 29: validación pérdida 9.9349 | perplejidad 20638.5 | top-5 0.1588 | top-10 0.2157 | top-20 0.2737 (exacta 0.0598)
+  ejemplo: volvió a su casa y → después de pronto, salió de la habitación, era de esperar a dejar a un momento de cada vez que los regresé. yo
+Época 30: validación pérdida 10.0308 | perplejidad 22716.5 | top-5 0.1552 | top-10 0.2111 | top-20 0.2685 (exacta 0.0586)
+  ejemplo: volvió a su casa y → después de pronto, ya no había dicho que eso era igual a las cosas que me han hecho un mercader de mí. yo
+Modelo guardado exitosamente en: 'respaldos\transformador\modelo_completar_epoca_30.npz'
+ENTRENAMIENTO FINALIZADO

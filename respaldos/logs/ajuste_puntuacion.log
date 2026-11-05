@@ -1,0 +1,97 @@
+Modelo cargado exitosamente desde: 'respaldos\modelo_cbow_w4_epoca_254.npz' (Epoca cargada: 254)
+
+================ AJUSTE FINO SIN SIGNOS COMO OBJETIVO (CUDA) ================
+Respaldo de partida: respaldos\modelo_cbow_w4_epoca_254.npz (Época 254, solo lectura)
+Directorio de salida: respaldos\ajuste_puntuacion
+Signos de puntuación en el vocabulario: 27: , . ; : ? ¿ “ - ! ¡ ” ) ( – ­ ’ ‘ ´ © ° / [ ] = { } '
+Muestras totales: 1,053,780
+Muestras por época (objetivo = palabra): 916,668
+Tasa de aprendizaje (eta): 0.05
+Épocas a entrenar: 40
+Respaldo cada: 5 épocas (y la última)
+=================================================================
+
+Evaluación época 254: acc_palabras 0.6301 | acc_palabras_sin_signos 0.6493 | acc_signos 0.4836 | pred_signos 0.1356
+Epoca 255 finalizada. Perdida: 1.8295 | Accuracy (palabras): 0.6273 | Tiempo: 760.79s
+Evaluación época 255: acc_palabras 0.6452 | acc_palabras_sin_signos 0.6452 | acc_signos 0.0031 | pred_signos 0.0004
+Epoca 256 finalizada. Perdida: 1.8227 | Accuracy (palabras): 0.6288 | Tiempo: 760.64s
+Evaluación época 256: acc_palabras 0.6479 | acc_palabras_sin_signos 0.6479 | acc_signos 0.0023 | pred_signos 0.0003
+Epoca 257 finalizada. Perdida: 1.8169 | Accuracy (palabras): 0.6295 | Tiempo: 760.85s
+Evaluación época 257: acc_palabras 0.6543 | acc_palabras_sin_signos 0.6543 | acc_signos 0.0019 | pred_signos 0.0003
+Epoca 258 finalizada. Perdida: 1.8132 | Accuracy (palabras): 0.6303 | Tiempo: 760.87s
+Evaluación época 258: acc_palabras 0.6491 | acc_palabras_sin_signos 0.6491 | acc_signos 0.0004 | pred_signos 0.0001
+Epoca 259 finalizada. Perdida: 1.8099 | Accuracy (palabras): 0.6314 | Tiempo: 760.91s
+Evaluación época 259: acc_palabras 0.6545 | acc_palabras_sin_signos 0.6545 | acc_signos 0.0012 | pred_signos 0.0001
+Modelo guardado exitosamente en: 'respaldos\ajuste_puntuacion\modelo_cbow_w4_ajuste_epoca_259.npz'
+Epoca 260 finalizada. Perdida: 1.8066 | Accuracy (palabras): 0.6315 | Tiempo: 760.81s
+Evaluación época 260: acc_palabras 0.6489 | acc_palabras_sin_signos 0.6489 | acc_signos 0.0004 | pred_signos 0.0001
+Epoca 261 finalizada. Perdida: 1.8036 | Accuracy (palabras): 0.6322 | Tiempo: 760.83s
+Evaluación época 261: acc_palabras 0.6509 | acc_palabras_sin_signos 0.6509 | acc_signos 0.0008 | pred_signos 0.0001
+Epoca 262 finalizada. Perdida: 1.8008 | Accuracy (palabras): 0.6323 | Tiempo: 760.83s
+Evaluación época 262: acc_palabras 0.6512 | acc_palabras_sin_signos 0.6512 | acc_signos 0.0008 | pred_signos 0.0001
+Epoca 263 finalizada. Perdida: 1.7988 | Accuracy (palabras): 0.6331 | Tiempo: 760.84s
+Evaluación época 263: acc_palabras 0.6500 | acc_palabras_sin_signos 0.6500 | acc_signos 0.0012 | pred_signos 0.0001
+Epoca 264 finalizada. Perdida: 1.7962 | Accuracy (palabras): 0.6333 | Tiempo: 760.84s
+Evaluación época 264: acc_palabras 0.6531 | acc_palabras_sin_signos 0.6531 | acc_signos 0.0012 | pred_signos 0.0001
+Modelo guardado exitosamente en: 'respaldos\ajuste_puntuacion\modelo_cbow_w4_ajuste_epoca_264.npz'
+Epoca 265 finalizada. Perdida: 1.7935 | Accuracy (palabras): 0.6334 | Tiempo: 760.69s
+Evaluación época 265: acc_palabras 0.6554 | acc_palabras_sin_signos 0.6554 | acc_signos 0.0008 | pred_signos 0.0001
+Epoca 266 finalizada. Perdida: 1.7915 | Accuracy (palabras): 0.6340 | Tiempo: 760.85s
+Evaluación época 266: acc_palabras 0.6582 | acc_palabras_sin_signos 0.6582 | acc_signos 0.0012 | pred_signos 0.0001
+Epoca 267 finalizada. Perdida: 1.7892 | Accuracy (palabras): 0.6347 | Tiempo: 760.83s
+Evaluación época 267: acc_palabras 0.6457 | acc_palabras_sin_signos 0.6457 | acc_signos 0.0004 | pred_signos 0.0001
+Epoca 268 finalizada. Perdida: 1.7874 | Accuracy (palabras): 0.6349 | Tiempo: 760.87s
+Evaluación época 268: acc_palabras 0.6581 | acc_palabras_sin_signos 0.6581 | acc_signos 0.0008 | pred_signos 0.0001
+Epoca 269 finalizada. Perdida: 1.7853 | Accuracy (palabras): 0.6356 | Tiempo: 760.86s
+Evaluación época 269: acc_palabras 0.6470 | acc_palabras_sin_signos 0.6470 | acc_signos 0.0004 | pred_signos 0.0001
+Modelo guardado exitosamente en: 'respaldos\ajuste_puntuacion\modelo_cbow_w4_ajuste_epoca_269.npz'
+Epoca 270 finalizada. Perdida: 1.7832 | Accuracy (palabras): 0.6358 | Tiempo: 760.68s
+Evaluación época 270: acc_palabras 0.6509 | acc_palabras_sin_signos 0.6509 | acc_signos 0.0004 | pred_signos 0.0001
+Epoca 271 finalizada. Perdida: 1.7808 | Accuracy (palabras): 0.6363 | Tiempo: 760.82s
+Evaluación época 271: acc_palabras 0.6516 | acc_palabras_sin_signos 0.6516 | acc_signos 0.0004 | pred_signos 0.0001
+Epoca 272 finalizada. Perdida: 1.7790 | Accuracy (palabras): 0.6364 | Tiempo: 760.87s
+Evaluación época 272: acc_palabras 0.6544 | acc_palabras_sin_signos 0.6544 | acc_signos 0.0004 | pred_signos 0.0001
+Epoca 273 finalizada. Perdida: 1.7769 | Accuracy (palabras): 0.6363 | Tiempo: 761.97s
+Evaluación época 273: acc_palabras 0.6567 | acc_palabras_sin_signos 0.6567 | acc_signos 0.0004 | pred_signos 0.0001
+Epoca 274 finalizada. Perdida: 1.7752 | Accuracy (palabras): 0.6368 | Tiempo: 760.85s
+Evaluación época 274: acc_palabras 0.6556 | acc_palabras_sin_signos 0.6556 | acc_signos 0.0004 | pred_signos 0.0001
+Modelo guardado exitosamente en: 'respaldos\ajuste_puntuacion\modelo_cbow_w4_ajuste_epoca_274.npz'
+Epoca 275 finalizada. Perdida: 1.7735 | Accuracy (palabras): 0.6372 | Tiempo: 760.61s
+Evaluación época 275: acc_palabras 0.6566 | acc_palabras_sin_signos 0.6566 | acc_signos 0.0004 | pred_signos 0.0001
+Epoca 276 finalizada. Perdida: 1.7715 | Accuracy (palabras): 0.6376 | Tiempo: 760.82s
+Evaluación época 276: acc_palabras 0.6514 | acc_palabras_sin_signos 0.6514 | acc_signos 0.0004 | pred_signos 0.0001
+Epoca 277 finalizada. Perdida: 1.7704 | Accuracy (palabras): 0.6374 | Tiempo: 760.83s
+Evaluación época 277: acc_palabras 0.6541 | acc_palabras_sin_signos 0.6541 | acc_signos 0.0004 | pred_signos 0.0001
+Epoca 278 finalizada. Perdida: 1.7683 | Accuracy (palabras): 0.6383 | Tiempo: 760.83s
+Evaluación época 278: acc_palabras 0.6595 | acc_palabras_sin_signos 0.6595 | acc_signos 0.0004 | pred_signos 0.0001
+Epoca 279 finalizada. Perdida: 1.7664 | Accuracy (palabras): 0.6381 | Tiempo: 760.75s
+Evaluación época 279: acc_palabras 0.6584 | acc_palabras_sin_signos 0.6584 | acc_signos 0.0004 | pred_signos 0.0001
+Modelo guardado exitosamente en: 'respaldos\ajuste_puntuacion\modelo_cbow_w4_ajuste_epoca_279.npz'
+Epoca 280 finalizada. Perdida: 1.7650 | Accuracy (palabras): 0.6385 | Tiempo: 760.81s
+Evaluación época 280: acc_palabras 0.6608 | acc_palabras_sin_signos 0.6608 | acc_signos 0.0004 | pred_signos 0.0001
+Epoca 281 finalizada. Perdida: 1.7635 | Accuracy (palabras): 0.6391 | Tiempo: 760.86s
+Evaluación época 281: acc_palabras 0.6595 | acc_palabras_sin_signos 0.6595 | acc_signos 0.0004 | pred_signos 0.0001
+Epoca 282 finalizada. Perdida: 1.7613 | Accuracy (palabras): 0.6391 | Tiempo: 760.83s
+Evaluación época 282: acc_palabras 0.6618 | acc_palabras_sin_signos 0.6618 | acc_signos 0.0004 | pred_signos 0.0001
+Epoca 283 finalizada. Perdida: 1.7601 | Accuracy (palabras): 0.6395 | Tiempo: 760.86s
+Evaluación época 283: acc_palabras 0.6560 | acc_palabras_sin_signos 0.6560 | acc_signos 0.0004 | pred_signos 0.0001
+Epoca 284 finalizada. Perdida: 1.7586 | Accuracy (palabras): 0.6394 | Tiempo: 760.71s
+Evaluación época 284: acc_palabras 0.6586 | acc_palabras_sin_signos 0.6586 | acc_signos 0.0004 | pred_signos 0.0001
+Modelo guardado exitosamente en: 'respaldos\ajuste_puntuacion\modelo_cbow_w4_ajuste_epoca_284.npz'
+Epoca 285 finalizada. Perdida: 1.7566 | Accuracy (palabras): 0.6398 | Tiempo: 760.83s
+Evaluación época 285: acc_palabras 0.6589 | acc_palabras_sin_signos 0.6589 | acc_signos 0.0004 | pred_signos 0.0001
+Epoca 286 finalizada. Perdida: 1.7560 | Accuracy (palabras): 0.6402 | Tiempo: 760.87s
+Evaluación época 286: acc_palabras 0.6620 | acc_palabras_sin_signos 0.6620 | acc_signos 0.0004 | pred_signos 0.0001
+Epoca 287 finalizada. Perdida: 1.7534 | Accuracy (palabras): 0.6404 | Tiempo: 760.86s
+Evaluación época 287: acc_palabras 0.6552 | acc_palabras_sin_signos 0.6552 | acc_signos 0.0004 | pred_signos 0.0001
+Epoca 288 finalizada. Perdida: 1.7522 | Accuracy (palabras): 0.6407 | Tiempo: 760.86s
+Evaluación época 288: acc_palabras 0.6609 | acc_palabras_sin_signos 0.6609 | acc_signos 0.0004 | pred_signos 0.0001
+Epoca 289 finalizada. Perdida: 1.7509 | Accuracy (palabras): 0.6408 | Tiempo: 760.64s
+Evaluación época 289: acc_palabras 0.6672 | acc_palabras_sin_signos 0.6672 | acc_signos 0.0004 | pred_signos 0.0001
+Modelo guardado exitosamente en: 'respaldos\ajuste_puntuacion\modelo_cbow_w4_ajuste_epoca_289.npz'
+Epoca 290 finalizada. Perdida: 1.7496 | Accuracy (palabras): 0.6409 | Tiempo: 760.78s
+Evaluación época 290: acc_palabras 0.6604 | acc_palabras_sin_signos 0.6604 | acc_signos 0.0004 | pred_signos 0.0001
+Epoca 291 finalizada. Perdida: 1.7483 | Accuracy (palabras): 0.6413 | Tiempo: 949.66s
+Evaluación época 291: acc_palabras 0.6536 | acc_palabras_sin_signos 0.6536 | acc_signos 0.0004 | pred_signos 0.0001
+Epoca 292 finalizada. Perdida: 1.7466 | Accuracy (palabras): 0.6413 | Tiempo: 996.91s
+Evaluación época 292: acc_palabras 0.6602 | acc_palabras_sin_signos 0.6602 | acc_signos 0.0004 | pred_signos 0.0001
