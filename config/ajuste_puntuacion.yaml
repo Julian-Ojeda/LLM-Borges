@@ -1,0 +1,28 @@
+# ==============================================================================
+# AJUSTE FINO DEL CBOW SIN SIGNOS DE PUNTUACIÓN COMO OBJETIVO (scripts/ajustar_puntuacion_cuda.py)
+# Parte de un respaldo ya entrenado (solo lectura) y escribe todo en una carpeta aparte.
+# Para deshacerlo, alcanza con borrar directorio_respaldos.
+# ==============================================================================
+
+# Corpus (el mismo con el que se construyó el vocabulario del respaldo)
+ruta_corpus: datos/corpus_ApAvAu.txt
+
+# Respaldo de partida: no se modifica
+ruta_checkpoint: respaldos/modelo_cbow_w4_epoca_254.npz
+
+# Carpeta de salida: debe ser distinta de la del respaldo de partida y no tener métricas previas
+directorio_respaldos: respaldos/ajuste_puntuacion
+
+# Debe coincidir con el del respaldo de partida
+tamanio_ventana: 4
+
+# Misma tasa que el entrenamiento original, para que la diferencia se deba solo a sacar los signos como objetivo
+tasa_aprendizaje: 0.05
+
+# Cada época (~11 min en la GTX 1050) recorre las ~918.000 muestras cuya palabra central no es un signo
+cantidad_epocas: 40
+
+# Respaldo cada tantas épocas (y siempre la última); cada .npz ocupa ~31 MB
+frecuencia_respaldo: 5
+
+semilla_aleatoria: 26

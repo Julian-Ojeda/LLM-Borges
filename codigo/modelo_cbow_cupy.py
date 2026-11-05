@@ -9,6 +9,16 @@ Red neuronal CBOW en CuPy / NumPy, con la notacion y las dimensiones de las clas
 El entrenamiento es por descenso por el gradiente muestra a muestra (sin lotes).
 Como las entradas son one-hot, W^t x equivale a tomar una fila de W: por eso se trabaja
 con los indices de las palabras en lugar de armar vectores one-hot.
+
+Notacion usada en todo el modulo:
+    |V|  tamaño del vocabulario (53.409 en el corpus del TP)
+    N    dimension del embedding / neuronas de la capa oculta (80)
+    C    cantidad de palabras de contexto = 2m (8 con ventana 4)
+    O    indice de la palabra central (la que hay que predecir)
+    eta  tasa de aprendizaje
+
+Todas las funciones usan `xp`, que es CuPy (GPU) si esta disponible o NumPy (CPU) si no:
+el mismo codigo corre en los dos lados porque CuPy copia la interfaz de NumPy.
 """
 
 import sys
@@ -18,6 +28,8 @@ from pathlib import Path
 import numpy as np
 
 # Cargar automaticamente bibliotecas dinamicas CUDA instaladas en el .venv
+# (solo aplica a Linux: busca los .so de los paquetes nvidia-* de pip para que CuPy los encuentre;
+#  en Windows esa carpeta no existe y este bloque no hace nada)
 _ruta_venv = Path(__file__).resolve().parent.parent / ".venv"
 _carpeta_nvidia = (
     _ruta_venv
@@ -35,11 +47,13 @@ if _carpeta_nvidia.exists():
             except Exception:
                 pass
 
+# Eleccion del "backend": se intenta usar la GPU con CuPy; si falla (no hay CuPy o no hay GPU), NumPy.
+# xp es el modulo con el que se hacen todas las cuentas (xp.exp, xp.zeros, ...).
 try:
     import cupy as cp
     import cupyx
 
-    _ = cp.zeros((1,), dtype=cp.float32)
+    _ = cp.zeros((1,), dtype=cp.float32)   # prueba real: crear un arreglo en la GPU (falla si no hay GPU)
     USAR_CUPY = True
     xp = cp
 except Exception:
@@ -55,7 +69,11 @@ def inicializar_pesos(tamanio_vocabulario: int, dimension_embedding: int) -> tup
     :param dimension_embedding: Cantidad de unidades de la capa oculta N.
     :return: Tupla (W, W_prima).
     """
+    # W al azar y chico: cada palabra arranca con un embedding distinto (si todos fueran iguales,
+    # recibirian el mismo gradiente y nunca se diferenciarian)
     W = xp.random.uniform(-0.1, 0.1, (tamanio_vocabulario, dimension_embedding)).astype(xp.float32)
+    # W' en ceros: al principio u = 0 para todas las palabras, o sea una prediccion uniforme 1/|V|.
+    # Como W es al azar, h no es cero y el gradiente de W' ya es distinto de cero en el primer paso
     W_prima = xp.zeros((dimension_embedding, tamanio_vocabulario), dtype=xp.float32)
     return W, W_prima
 
@@ -64,6 +82,9 @@ def _sumar_en_filas(matriz, indices, valores) -> None:
     """
     matriz[indices] += valores, acumulando cuando un indice se repite
     (por ejemplo, la misma palabra dos veces en un contexto).
+
+    Por que no alcanza con `matriz[indices] += valores`: con indices repetidos, esa forma suma una sola vez
+    (la ultima escritura gana). scatter_add / add.at suman todas las veces que aparece el indice.
     """
     if USAR_CUPY:
         cupyx.scatter_add(matriz, indices, valores)
@@ -80,6 +101,7 @@ def calcular_capa_oculta(contexto, W):
     :return: h, vector columna de forma (N, 1).
     """
     C = contexto.shape[0]
+    # W[contexto] toma las C filas (embeddings) del contexto: (C, N). Se promedian y se vuelve columna (N, 1)
     return (W[contexto].sum(axis=0) / C).reshape(-1, 1)
 
 
@@ -107,14 +129,14 @@ def paso_softmax_completo(contexto, objetivo, W, W_prima, eta: float):
     y = xp.exp(u - u.max())                          # se resta el maximo por estabilidad numerica
     y /= y.sum()                                     # (|V|, 1): y_j = P(p_j | contexto)
 
-    E = -xp.log(xp.maximum(y[objetivo, 0], 1e-12))
-    acierto = xp.argmax(y) == objetivo
+    E = -xp.log(xp.maximum(y[objetivo, 0], 1e-12))  # perdida; el maximo con 1e-12 evita log(0) = -infinito
+    acierto = xp.argmax(y) == objetivo               # la palabra mas probable es la correcta?
 
     e = y                                            # e = y - t (reutiliza la memoria de y)
-    e[objetivo, 0] -= 1.0
+    e[objetivo, 0] -= 1.0                            # t es one-hot: solo resta 1 en la posicion O
     EH = W_prima @ e                                 # (N, 1), con W' antes de actualizarla
 
-    W_prima -= eta * (h @ e.T)                       # (N, |V|)
+    W_prima -= eta * (h @ e.T)                       # (N, |V|): h e^t es el gradiente dE/dW'
     _sumar_en_filas(W, contexto, (-eta / C) * EH.T)  # (1, N) sumado a cada fila del contexto
     return E, acierto
 
@@ -127,8 +149,10 @@ def distribucion_negativos(frecuencias):
     :param frecuencias: Cantidad de apariciones de cada palabra del vocabulario, forma (|V|,).
     :return: Distribucion acumulada, forma (|V|,).
     """
+    # El exponente 3/4 achata la distribucion: las palabras raras salen sorteadas un poco mas
+    # (y las muy frecuentes un poco menos) que con la frecuencia pura
     p = np.asarray(frecuencias, dtype=np.float64) ** 0.75
-    return xp.asarray(np.cumsum(p / p.sum()))
+    return xp.asarray(np.cumsum(p / p.sum()))   # acumulada: valores crecientes de ~0 a 1
 
 
 def muestrear_negativos(objetivo, cantidad: int, acumulada):
@@ -141,12 +165,15 @@ def muestrear_negativos(objetivo, cantidad: int, acumulada):
     :return: Indices de los ejemplos negativos, forma (T, cantidad).
     """
     def sortear(forma):
+        # Muestreo por transformada inversa: un numero al azar r en [0, 1) cae en el intervalo de la
+        # acumulada de alguna palabra; searchsorted encuentra ese indice. Palabras con mas probabilidad
+        # ocupan intervalos mas largos y salen mas seguido
         indices = xp.searchsorted(acumulada, xp.random.random(forma))
-        return xp.minimum(indices, len(acumulada) - 1)
+        return xp.minimum(indices, len(acumulada) - 1)   # por redondeo, r puede quedar apenas fuera del ultimo
 
-    negativos = sortear((len(objetivo), cantidad))
-    repetidos = negativos == objetivo[:, None]
-    while bool(repetidos.any()):
+    negativos = sortear((len(objetivo), cantidad))          # (T, K)
+    repetidos = negativos == objetivo[:, None]              # True donde se sorteo la propia palabra objetivo
+    while bool(repetidos.any()):                            # se vuelven a sortear solo esas posiciones
         negativos[repetidos] = sortear(int(repetidos.sum()))
         repetidos = negativos == objetivo[:, None]
     return negativos
@@ -177,7 +204,7 @@ def paso_muestreo_negativo(contexto, objetivo, negativos, W, W_prima, eta: float
     v_salida = W_prima[:, palabras]                                # (N, 1+K): columnas v'_j
     u = v_salida.T @ h                                             # (1+K, 1): u_j = v'_j^t h
 
-    t = xp.zeros_like(u)
+    t = xp.zeros_like(u)    # etiquetas: 1 para la palabra correcta (posicion 0), 0 para los negativos
     t[0, 0] = 1.0
     # -log sigma(x) = log(1 + exp(-x))
     E = xp.logaddexp(0, -u[0, 0]) + xp.logaddexp(0, u[1:, 0]).sum()
@@ -202,10 +229,12 @@ def guardar_modelo(modelo: dict, ruta_archivo: str | Path) -> None:
     destino = Path(ruta_archivo)
     destino.parent.mkdir(parents=True, exist_ok=True)
 
+    # np.savez solo guarda arreglos de NumPy: si los pesos estan en la GPU se copian a la CPU
     W_np = cp.asnumpy(modelo["W"]) if USAR_CUPY else np.asarray(modelo["W"])
     W_prima_np = cp.asnumpy(modelo["W_prima"]) if USAR_CUPY else np.asarray(modelo["W_prima"])
     vocabulario_palabras = modelo["vocabulario_palabras"]
 
+    # Cada clave queda como un arreglo dentro del .npz (un .zip con un archivo .npy por clave)
     datos_guardar = {
         "W": W_np,
         "W_prima": W_prima_np,
@@ -218,9 +247,10 @@ def guardar_modelo(modelo: dict, ruta_archivo: str | Path) -> None:
     }
 
     if "configuracion" in modelo:
+        # El diccionario de configuracion se guarda como texto; cargar_modelo lo reconstruye con literal_eval
         datos_guardar["configuracion_json"] = str(modelo["configuracion"])
 
-    np.savez_compressed(destino, **datos_guardar)
+    np.savez_compressed(destino, **datos_guardar)   # comprimido: ~31 MB por respaldo en este corpus
     print(f"Modelo guardado exitosamente en: '{destino}'")
 
 
@@ -235,8 +265,9 @@ def cargar_modelo(ruta_archivo: str | Path) -> dict:
     if not origen.exists():
         raise FileNotFoundError(f"No se encontro el archivo de modelo en: '{origen}'")
 
+    # allow_pickle=True hace falta porque el vocabulario es un arreglo de objetos (cadenas)
     datos = np.load(origen, allow_pickle=True)
-    W = xp.asarray(datos["W"], dtype=xp.float32)
+    W = xp.asarray(datos["W"], dtype=xp.float32)        # a la GPU si hay CuPy
     W_prima = xp.asarray(datos["W_prima"], dtype=xp.float32)
     vocabulario_palabras = datos["vocabulario_palabras"]
 

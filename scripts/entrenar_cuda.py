@@ -20,6 +20,21 @@ Esas cuentas se reparten en 3 kernels por muestra:
     3. cbow_actualizar_entrada: la actualizacion de las filas de W del contexto.
 
 Solo implementa el modo softmax completo (cantidad_negativos: 0).
+
+Conceptos de CUDA que aparecen en el codigo:
+    - Kernel: funcion que corre en la GPU, ejecutada a la vez por miles de hilos (threads).
+    - Hilos y bloques: los hilos se agrupan en bloques de HILOS = 256. Aca cada hilo se encarga de una
+      palabra j del vocabulario, asi que se lanzan ceil(|V| / 256) bloques (209 para |V| = 53.409).
+      Dentro del kernel: tid = threadIdx.x (hilo dentro del bloque), j = blockIdx.x * HILOS + tid (palabra).
+    - Memoria compartida (__shared__): memoria rapida que comparten los hilos de un mismo bloque.
+    - __syncthreads(): barrera; ningun hilo del bloque sigue hasta que todos llegaron ahi.
+    - Reduccion: calcular un maximo o una suma entre los 256 hilos del bloque, a la mitad por paso
+      (256 -> 128 -> ... -> 1). Cada bloque deja un resultado parcial y despues se combinan los parciales.
+    - atomicAdd: suma sobre una misma posicion de memoria desde muchos hilos sin que se pisen.
+
+Uso:
+    python scripts/entrenar_cuda.py                                          # config/configuracion_cuda.yaml
+    python scripts/entrenar_cuda.py --reanudar --checkpoint respaldos/modelo_cbow_w4_epoca_254.npz --epocas 10
 """
 
 import argparse
@@ -43,8 +58,9 @@ from codigo.generador_vocabulario import construir_vocabulario
 from codigo.entrenador_cbow import preparar_muestras, imprimir_resumen, TOKEN_DESCONOCIDO
 from codigo.modelo_cbow_cupy import inicializar_pesos, guardar_modelo, cargar_modelo, USAR_CUPY, xp
 
-HILOS = 256
+HILOS = 256   # hilos por bloque (tiene que coincidir con el #define HILOS del codigo CUDA)
 
+# Codigo fuente CUDA (C++). CuPy lo compila en tiempo de ejecucion con RawModule (ver PasoCBOWCuda).
 CODIGO_CUDA = r"""
 #define HILOS 256
 #define MENOS_INFINITO __int_as_float(0xff800000)
@@ -76,13 +92,14 @@ extern "C" __global__ void cbow_salida(
     float* __restrict__ u, float* __restrict__ h_global,
     float* __restrict__ max_parcial, int* __restrict__ arg_parcial, float* __restrict__ suma_parcial)
 {
-    extern __shared__ float h[];                       // (N)
-    __shared__ float red_val[HILOS];
-    __shared__ int red_ind[HILOS];
-    const int tid = threadIdx.x;
-    const int j = blockIdx.x * HILOS + tid;
-    const int* ctx = contexto + (long long)idx * C;
+    extern __shared__ float h[];                       // (N) tamaño dado al lanzar el kernel (shared_mem)
+    __shared__ float red_val[HILOS];                   // valores para las reducciones del bloque
+    __shared__ int red_ind[HILOS];                     // indices (para saber cual es el argmax)
+    const int tid = threadIdx.x;                       // hilo dentro del bloque: 0..255
+    const int j = blockIdx.x * HILOS + tid;            // palabra del vocabulario de este hilo
+    const int* ctx = contexto + (long long)idx * C;    // las C palabras de contexto de la muestra idx
 
+    // Cada bloque calcula h completo en su memoria compartida (los hilos se reparten las N componentes)
     for (int i = tid; i < N; i += HILOS) {
         float s = 0.0f;
         for (int c = 0; c < C; ++c) s += W[(long long)ctx[c] * N + i];
@@ -91,10 +108,11 @@ extern "C" __global__ void cbow_salida(
     }
     __syncthreads();
 
+    // u_j = columna j de W' por h. Los hilos sobrantes del ultimo bloque (j >= V) quedan en -infinito
     float uj = MENOS_INFINITO;
     if (j < V) {
         float s = 0.0f;
-        for (int i = 0; i < N; ++i) s += Wp[(long long)i * V + j] * h[i];
+        for (int i = 0; i < N; ++i) s += Wp[(long long)i * V + j] * h[i];   // W' guardada por filas: (i, j) = i*V + j
         uj = s;
         u[j] = uj;
     }
@@ -139,6 +157,9 @@ extern "C" __global__ void cbow_actualizar_salida(
 
     for (int i = tid; i < N; i += HILOS) { h[i] = h_global[i]; EH[i] = 0.0f; }
 
+    // Softmax en dos etapas: el kernel 1 dejo, por bloque, el maximo parcial y la suma parcial de exp.
+    // Aca cada bloque combina los nb parciales para obtener el maximo M y la suma S de todo |V|:
+    //     S = sum_b suma_b * exp(max_b - M)      (cada suma parcial se reescala al maximo global)
     // Maximo global de u y su indice, a partir de los parciales de los bloques
     float mv = MENOS_INFINITO;
     int mi = 0x7fffffff;
@@ -170,7 +191,9 @@ extern "C" __global__ void cbow_actualizar_salida(
     if (j < V) ej = expf(u[j] - M) / S - (j == O ? 1.0f : 0.0f);
 
     // Una sola pasada por W': EH_i += w'_ij e_j (valor anterior) y w'_ij <- w'_ij - eta e_j h_i
-    const int carril = tid & 31;
+    // Para EH_i hay que sumar sobre todas las palabras j: primero se suma dentro de cada "warp"
+    // (grupo de 32 hilos) con __shfl_down_sync, y despues un hilo por warp lo agrega con atomicAdd.
+    const int carril = tid & 31;                       // posicion del hilo dentro de su warp (0..31)
     for (int i = 0; i < N; ++i) {
         float aporte = 0.0f;
         if (j < V) {
@@ -215,36 +238,52 @@ class PasoCBOWCuda:
     """
 
     def __init__(self, tamanio_vocabulario: int, dimension_embedding: int, cantidad_contexto: int):
-        modulo = xp.RawModule(code=CODIGO_CUDA)
+        """
+        Compila los kernels y reserva una sola vez los buffers intermedios en la GPU.
+
+        :param tamanio_vocabulario: |V|.
+        :param dimension_embedding: N.
+        :param cantidad_contexto: C = 2m.
+        """
+        modulo = xp.RawModule(code=CODIGO_CUDA)        # compila CODIGO_CUDA (la primera vez tarda unos segundos)
         self.kernel_salida = modulo.get_function("cbow_salida")
         self.kernel_actualizar_salida = modulo.get_function("cbow_actualizar_salida")
         self.kernel_actualizar_entrada = modulo.get_function("cbow_actualizar_entrada")
 
+        # Los enteros que reciben los kernels tienen que ser int32 de C (no int de Python)
         self.V = np.int32(tamanio_vocabulario)
         self.N = np.int32(dimension_embedding)
         self.C = np.int32(cantidad_contexto)
-        self.bloques = (tamanio_vocabulario + HILOS - 1) // HILOS
+        self.bloques = (tamanio_vocabulario + HILOS - 1) // HILOS   # ceil(|V| / HILOS): un hilo por palabra
         self.nb = np.int32(self.bloques)
 
+        # Buffers intermedios (se reusan en cada muestra, no se reservan de nuevo)
         self.u = xp.empty(tamanio_vocabulario, dtype=xp.float32)
         self.h = xp.empty(dimension_embedding, dtype=xp.float32)
         self.max_parcial = xp.empty(self.bloques, dtype=xp.float32)
         self.arg_parcial = xp.empty(self.bloques, dtype=xp.int32)
         self.suma_parcial = xp.empty(self.bloques, dtype=xp.float32)
         self.EH_parcial = xp.empty((self.bloques, dimension_embedding), dtype=xp.float32)
+        # Acumuladores de la época; viven en la GPU para no sincronizar con la CPU en cada muestra
         self.perdida_acumulada = xp.zeros(1, dtype=xp.float64)
         self.aciertos = xp.zeros(1, dtype=xp.uint64)
 
     def reiniciar_metricas(self) -> None:
+        """Pone en cero la perdida y los aciertos acumulados (al empezar cada época)."""
         self.perdida_acumulada.fill(0)
         self.aciertos.fill(0)
 
     def leer_metricas(self) -> tuple[float, int]:
+        """Copia a la CPU la perdida total y la cantidad de aciertos acumulados."""
         return float(self.perdida_acumulada[0]), int(self.aciertos[0])
 
     def __call__(self, W, W_prima, contexto, objetivo, indice: int, eta: float) -> None:
+        """
+        Un paso de gradiente para la muestra `indice`: lanza los 3 kernels en orden (W y W' cambian en el lugar).
+        Forma de cada lanzamiento: kernel((bloques,), (hilos por bloque,), (argumentos...), shared_mem=bytes).
+        """
         idx = np.int32(indice)
-        bytes_h = int(self.N) * 4
+        bytes_h = int(self.N) * 4                      # N floats de 4 bytes: memoria compartida para h
         self.kernel_salida(
             (self.bloques,), (HILOS,),
             (W, W_prima, contexto, idx, self.V, self.N, self.C,
@@ -258,6 +297,7 @@ class PasoCBOWCuda:
              self.EH_parcial, self.perdida_acumulada, self.aciertos),
             shared_mem=2 * bytes_h,
         )
+        # La actualizacion de W es chica (C filas de N): alcanza con un solo bloque de 128 hilos
         self.kernel_actualizar_entrada(
             (1,), (128,),
             (W, contexto, idx, self.N, self.C, self.nb, np.float32(eta), self.EH_parcial),
@@ -319,6 +359,7 @@ def entrenar_cuda(configuracion_dict: dict) -> dict:
         historial_perdida, historial_accuracy = [], []
         estado = "Entrenamiento limpio desde el corpus"
 
+    # Los kernels leen la memoria como un bloque continuo por filas: se garantiza ese formato y float32
     W = xp.ascontiguousarray(W, dtype=xp.float32)
     W_prima = xp.ascontiguousarray(W_prima, dtype=xp.float32)
     tamanio_vocabulario, dimension_embedding = W.shape
@@ -367,8 +408,9 @@ def entrenar_cuda(configuracion_dict: dict) -> dict:
 
         barra_progreso = tqdm(orden, desc=f"Epoca {epoca}/{epoca_final}", unit="muestra", mininterval=2.0)
         for procesadas, indice in enumerate(barra_progreso, start=1):
-            paso(W, W_prima, contexto, objetivo, int(indice), tasa_aprendizaje)
+            paso(W, W_prima, contexto, objetivo, int(indice), tasa_aprendizaje)   # un paso por muestra
 
+            # Leer las metricas obliga a esperar a la GPU: se hace solo cada 20.000 muestras
             if procesadas % 20000 == 0:
                 perdida_acumulada, aciertos = paso.leer_metricas()
                 barra_progreso.set_postfix(

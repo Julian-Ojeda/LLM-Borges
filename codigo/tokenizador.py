@@ -1,5 +1,13 @@
 """
 Modulo de tokenizacion para el preprocesamiento de textos y corpora.
+
+Rol en el proyecto: es el primer paso de todo el pipeline. Convierte el archivo de texto en la lista
+de tokens (palabras y, opcionalmente, signos) sobre la que se arma el vocabulario y las ventanas.
+
+Ejemplo con incluir_puntuacion_y_numeros=True:
+    "Dijo: ¡Hola, Juan!"  ->  ['dijo', ':', '¡', 'hola', ',', 'juan', '!']
+y con False:
+    "Dijo: ¡Hola, Juan!"  ->  ['dijo', 'hola', 'juan']
 """
 
 import re
@@ -21,21 +29,24 @@ def tokenizar_corpus(
     if not path_corpus.exists():
         raise FileNotFoundError(f"No se encontro el archivo de corpus en la ruta: {path_corpus}")
 
+    # Se lee todo el texto y se pasa a minusculas: "Casa" y "casa" son el mismo token.
+    # errors="ignore" descarta los bytes que no son UTF-8 valido en lugar de cortar con error.
     with open(path_corpus, "r", encoding="utf-8", errors="ignore") as archivo:
         contenido = archivo.read().lower()
 
     if incluir_puntuacion_y_numeros:
         # Regex que captura secuencias alfanumericas o cualquier caracter de puntuacion no blanco
+        #   \w+       una o mas letras/digitos/guion bajo seguidos (una palabra o un numero)
+        #   [^\w\s]   un solo caracter que no es letra/digito ni espacio (un signo: . , ; ¿ ...)
         patron = re.compile(r"\w+|[^\w\s]", re.IGNORECASE)
     else:
         # Regex que captura exclusivamente palabras alfabeticas con tildes y ñ
         patron = re.compile(r"[a-záéíóúüñ]+", re.IGNORECASE)
 
-    tokens = patron.findall(contenido)
+    tokens = patron.findall(contenido)   # lista con cada coincidencia del patron, en orden de aparicion
     if not tokens:
         raise ValueError(
             f"El corpus en la ruta '{path_corpus}' no contiene suficiente texto para entrenar (0 tokens)."
         )
 
     return tokens
-

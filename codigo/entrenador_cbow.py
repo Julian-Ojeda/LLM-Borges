@@ -1,6 +1,14 @@
 """
 Modulo de entrenamiento de la red neuronal CBOW, muestra a muestra (sin lotes).
 Coordina la tokenizacion, el vocabulario, las muestras (contexto, palabra central) y los pasos de gradiente.
+
+Flujo completo (lo llama scripts/entrenar.py):
+    texto --tokenizar_corpus--> tokens --construir_vocabulario--> vocabulario (|V| palabras)
+          --preparar_muestras--> (contexto, objetivo) para cada posicion del corpus
+          --por cada época, por cada muestra en orden aleatorio--> paso_softmax_completo / paso_muestreo_negativo
+          --cada tantas épocas--> respaldo .npz + fila en el CSV de metricas
+
+scripts/entrenar_cuda.py hace exactamente lo mismo pero con kernels CUDA propios (mas rapido).
 """
 
 import time
@@ -23,6 +31,7 @@ from .modelo_cbow_cupy import (
     xp,
 )
 
+# Palabra reservada (indice 0 del vocabulario) para los tokens que no entraron al vocabulario
 TOKEN_DESCONOCIDO = "<UNK>"
 
 
@@ -38,12 +47,18 @@ def preparar_muestras(
     :param tamanio_ventana: Tamaño m de la ventana a izquierda y a derecha.
     :return: Tupla (ids del corpus, contexto de forma (T, C) con C = 2m, objetivo de forma (T,)).
     """
+    # Cada token se reemplaza por su indice en el vocabulario (0 = <UNK> si no esta)
     ids = np.array([mapeo_vocabulario.get(token, 0) for token in tokens_corpus], dtype=np.int32)
     if len(ids) < 2 * tamanio_ventana + 1:
         raise ValueError("El corpus tiene menos tokens que una ventana de contexto completa.")
 
+    # Todas las ventanas de 2m+1 tokens consecutivos, una por fila (sin copiar memoria).
+    # Ejemplo con m = 1 e ids [5, 7, 9, 4]:  ventanas = [[5, 7, 9], [7, 9, 4]]
     ventanas = sliding_window_view(ids, 2 * tamanio_ventana + 1)
+    # La columna del medio es la palabra central (lo que la red tiene que predecir): [7, 9]
     objetivo = ventanas[:, tamanio_ventana].copy()
+    # El resto de las columnas es el contexto: [[5, 9], [7, 4]]
+    # El orden queda (p_{j-m}, ..., p_{j-1}, p_{j+1}, ..., p_{j+m}): primero la izquierda, despues la derecha
     contexto = np.delete(ventanas, tamanio_ventana, axis=1)
     return ids, contexto, objetivo
 
@@ -70,8 +85,9 @@ def entrenar(configuracion_dict: dict) -> dict:
     :return: Diccionario 'modelo' con W, W_prima, vocabulario_palabras, historiales y metadatos.
     """
     tiempo_inicio_total = time.time()
-    configuracion = dict(configuracion_dict)
+    configuracion = dict(configuracion_dict)   # copia: los cambios de abajo no afectan al diccionario original
 
+    # Hiperparametros (ver config/configuracion.yaml para el significado de cada uno)
     ruta_corpus = configuracion["ruta_corpus"]
     directorio_respaldos = Path(configuracion["directorio_respaldos"])
     tamanio_ventana = configuracion["tamanio_ventana"]
@@ -83,7 +99,7 @@ def entrenar(configuracion_dict: dict) -> dict:
     ruta_checkpoint = configuracion["ruta_checkpoint"]
     semilla_aleatoria = configuracion["semilla_aleatoria"]
 
-    xp.random.seed(semilla_aleatoria)
+    xp.random.seed(semilla_aleatoria)   # misma semilla => mismos pesos iniciales y mismos negativos sorteados
 
     # 1. Pesos y vocabulario: desde un checkpoint o inicializados desde el corpus
     if configuracion["reanudar_entrenamiento"]:
@@ -103,6 +119,7 @@ def entrenar(configuracion_dict: dict) -> dict:
         tokens_corpus = tokenizar_corpus(ruta_corpus, configuracion["incluir_puntuacion_y_numeros"])
         estado = f"Reanudando desde '{ruta_checkpoint}' (Época {epoca_inicial})"
     else:
+        # Entrenamiento desde cero: vocabulario nuevo y pesos al azar
         tokens_corpus = tokenizar_corpus(ruta_corpus, configuracion["incluir_puntuacion_y_numeros"])
         vocabulario_palabras = construir_vocabulario(
             tokens_corpus, configuracion["frecuencia_minima"], TOKEN_DESCONOCIDO
@@ -112,28 +129,33 @@ def entrenar(configuracion_dict: dict) -> dict:
         historial_perdida, historial_accuracy = [], []
         estado = "Entrenamiento limpio desde el corpus"
 
-    tamanio_vocabulario, dimension_embedding = W.shape
+    tamanio_vocabulario, dimension_embedding = W.shape   # |V| y N
+    # Control: W tiene que ser (|V| x N) y W' (N x |V|), con el mismo |V| que el vocabulario
     if tamanio_vocabulario != len(vocabulario_palabras) or W_prima.shape != (dimension_embedding, tamanio_vocabulario):
         raise ValueError(f"Dimensiones inconsistentes: W {W.shape}, W' {W_prima.shape}, |V| = {len(vocabulario_palabras)}")
 
     # 2. Muestras (contexto, palabra central) como indices, cargadas una sola vez en GPU/CPU
-    mapeo_vocabulario = {palabra: indice for indice, palabra in enumerate(vocabulario_palabras)}
+    mapeo_vocabulario = {palabra: indice for indice, palabra in enumerate(vocabulario_palabras)}   # palabra -> indice
     ids_corpus, contexto_cpu, objetivo_cpu = preparar_muestras(tokens_corpus, mapeo_vocabulario, tamanio_ventana)
-    contexto = xp.asarray(contexto_cpu)
-    objetivo = xp.asarray(objetivo_cpu)
-    total_muestras = len(objetivo_cpu)
+    contexto = xp.asarray(contexto_cpu)    # (T, C): las C palabras de contexto de cada una de las T muestras
+    objetivo = xp.asarray(objetivo_cpu)    # (T,): la palabra central de cada muestra
+    total_muestras = len(objetivo_cpu)     # T = |D| - 2m (cada posicion del corpus con contexto completo)
 
     if cantidad_negativos > 0:
+        # bincount cuenta cuantas veces aparece cada indice en el corpus = frecuencia de cada palabra
         acumulada = distribucion_negativos(np.bincount(ids_corpus, minlength=tamanio_vocabulario))
         modo = f"Muestreo negativo (|P_sel| = {cantidad_negativos})"
     else:
         modo = "Softmax completo sobre todo |V|"
 
+    # CSV con una fila por época. Al reanudar se siguen agregando filas al mismo archivo;
+    # solo se crea (con el encabezado) si se arranca de cero o si no existe
     ruta_metricas = directorio_respaldos / f"metricas_w{tamanio_ventana}.csv"
     directorio_respaldos.mkdir(parents=True, exist_ok=True)
     if epoca_inicial == 0 or not ruta_metricas.exists():
         ruta_metricas.write_text("epoca,perdida,accuracy,segundos\n", encoding="utf-8")
 
+    # Resumen que se imprime al empezar y al terminar (solo informativo)
     datos_resumen = {
         "Estado": estado,
         "Ruta del corpus": ruta_corpus,
@@ -154,9 +176,12 @@ def entrenar(configuracion_dict: dict) -> dict:
     imprimir_resumen("CONFIGURACIÓN DEL ENTRENAMIENTO", datos_resumen)
 
     # 3. Bucle de entrenamiento: una actualización de W y W' por cada muestra
+    # Las épocas se numeran a continuacion de las ya entrenadas (si se reanuda desde la 254, sigue la 255)
     epoca_final = epoca_inicial + cantidad_epocas
     for epoca in range(epoca_inicial + 1, epoca_final + 1):
         tiempo_inicio = time.time()
+        # Orden aleatorio de las muestras en esta época. La semilla depende de la época:
+        # cada época tiene un orden distinto, pero repetir la corrida da el mismo orden
         orden = np.random.default_rng(semilla_aleatoria + epoca).permutation(total_muestras)
         if cantidad_negativos > 0:
             negativos_epoca = muestrear_negativos(objetivo, cantidad_negativos, acumulada)  # un P_sel por muestra
@@ -165,9 +190,11 @@ def entrenar(configuracion_dict: dict) -> dict:
         perdida_acumulada = xp.zeros((), dtype=xp.float64)
         aciertos = xp.zeros((), dtype=xp.int64)
 
+        # tqdm recorre `orden` y dibuja la barra de progreso (se refresca cada 2 s como minimo)
         barra_progreso = tqdm(orden, desc=f"Epoca {epoca}/{epoca_final}", unit="muestra", mininterval=2.0)
         for procesadas, indice in enumerate(barra_progreso, start=1):
-            indice = int(indice)
+            indice = int(indice)   # numero de muestra: contexto[indice] y objetivo[indice]
+            # Un paso de gradiente: modifica W y W' en el lugar y devuelve la perdida E y si acerto
             if cantidad_negativos > 0:
                 E, acierto = paso_muestreo_negativo(
                     contexto[indice], objetivo[indice], negativos_epoca[indice], W, W_prima, tasa_aprendizaje
@@ -182,6 +209,7 @@ def entrenar(configuracion_dict: dict) -> dict:
                     {"Perdida": f"{float(perdida_acumulada) / procesadas:.4f}", "Acc": f"{int(aciertos) / procesadas:.3f}"}
                 )
 
+        # Fin de la época: perdida promedio y accuracy (fraccion de muestras acertadas) sobre las T muestras
         duracion_epoca = time.time() - tiempo_inicio
         historial_perdida.append(float(perdida_acumulada) / total_muestras)
         historial_accuracy.append(int(aciertos) / total_muestras)
@@ -210,6 +238,7 @@ def entrenar(configuracion_dict: dict) -> dict:
     datos_resumen["Tiempo total de entrenamiento"] = f"{duracion_total_segundos:.2f} s"
     imprimir_resumen("RESUMEN FINAL DE CONFIGURACIÓN Y RESULTADOS", datos_resumen)
 
+    # Se devuelve el modelo final (scripts/entrenar.py lo usa para imprimir el resumen)
     return {
         "W": W,
         "W_prima": W_prima,

@@ -1,0 +1,463 @@
+<title>Modelos de lenguaje del TP2</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: guía de estudio a una columna de lectura (~68ch) con índice fijo a la izquierda en pantallas anchas.
+   Dos colores de autor codifican quién hizo qué: ocre = Pablo, azul = Julián. */
+:root {
+  --papel: #f7f8fa;
+  --hoja: #ffffff;
+  --tinta: #1b2230;
+  --tinta-suave: #4a5466;
+  --linea: #dde2ea;
+  --codigo-fondo: #f0f2f6;
+  --codigo-comentario: #6b7a90;
+  --acento: #2d4fa3;
+  --pablo: #a8641a;
+  --pablo-fondo: #fbf1e4;
+  --julian: #2d4fa3;
+  --julian-fondo: #e9eefb;
+  --bien: #2f7a4b;
+  --mal: #b03a3a;
+  --pendiente: #7a6a1f;
+  --pendiente-fondo: #f8f2d6;
+  --fuente-titulo: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --fuente-texto: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --fuente-codigo: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --papel: #12161d; --hoja: #181d26; --tinta: #e4e8ef; --tinta-suave: #a3adbd; --linea: #2b3340;
+    --codigo-fondo: #1e2430; --codigo-comentario: #8593a8; --acento: #8aa6ee;
+    --pablo: #e3a35c; --pablo-fondo: #2e2416; --julian: #8aa6ee; --julian-fondo: #1c2541;
+    --bien: #6cc391; --mal: #ec8585; --pendiente: #e2cd72; --pendiente-fondo: #2c2914;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --papel: #12161d; --hoja: #181d26; --tinta: #e4e8ef; --tinta-suave: #a3adbd; --linea: #2b3340;
+  --codigo-fondo: #1e2430; --codigo-comentario: #8593a8; --acento: #8aa6ee;
+  --pablo: #e3a35c; --pablo-fondo: #2e2416; --julian: #8aa6ee; --julian-fondo: #1c2541;
+  --bien: #6cc391; --mal: #ec8585; --pendiente: #e2cd72; --pendiente-fondo: #2c2914;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--papel); color: var(--tinta);
+  font-family: var(--fuente-texto); font-size: 16.5px; line-height: 1.65;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.marco { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 56px; padding-block: 48px 96px; }
+@media (max-width: 900px) { .marco { grid-template-columns: minmax(0, 1fr); gap: 0; padding-block: 28px 64px; } .indice { display: none; } }
+
+.indice { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; font-size: 14px; }
+.indice p { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--tinta-suave); margin: 0 0 10px; }
+.indice ol { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+.indice a { color: var(--tinta-suave); text-decoration: none; display: block; padding: 3px 0 3px 10px; border-left: 2px solid var(--linea); }
+.indice a:hover, .indice a:focus-visible { color: var(--tinta); border-left-color: var(--acento); outline: none; }
+
+main { min-width: 0; max-width: 760px; }
+h1, h2, h3 { font-family: var(--fuente-titulo); text-wrap: balance; line-height: 1.2; }
+h1 { font-size: clamp(2.1rem, 5vw, 3rem); font-weight: 700; margin: 6px 0 16px; letter-spacing: -.01em; }
+h2 { font-size: 1.75rem; font-weight: 600; margin: 0 0 14px; }
+h3 { font-size: 1.2rem; font-weight: 600; margin: 28px 0 8px; }
+p { margin: 0 0 14px; }
+.ceja { font-size: 12.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--tinta-suave); margin: 0; }
+.bajada { font-size: 1.12rem; color: var(--tinta-suave); max-width: 62ch; }
+section { padding-block: 40px 8px; border-top: 1px solid var(--linea); margin-top: 32px; scroll-margin-top: 16px; }
+.cabecera { display: grid; gap: 4px; }
+.num { font-family: var(--fuente-codigo); font-size: 13px; color: var(--acento); }
+
+.autores { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0 0; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; padding: 3px 10px; border-radius: 999px; font-weight: 500; white-space: nowrap; }
+.chip.pablo { background: var(--pablo-fondo); color: var(--pablo); }
+.chip.julian { background: var(--julian-fondo); color: var(--julian); }
+.chip.pend { background: var(--pendiente-fondo); color: var(--pendiente); font-size: 12px; }
+.chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.chip.pend::before { display: none; }
+
+code { font-family: var(--fuente-codigo); font-size: .88em; background: var(--codigo-fondo); padding: 1px 5px; border-radius: 4px; }
+pre { font-family: var(--fuente-codigo); font-size: 13.2px; line-height: 1.55; background: var(--codigo-fondo); padding: 14px 16px; border-radius: 8px; overflow-x: auto; margin: 0 0 6px; tab-size: 4; }
+pre code { background: none; padding: 0; font-size: inherit; }
+pre .c { color: var(--codigo-comentario); font-style: italic; }
+.archivo { font-family: var(--fuente-codigo); font-size: 12px; color: var(--tinta-suave); margin: 18px 0 4px; }
+.explica { font-size: 15px; color: var(--tinta-suave); margin: 4px 0 18px; }
+
+.consigna { background: var(--hoja); border: 1px solid var(--linea); border-radius: 8px; padding: 14px 18px; font-size: 15px; margin: 8px 0 18px; }
+.consigna strong { display: block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--tinta-suave); margin-bottom: 4px; }
+
+.tabla { overflow-x: auto; margin: 10px 0 20px; border: 1px solid var(--linea); border-radius: 8px; background: var(--hoja); }
+table { border-collapse: collapse; width: 100%; font-size: 14.2px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--linea); vertical-align: top; }
+th { font-weight: 600; font-size: 12.5px; letter-spacing: .03em; color: var(--tinta-suave); background: var(--codigo-fondo); white-space: nowrap; }
+tr:last-child td { border-bottom: none; }
+td.n { text-align: right; white-space: nowrap; }
+tr.pablo td:first-child { box-shadow: inset 3px 0 0 var(--pablo); }
+tr.julian td:first-child { box-shadow: inset 3px 0 0 var(--julian); }
+.bien { color: var(--bien); font-weight: 600; }
+.mal { color: var(--mal); font-weight: 600; }
+
+/* Recorrido del proyecto */
+.recorrido { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 18px 0 8px; align-items: stretch; }
+.paso { background: var(--hoja); border: 1px solid var(--linea); border-radius: 8px; padding: 12px; font-size: 14px; position: relative; min-width: 0; }
+.paso b { display: block; font-family: var(--fuente-titulo); font-size: 1.02rem; margin-bottom: 2px; }
+.paso small { color: var(--tinta-suave); display: block; line-height: 1.45; }
+.paso:not(:last-child)::after { content: "→"; position: absolute; right: -10px; top: 50%; transform: translate(50%, -50%); color: var(--tinta-suave); font-size: 15px; }
+@media (max-width: 640px) { .recorrido { grid-template-columns: minmax(0, 1fr); } .paso:not(:last-child)::after { content: "↓"; right: 50%; top: auto; bottom: -10px; transform: translate(50%, 50%); } }
+
+.dos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 10px 0 20px; }
+@media (max-width: 640px) { .dos { grid-template-columns: minmax(0, 1fr); } }
+.lado { border-radius: 8px; padding: 14px 16px; font-size: 15px; min-width: 0; }
+.lado.pablo { background: var(--pablo-fondo); }
+.lado.julian { background: var(--julian-fondo); }
+.lado h4 { margin: 0 0 6px; font-size: 13px; letter-spacing: .07em; text-transform: uppercase; }
+.lado.pablo h4 { color: var(--pablo); }
+.lado.julian h4 { color: var(--julian); }
+.lado ul { margin: 0; padding-left: 18px; }
+
+.formula { font-family: var(--fuente-codigo); font-size: 14.5px; background: var(--hoja); border: 1px solid var(--linea); border-radius: 8px; padding: 10px 14px; overflow-x: auto; margin: 8px 0 16px; white-space: nowrap; }
+
+details { border: 1px solid var(--linea); border-radius: 8px; background: var(--hoja); margin: 0 0 10px; }
+summary { cursor: pointer; padding: 12px 16px; font-weight: 500; list-style-position: inside; }
+summary:focus-visible { outline: 2px solid var(--acento); outline-offset: 2px; border-radius: 8px; }
+details > div { padding: 0 16px 14px; font-size: 15px; color: var(--tinta-suave); }
+details[open] summary { color: var(--acento); }
+.contador { font-size: 14px; color: var(--tinta-suave); margin: 0 0 12px; }
+
+.archivos { display: grid; gap: 0; }
+.archivos div { display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: 16px; padding: 9px 0; border-bottom: 1px solid var(--linea); font-size: 14.5px; }
+.archivos div code { justify-self: start; }
+@media (max-width: 640px) { .archivos div { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
+a { color: var(--acento); }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+
+<div class="marco">
+  <nav class="indice" aria-label="Índice">
+    <p>Índice</p>
+    <ol>
+      <li><a href="#recorrido">Recorrido</a></li>
+      <li><a href="#corpus">Corpus y tokens</a></li>
+      <li><a href="#cbow">Los dos CBOW</a></li>
+      <li><a href="#pmc">Consignas 1 y 2: PMC</a></li>
+      <li><a href="#microgpt">Consigna 3: microgpt</a></li>
+      <li><a href="#frases">Las mismas frases</a></li>
+      <li><a href="#medir">Cómo medir</a></li>
+      <li><a href="#extras">Más allá de la consigna</a></li>
+      <li><a href="#repaso">Preguntas de repaso</a></li>
+      <li><a href="#archivos">Archivos y comandos</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <header>
+      <p class="ceja">Aprendizaje automático avanzado · TP2 · Construcción de un modelo de lenguaje</p>
+      <h1>Modelos de lenguaje del TP2</h1>
+      <p class="bajada">Guía para estudiar todo lo que hicimos: cómo se predice la palabra siguiente con un perceptrón multicapa y con microgpt, partiendo de las representaciones del CBOW del TP1. Cada parte muestra el código, qué hace y los resultados de los dos.</p>
+      <div class="autores">
+        <span class="chip pablo">Pablo Occhiuzzi · CBOW d = 50</span>
+        <span class="chip julian">Julián Ojeda · CBOW d = 80</span>
+      </div>
+    </header>
+
+    <section id="recorrido">
+      <div class="cabecera"><span class="num">§1</span><h2>El recorrido</h2></div>
+      <p>Las tres consignas comparten el mismo esquema. Primero se tokeniza el corpus, después el CBOW del TP1 da un vector por palabra (la matriz <code>W</code>) y, con esos vectores, cada modelo aprende a predecir el token que sigue.</p>
+      <div class="recorrido" role="list">
+        <div class="paso" role="listitem"><b>Corpus</b><small>1.053.788 tokens: palabras y signos en minúscula</small></div>
+        <div class="paso" role="listitem"><b>CBOW (TP1)</b><small>W: un vector de d componentes por palabra</small></div>
+        <div class="paso" role="listitem"><b>Modelo</b><small>PMC, microgpt o transformador: k tokens anteriores → puntaje por palabra</small></div>
+        <div class="paso" role="listitem"><b>Siguiente token</b><small>softmax → se elige el más probable o se sortea</small></div>
+      </div>
+      <p class="explica">El TP pide un modelo <em>causal</em>: solo puede mirar los tokens anteriores. El CBOW del TP1, en cambio, ve el contexto de los dos lados para adivinar la palabra del medio.</p>
+    </section>
+
+    <section id="corpus">
+      <div class="cabecera"><span class="num">§2</span><h2>Corpus y tokens</h2></div>
+      <p>Los dos usamos el mismo corpus, <code>datos/corpus_ApAvAu.txt</code>, que empieza con «los enanos tienen una especie de sexto sentido…». Por eso varias de las frases de prueba de la presentación están <em>dentro</em> del corpus.</p>
+      <p class="archivo">codigo/tokenizador.py</p>
+<pre><code>contenido = archivo.read().lower()          # "Casa" y "casa" son el mismo token
+patron = re.compile(r"\w+|[^\w\s]")         # una palabra/número, o un signo suelto
+tokens = patron.findall(contenido)
+# "Dijo: ¡Hola, Juan!" -> ['dijo', ':', '¡', 'hola', ',', 'juan', '!']</code></pre>
+      <p class="explica">Los signos de puntuación son tokens como cualquier palabra. Hacen falta para generar texto, porque el modelo tiene que aprender cuándo poner un punto o una coma.</p>
+    </section>
+
+    <section id="cbow">
+      <div class="cabecera"><span class="num">§3</span><h2>Los dos CBOW</h2></div>
+      <p>El CBOW aprende un vector por palabra prediciendo la palabra central a partir del promedio de las de alrededor. Las filas de <code>W</code> son las «representaciones contextuales» que pide usar el TP2.</p>
+      <div class="formula">h = (1/2m) · Σ W[contexto]      u = h · W′      p = softmax(u)</div>
+      <div class="tabla"><table>
+        <thead><tr><th>CBOW</th><th>d</th><th>Ventana m</th><th>Épocas</th><th>|V|</th><th>Nota</th></tr></thead>
+        <tbody>
+          <tr class="pablo"><td>Pablo</td><td class="n">50</td><td class="n">5</td><td class="n">135</td><td class="n">53.408</td><td>Pérdida final 3,48. Sigue la sugerencia d ≈ 50</td></tr>
+          <tr class="julian"><td>Julián</td><td class="n">80</td><td class="n">4</td><td class="n">254</td><td class="n">53.409</td><td>63,0% de acierto exacto de la palabra central. Implementado en CuPy con kernels CUDA propios</td></tr>
+        </tbody>
+      </table></div>
+      <p class="explica">El vocabulario de Julián tiene un token más, <code>&lt;UNK&gt;</code> (índice 0), para palabras desconocidas.</p>
+    </section>
+
+    <section id="pmc">
+      <div class="cabecera"><span class="num">§4</span><h2>Consignas 1 y 2: el PMC como modelo de lenguaje</h2></div>
+      <div class="consigna"><strong>Consigna 1</strong>Defina, implemente y entrene un perceptrón multicapa para que aprenda un modelo de lenguaje usando como corpus el utilizado en el TP1. Use las representaciones contextuales obtenidas en el TP1 y no use, en la implementación del perceptrón multicapa, una capa del tipo Embedding.</div>
+
+      <h3>La entrada: vectores concatenados, sin capa Embedding</h3>
+      <p>Para predecir el token siguiente se toman los <b>k tokens anteriores</b>, se busca la fila de cada uno en <code>W</code> y se pegan uno detrás del otro. Con k = 8 y d = 80 la entrada tiene 640 componentes; Pablo, con k = 5 y d = 50, tenía 250.</p>
+      <p class="archivo">codigo/modelo_pmc_torch.py</p>
+<pre><code>def construir_entrada(W, contexto):
+    # contexto: (B, k) índices de los k tokens anteriores
+    return W[contexto].reshape(contexto.shape[0], -1)   # (B, k, d) -> (B, k*d)
+
+# W NO es un parámetro: register_buffer la guarda y la mueve a la GPU, pero no se entrena
+self.register_buffer("W", W)</code></pre>
+      <p class="explica">Una capa Embedding (<code>nn.Embedding</code>) es justamente una tabla de vectores que se <em>entrena</em>. Acá la tabla es fija y viene del TP1, así que el PMC solo aprende a usarla.</p>
+
+      <div class="consigna"><strong>Consigna 2</strong>Una opción es usar en la capa de salida tantas unidades como dimensión tenga la representación contextual, con activación logística o tangente hiperbólica, escalando las componentes a la imagen de la activación. Otra opción es usar una capa de salida softmax con tantas unidades como palabras haya en el vocabulario, con entropía cruzada como pérdida.</div>
+
+      <h3>Las dos salidas</h3>
+<pre><code>def perdida(self, contexto, objetivo):
+    if self.modo == "vocabulario":
+        # |V| = 53.409 salidas -> softmax -> entropía cruzada = -log p(palabra correcta)
+        return F.cross_entropy(self.pmc(construir_entrada(self.W, contexto)), objetivo)
+    # "vector": d = 80 salidas con tanh, contra el vector de la palabra correcta escalado a [-1, 1]
+    return F.mse_loss(self.vector_predicho(contexto), self.W_escalada[objetivo])
+
+def escalar_min_max(W, activacion_salida):
+    W01 = (W - W.min()) / (W.max() - W.min())          # a [0, 1] (logística)
+    return W01 if activacion_salida == "logistica" else 2 * W01 - 1   # a [-1, 1] (tanh)</code></pre>
+      <p class="explica">En la variante «vector» el modelo devuelve un punto del espacio, no una palabra. Para leer qué predijo se buscan las palabras cuyo vector tiene mayor coseno con ese punto. Ese coseno es el «%» que aparece en las tablas de esa variante.</p>
+
+      <h3>Por qué la salida «vector» predice palabras raras</h3>
+      <p>Con error cuadrático, si el contexto admite muchas palabras siguientes («de», «la», «que»…), la mejor respuesta es el <b>promedio</b> de sus vectores. Ese promedio cae cerca del centro del espacio, donde están las palabras poco frecuentes, cuyos vectores el CBOW casi no movió de su inicialización. Por eso aparecen «díchole», «amanecieron» o «mucílago» en todas las frases. Le pasó a Pablo y le pasa al PMC de Julián («consultoras», «capiteles»), así que es una propiedad de la variante y no un error de código.</p>
+
+      <h3>Modelos entrenados</h3>
+      <div class="tabla"><table>
+        <thead><tr><th>Autor</th><th>Salida</th><th>k</th><th>Ocultas</th><th>Lote</th><th>Optimizador</th><th>Pérdida</th><th>Top-5 validación</th></tr></thead>
+        <tbody>
+          <tr class="pablo"><td>Pablo</td><td>vocabulario</td><td class="n">5</td><td>512 + LN</td><td class="n">64</td><td>η 0,05</td><td class="n">2,60 (entren.)</td><td>no medido</td></tr>
+          <tr class="pablo"><td>Pablo</td><td>vocabulario</td><td class="n">5</td><td>512</td><td class="n">1</td><td>η 0,01</td><td class="n">3,73 (entren.)</td><td>no medido</td></tr>
+          <tr class="pablo"><td>Pablo</td><td>vocabulario</td><td class="n">5</td><td>200</td><td class="n">1</td><td>η 0,01</td><td class="n">4,32 (entren.)</td><td>no medido</td></tr>
+          <tr class="pablo"><td>Pablo</td><td>vector (tanh)</td><td class="n">10</td><td>100 – 100 + LN</td><td class="n">64</td><td>η 0,05</td><td class="n">MSE</td><td>no medido</td></tr>
+          <tr class="pablo"><td>Pablo</td><td>vector (tanh)</td><td class="n">5</td><td>1000</td><td class="n">1</td><td>η 0,01</td><td class="n">MSE</td><td>no medido</td></tr>
+          <tr class="julian"><td>Julián</td><td>vocabulario</td><td class="n">8</td><td>512 + LN, ReLU</td><td class="n">256</td><td>Adam 0,001, 10 épocas</td><td class="n" id="pmc-perdida"><span class="chip pend">entrenando</span></td><td id="pmc-top5"><span class="chip pend">entrenando</span></td></tr>
+        </tbody>
+      </table></div>
+      <p class="explica">Pablo midió la pérdida sobre el mismo texto con el que entrenó. Julián separa el 5% final del corpus (52.681 predicciones) y mide ahí, sobre texto que el modelo nunca vio (ver <a href="#medir">§7</a>).</p>
+    </section>
+
+    <section id="microgpt">
+      <div class="cabecera"><span class="num">§5</span><h2>Consigna 3: microgpt con palabras</h2></div>
+      <div class="consigna"><strong>Consigna 3</strong>A partir del código microgpt.py de Andrej Karpathy, realice las modificaciones para construir un modelo de lenguaje usando como corpus el del TP1. El vocabulario está dado por las palabras y signos de puntuación del corpus. Entrene con una fracción del corpus y verifique el correcto funcionamiento. Sugerencias: dimensión alrededor de 50; ventana de entrada de entre 5 y 10 tokens.</div>
+
+      <h3>Cómo funciona microgpt</h3>
+      <p>microgpt es un GPT completo en Python puro. Cada número es un objeto <code>Value</code> que recuerda de qué operación salió; así, después de calcular la pérdida, <code>backward()</code> aplica la regla de la cadena hacia atrás y obtiene el gradiente de cada parámetro.</p>
+      <p class="archivo">material/autograd/microgpt.py</p>
+<pre><code>def __mul__(self, other):
+    # c = a * b guarda a sus hijos (a, b) y las derivadas locales: dc/da = b, dc/db = a
+    return Value(self.data * other.data, (self, other), (other.data, self.data))
+
+def backward(self):
+    # orden topológico y, desde la pérdida hacia atrás: grad_hijo += derivada_local * grad_nodo
+    self.grad = 1
+    for v in reversed(topo):
+        for child, local_grad in zip(v._children, v._local_grads):
+            child.grad += local_grad * v.grad</code></pre>
+      <p>La función <code>gpt()</code> procesa <b>un token por vez</b>. Suma el embedding del token y el de su posición, aplica atención multi-cabeza y un MLP con conexiones residuales, y devuelve un logit por palabra. Las claves y valores de los tokens anteriores quedan guardados en listas, y por eso la atención es causal.</p>
+<pre><code>x = [t + p for t, p in zip(wte[token_id], wpe[pos_id])]   # embedding de token + posición
+q, k, v = linear(x, W_Q), linear(x, W_K), linear(x, W_V)
+keys.append(k); values.append(v)                           # solo existen las posiciones ya vistas
+attn = softmax([q·k_t / raiz(dk) for k_t in keys])          # pesos de atención
+x = x + linear(Σ attn_t · v_t, W_O)                         # residual
+x = x + mlp(rmsnorm(x))                                     # d -> 4d -> d con ReLU
+logits = linear(x, lm_head)                                 # un puntaje por palabra</code></pre>
+
+      <h3>Qué hubo que cambiar</h3>
+      <p class="archivo">scripts/microgpt_palabras.py (cada cambio está marcado con «# CAMBIO:»)</p>
+<pre><code># CAMBIO: tokens = palabras y signos del corpus del TP1 (antes: letras de nombres)
+tokens_corpus = tokenizar_corpus("datos/corpus_ApAvAu.txt", True)[: int(len(...) * fraccion)]
+uchars = sorted(set(tokens_corpus))            # vocabulario de la fracción
+BOS = len(uchars)
+
+# CAMBIO: cada oración (termina en . ? !) es un documento [BOS, ..., ., BOS],
+# cortado en tramos de block_size + 1 tokens
+for w in tokens_corpus:
+    actual.append(palabra_a_id[w])
+    if w in (".", "?", "!"):
+        oraciones.append(actual + [BOS]); actual = [BOS]
+
+# CAMBIO: wte arranca con los vectores del CBOW del TP1 (BOS queda al azar)
+for palabra, i in palabra_a_id.items():
+    state_dict["wte"][i] = [Value(float(x)) for x in W_cbow[indice_cbow[palabra]]]</code></pre>
+
+      <h3>Las dos adaptaciones</h3>
+      <div class="dos">
+        <div class="lado pablo"><h4>Pablo</h4><ul>
+          <li>1% del corpus: 10.537 tokens, vocabulario 2.920</li>
+          <li>d = 50 (su CBOW), H = 5 cabezas (dk = 10)</li>
+          <li>N = 5 tokens de contexto</li>
+          <li>12.000 pasos: <b>25,7 horas</b></li>
+          <li>Pérdida medida sobre el entrenamiento</li>
+        </ul></div>
+        <div class="lado julian"><h4>Julián</h4><ul>
+          <li>0,3% del corpus: 3.161 tokens, vocabulario 1.158</li>
+          <li>d = 40: su W de 80 reducida con PCA (conserva el 67,6% de la varianza), H = 4 (dk = 10)</li>
+          <li>N = 6 tokens de contexto</li>
+          <li>1.500 pasos: unas 3 horas</li>
+          <li>Validación con el último 10% de las oraciones</li>
+        </ul></div>
+      </div>
+
+      <h3>Por qué es tan lento y por qué PCA</h3>
+      <p>Cada multiplicación crea un objeto <code>Value</code>. Solo la última capa (<code>lm_head</code>) hace |V| × d multiplicaciones <b>por token</b>: con |V| = 1.158 y d = 80 son 92.640 objetos por token, y todos se recorren otra vez en <code>backward()</code>. Medido en esta computadora, un paso tardaba 17 s con d = 80 y 0,5% del corpus, y baja a 4,2 s con d = 40 y 0,3%.</p>
+      <p>Para no perder el vínculo con el TP1, <code>wte</code> sigue saliendo del CBOW, reducido con <b>PCA</b>: se centra <code>W</code> y se proyecta sobre las 40 direcciones de mayor varianza. Es la mejor aproximación de 40 dimensiones a las distancias entre palabras.</p>
+<pre><code>W_centrada = W_cbow - W_cbow.mean(axis=0)
+_, valores_singulares, Vt = np.linalg.svd(W_centrada, full_matrices=False)
+W_cbow = W_centrada @ Vt[:40].T                 # (|V|, 80) -> (|V|, 40)</code></pre>
+
+      <h3>Verificación</h3>
+      <p><code>scripts/probar_microgpt.py</code> rehace la misma cuenta de <code>gpt()</code> con matrices de NumPy para evaluar rápido. Para comprobar que es idéntica, se entrenó un paso, se guardaron los pesos y se calculó la pérdida del paso 2 de las dos formas: <b>7,271666</b> con <code>Value</code> y <b>7,271666</b> con NumPy.</p>
+      <div class="tabla"><table>
+        <thead><tr><th>microgpt</th><th>Validación: pérdida</th><th>Top-5</th><th>Top-10</th><th>Top-20</th></tr></thead>
+        <tbody>
+          <tr class="pablo"><td>Pablo (1%, d50, N5, 12.000 pasos)</td><td colspan="4">no medido (sin texto separado)</td></tr>
+          <tr class="julian"><td>Julián (0,3%, d40, N6, 1.500 pasos)</td><td class="n" id="mg-perdida"><span class="chip pend">entrenando</span></td><td class="n" id="mg-top5">—</td><td class="n" id="mg-top10">—</td><td class="n" id="mg-top20">—</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="frases">
+      <div class="cabecera"><span class="num">§6</span><h2>Las mismas frases en todos los modelos</h2></div>
+      <p>Son las frases de la presentación. Las de «fuera del corpus» son la comparación justa; en las «del corpus» el modelo puede estar recordando el texto.</p>
+      <div class="tabla"><table>
+        <thead><tr><th>Modelo</th><th>«ella caminaba lentamente hacia la» <br><small>fuera del corpus</small></th><th>«el viejo escritor pensaba en» <br><small>fuera del corpus</small></th><th>«enanos tienen una especie de» <br><small>corpus</small></th></tr></thead>
+        <tbody>
+          <tr class="pablo"><td>PMC k5 512 lote 64 LN</td><td>puerta 17%, hoguera 11%, oficina 7%</td><td>mi 36%, su 16%, el 7%</td><td>sexto 81%</td></tr>
+          <tr class="pablo"><td>PMC k5 512 lote 1</td><td>acera 26%, ventana 12%, brisa 7%</td><td>el 20%, que 13%, los 11%</td><td>sexto 99%</td></tr>
+          <tr class="pablo"><td>PMC vector k5 1000</td><td>sala, ventana, esclava (coseno ≈ 80%)</td><td>reprochara, su, obediente</td><td>choya, exornador, anaquel</td></tr>
+          <tr class="pablo"><td>microgpt (1%)</td><td>selva 2,8%, hora 1,2%, noche 0,9%</td><td>que 17%, la 15%, el 12%</td><td>que 7%, su 6%, la 5%</td></tr>
+          <tr class="julian"><td>PMC k8 512 LN</td><td id="f-pmc-1"><span class="chip pend">entrenando</span></td><td id="f-pmc-2"><span class="chip pend">entrenando</span></td><td id="f-pmc-3"><span class="chip pend">entrenando</span></td></tr>
+          <tr class="julian"><td>microgpt (0,3%)</td><td id="f-mg-1"><span class="chip pend">entrenando</span></td><td id="f-mg-2"><span class="chip pend">entrenando</span></td><td id="f-mg-3"><span class="chip pend">entrenando</span></td></tr>
+          <tr class="julian"><td>Transformador N16 (extra)</td><td>puerta 11%, vista 8%, ventana 8%</td><td>el 11%, su 10%, la 6%</td><td>felpa 0,8% (no aprendió «sexto»)</td></tr>
+        </tbody>
+      </table></div>
+      <p class="explica">«los enanos tienen una especie» → «de»: 82% en el mejor PMC de Pablo, 38% en su microgpt y 83% en el transformador de Julián. Con el orden invertido («especie una tienen enanos los») ninguno da algo sensato. Eso muestra que los modelos usan el orden de las palabras y no solo cuáles aparecen.</p>
+    </section>
+
+    <section id="medir">
+      <div class="cabecera"><span class="num">§7</span><h2>Cómo medir si un modelo anda</h2></div>
+      <h3>Entrenamiento contra validación</h3>
+      <p>La pérdida de entrenamiento baja aunque el modelo solo esté memorizando. El PMC de Pablo dice «sexto» con 99% porque vio esa ventana exacta durante el entrenamiento. Para saber si <em>generaliza</em> hay que medir sobre texto que no vio: Julián deja afuera el 5% final del corpus, con una separación de k ventanas para que ningún objetivo de entrenamiento caiga dentro de una ventana de validación.</p>
+<pre><code>corte = int(T * (1 - 0.05))
+indices_entrenamiento = np.arange(corte)
+indices_validacion = np.arange(corte + k, T)     # k ventanas de separación</code></pre>
+
+      <h3>Contadores de ranking: top-5, top-10, top-20</h3>
+      <p>El acierto exacto es injusto con un modelo de lenguaje: después de «hacia la» pueden venir «puerta», «ventana» o «esquina», y las tres están bien. Por eso se cuenta en qué <b>puesto</b> quedó la palabra correcta y si entró entre las primeras 5, 10 o 20.</p>
+      <p class="archivo">codigo/modelo_completar_torch.py</p>
+<pre><code>def puesto_en_ranking(u, objetivo):
+    u_correcta = u.gather(1, objetivo[:, None])     # puntaje de la palabra correcta
+    return (u >= u_correcta).sum(dim=1)             # cuántas tienen puntaje >= (ella incluida)
+# con >= un empate cuenta el peor puesto: si todas empatan, no hay acierto falso</code></pre>
+      <p class="explica">Ejemplo: si la correcta tiene el 3.er puntaje más alto, su puesto es 3 y cuenta como acierto para los cortes 5, 10 y 20.</p>
+
+      <h3>Perplejidad</h3>
+      <p>La perplejidad es <code>exp(pérdida)</code>: entre cuántas palabras «duda» el modelo en promedio. Una pérdida de validación de 5,93 equivale a una perplejidad de 376.</p>
+    </section>
+
+    <section id="extras">
+      <div class="cabecera"><span class="num">§8</span><h2>Más allá de la consigna</h2></div>
+      <p>Julián hizo además tres cosas que no pide el TP, pero que ayudan a entender los mismos temas.</p>
+
+      <h3>1. El problema de la puntuación en el CBOW</h3>
+      <p>El CBOW acertaba mucho prediciendo «,» y «.», que son muy frecuentes. Sin reentrenarlo desde cero, se lo ajustó 35 épocas más sin usar signos como palabra objetivo: el acierto en palabras subió de 63,0% a <b>66,7%</b>.</p>
+
+      <h3>2. CBOW + auto-atención</h3>
+      <p>En lugar del promedio de las 8 palabras del contexto, una capa de atención aprende cuánto pesa cada una. La consulta es la posición central, y hay una «clave nula» para cuando ninguna palabra aporta. Se entrenó con PyTorch y su autograd, y antes se verificó contra gradientes calculados a mano en CuPy (diferencia de 8,5 · 10⁻⁸).</p>
+      <div class="tabla"><table>
+        <thead><tr><th>Modelo</th><th>Acierto (palabra central)</th></tr></thead>
+        <tbody>
+          <tr class="julian"><td>CBOW con ajuste de puntuación (partida)</td><td class="n">66,7%</td></tr>
+          <tr class="julian"><td>Mismo entrenamiento con la atención congelada (control)</td><td class="n">67,7%</td></tr>
+          <tr class="julian"><td>CBOW + auto-atención</td><td class="n bien">71,2%</td></tr>
+        </tbody>
+      </table></div>
+      <p class="explica">El control separa el efecto de la atención (+3,5 puntos) del efecto de entrenar más épocas (+1 punto).</p>
+
+      <h3>3. Transformador causal con la arquitectura de la cátedra</h3>
+      <p>Un bloque como el de las diapositivas de Transformadores, con normalización <em>después</em> de cada residual, vectores posicionales sinusoidales y cabezal <code>u = h · Eᵗ</code> con la misma matriz <code>E</code> del CBOW. N = 16, h = 4, L = 1, entrenado en PyTorch sobre el 95% del corpus.</p>
+      <p class="archivo">codigo/modelo_completar_torch.py</p>
+<pre><code>def forward(self, X):
+    T1, alfa = self.auto_atencion(X)    # Q K^t / raiz(dk) + máscara causal (-inf arriba de la diagonal)
+    T2 = X + T1                         # residual
+    T3 = self.normalizacion_1(T2)       # LayerNorm
+    T4 = self.PMC_2(F.gelu(self.PMC_1(T3), approximate="tanh"))   # d -> 4d -> d
+    T5 = T3 + T4                        # residual
+    return self.normalizacion_2(T5), alfa</code></pre>
+      <div class="tabla"><table>
+        <thead><tr><th>Época</th><th>Pérdida entren.</th><th>Pérdida valid.</th><th>Top-5</th><th>Top-10</th><th>Top-20</th></tr></thead>
+        <tbody>
+          <tr class="julian"><td class="n">1</td><td class="n">5,70</td><td class="n bien">5,93</td><td class="n bien">35,2%</td><td class="n bien">44,4%</td><td class="n bien">52,7%</td></tr>
+          <tr class="julian"><td class="n">5</td><td class="n">4,40</td><td class="n">6,81</td><td class="n">30,3%</td><td class="n">38,8%</td><td class="n">46,6%</td></tr>
+          <tr class="julian"><td class="n">10</td><td class="n">4,09</td><td class="n">7,76</td><td class="n">26,7%</td><td class="n">34,1%</td><td class="n">41,4%</td></tr>
+          <tr class="julian"><td class="n">30</td><td class="n">3,18</td><td class="n mal">10,03</td><td class="n mal">15,5%</td><td class="n mal">21,1%</td><td class="n mal">26,9%</td></tr>
+        </tbody>
+      </table></div>
+      <p class="explica">Es un caso de <b>sobreajuste</b>: la pérdida de entrenamiento sigue bajando mientras la de validación sube desde la época 1. La causa probable es que <code>E</code> (4,27 millones de parámetros) se sigue entrenando. Congelarla (PEFT, Transformadores d) es la mejora natural.</p>
+    </section>
+
+    <section id="repaso">
+      <div class="cabecera"><span class="num">§9</span><h2>Preguntas de repaso</h2></div>
+      <p class="contador">Tocá cada pregunta para ver la respuesta.</p>
+      <details><summary>¿Por qué no se puede usar nn.Embedding en el PMC?</summary><div>Porque la consigna pide usar las representaciones del TP1. Una capa Embedding es una tabla que se entrena desde cero; acá la tabla W viene del CBOW y queda fija (register_buffer), y el PMC solo recibe sus filas concatenadas.</div></details>
+      <details><summary>Con k = 8 y d = 80, ¿cuántas componentes tiene la entrada del PMC? ¿Y cuántos parámetros tiene la capa de salida «vocabulario» con 512 ocultas?</summary><div>8 × 80 = 640 componentes. La capa de salida tiene 512 × 53.409 pesos + 53.409 sesgos ≈ 27,4 millones; es casi todo el modelo (27,7 millones en total).</div></details>
+      <details><summary>¿Por qué hay que escalar W en la variante «vector»?</summary><div>Porque tanh solo produce valores en [−1, 1] (y la logística en [0, 1]). Si el objetivo tiene componentes fuera de ese rango, el modelo nunca lo puede alcanzar. Con min-max global se lleva todo W a la imagen de la activación.</div></details>
+      <details><summary>¿Por qué la variante «vector» termina prediciendo palabras raras?</summary><div>Porque el error cuadrático premia predecir el promedio de las palabras posibles, y ese promedio cae cerca del centro del espacio, donde están las palabras poco frecuentes (sus vectores casi no se movieron en el CBOW). La softmax no tiene ese problema: reparte probabilidad entre las candidatas.</div></details>
+      <details><summary>¿Qué hace Value.backward() en microgpt?</summary><div>Ordena todos los nodos del grafo de forma topológica y recorre desde la pérdida hacia atrás, sumando a cada hijo derivada_local × gradiente_del_nodo (regla de la cadena). Se usa += porque un nodo puede influir en la pérdida por varios caminos.</div></details>
+      <details><summary>¿Por qué la atención de microgpt es causal si no tiene una máscara?</summary><div>Porque procesa un token por vez y solo agrega a keys/values las posiciones ya procesadas. Cuando está en la posición t, las posiciones futuras todavía no existen. En el transformador de PyTorch, que procesa las N posiciones juntas, hace falta la máscara con −∞ arriba de la diagonal.</div></details>
+      <details><summary>¿Por qué microgpt tarda horas y el transformador de PyTorch minutos?</summary><div>microgpt hace cada multiplicación como un objeto de Python (Value) y recorre ese grafo en el backward; PyTorch hace las mismas cuentas como multiplicaciones de matrices en la GPU. El algoritmo es el mismo; cambia la eficiencia.</div></details>
+      <details><summary>¿Qué es PCA y por qué se usó en microgpt?</summary><div>Es proyectar los vectores sobre las direcciones de mayor varianza (los primeros vectores singulares de W centrada). Se usó para pasar de d = 80 a d = 40 y que microgpt entrenara en horas, conservando el 67,6% de la varianza y la información del CBOW del TP1.</div></details>
+      <details><summary>¿Por qué el PMC de Pablo dice «sexto» con 99% y el transformador de Julián no?</summary><div>«los enanos tienen una especie de sexto» son las primeras palabras del corpus. El PMC con k = 5 vio exactamente esa ventana al entrenar y la memorizó. El transformador usa ventanas de 16 tokens, así que «sexto» (la 7.ª palabra) nunca fue objetivo de entrenamiento.</div></details>
+      <details><summary>¿Qué mide el contador «top-5»?</summary><div>El porcentaje de predicciones de validación en las que la palabra correcta quedó entre las 5 con mayor puntaje. Es más justo que el acierto exacto porque después de un contexto suelen caber varias palabras.</div></details>
+      <details><summary>¿Cómo se detecta el sobreajuste en el transformador?</summary><div>La pérdida de entrenamiento baja (5,70 → 3,18) mientras la de validación sube (5,93 → 10,03) y los contadores bajan. El mejor modelo es el de la época 1.</div></details>
+      <details><summary>¿Para qué sirve el entrenamiento de control en CBOW + atención?</summary><div>Para separar efectos: el control entrena las mismas épocas con la atención congelada. Ganó 1 punto solo por entrenar más; con atención se ganaron 4,5. La diferencia, 3,5 puntos, es lo que aporta la atención.</div></details>
+    </section>
+
+    <section id="archivos">
+      <div class="cabecera"><span class="num">§10</span><h2>Archivos y comandos</h2></div>
+      <div class="archivos">
+        <div><code>codigo/modelo_pmc_torch.py</code><span>PMC: entrada concatenada, variantes vocabulario y vector</span></div>
+        <div><code>scripts/entrenar_pmc_torch.py</code><span>Entrena el PMC. <code>--modo --k --ocultas --epocas</code> pisan <code>config/pmc.yaml</code></span></div>
+        <div><code>scripts/probar_pmc.py</code><span>Tablas top 5 y generación continua con las frases de la presentación</span></div>
+        <div><code>scripts/microgpt_palabras.py</code><span>microgpt adaptado a palabras: <code>--fraccion --dimension --bloque --cabezas --pasos</code></span></div>
+        <div><code>scripts/probar_microgpt.py</code><span>Validación (top-5/10/20) y tablas del microgpt, con NumPy</span></div>
+        <div><code>codigo/modelo_completar_torch.py</code><span>Transformador de la cátedra, ranking y generación</span></div>
+        <div><code>scripts/generar_texto.py</code><span>Completa frases con el transformador: ansiosa, top-k o top-p</span></div>
+        <div><code>codigo/modelo_atencion_torch.py</code><span>CBOW + auto-atención (PyTorch)</span></div>
+        <div><code>material/autograd/microgpt.py</code><span>microgpt original de Karpathy, con anotaciones en español</span></div>
+      </div>
+<pre><code><span class="c"># consignas 1 y 2</span>
+python scripts/entrenar_pmc_torch.py
+python scripts/probar_pmc.py respaldos/pmc/vocabulario_k8
+<span class="c"># consigna 3</span>
+python scripts/microgpt_palabras.py --fraccion 0.003 --dimension 40 --bloque 6 --cabezas 4 --pasos 1500
+python scripts/probar_microgpt.py respaldos/microgpt/f0.003_d40_N6_H4_L1_pasos1500</code></pre>
+    </section>
+  </main>
+</div>
+
+<script>
+  // Comentarios del código en gris: se marca desde el # hasta el final de cada línea
+  document.querySelectorAll("pre code").forEach(function (bloque) {
+    if (bloque.querySelector(".c")) return;
+    var html = bloque.innerHTML.split("\n").map(function (linea) {
+      var i = linea.indexOf("# ");
+      if (i === -1 && /^\s*#/.test(linea)) i = linea.indexOf("#");
+      return i === -1 ? linea : linea.slice(0, i) + '<span class="c">' + linea.slice(i) + "</span>";
+    }).join("\n");
+    bloque.innerHTML = html;
+  });
+</script>

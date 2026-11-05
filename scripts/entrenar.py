@@ -2,6 +2,18 @@
 """
 Script de ejecucion autonoma para el entrenamiento de la red neuronal CBOW.
 Permite iniciar un entrenamiento desde cero o reanudar un checkpoint (.npz) desde la terminal.
+
+Es la version "de referencia": cada paso usa operaciones de CuPy/NumPy (codigo/modelo_cbow_cupy.py).
+Soporta softmax completo y muestreo negativo. Para softmax completo mas rapido, ver entrenar_cuda.py.
+
+Uso:
+    python scripts/entrenar.py                                   # todo segun config/configuracion.yaml
+    python scripts/entrenar.py --epocas 5 --tasa 0.025           # pisa esos dos valores del YAML
+    python scripts/entrenar.py --negativos 10                    # muestreo negativo con 10 palabras
+    python scripts/entrenar.py --reanudar --checkpoint respaldos/modelo_cbow_w4_epoca_254.npz
+
+OJO al reanudar: los respaldos nuevos se numeran desde la época del checkpoint en adelante y se guardan
+en directorio_respaldos. Si ya existen respaldos de épocas posteriores, se sobrescriben.
 """
 
 import argparse
@@ -82,7 +94,7 @@ def main() -> None:
     # 1. Carga de configuracion desde YAML
     configuracion = cargar_configuracion(args.config)
 
-    # Sobrescrituras opcionales desde CLI
+    # Sobrescrituras opcionales desde CLI (None = no se paso ese argumento, queda el valor del YAML)
     if args.epocas is not None:
         configuracion["cantidad_epocas"] = args.epocas
     if args.tasa is not None:

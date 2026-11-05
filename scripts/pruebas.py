@@ -11,6 +11,9 @@ Uso:
     python scripts/pruebas.py "madre - mujer + hombre"          # una combinacion
     python scripts/pruebas.py "casa" --k 15                     # vecinos de una palabra
     python scripts/pruebas.py "rey - hombre + mujer" --modelo respaldos/modelo_cbow_w4_epoca_70.npz
+
+Tambien sirve con los respaldos del ajuste y de la atencion (guardan W con la misma clave), por ejemplo:
+    python scripts/pruebas.py "casa" --modelo respaldos/ajuste_puntuacion/modelo_cbow_w4_ajuste_epoca_289.npz
 """
 
 import argparse
@@ -18,7 +21,7 @@ import re
 from pathlib import Path
 import numpy as np
 
-RUTA_RAIZ = Path(__file__).resolve().parent.parent
+RUTA_RAIZ = Path(__file__).resolve().parent.parent   # carpeta del proyecto (scripts/ esta un nivel abajo)
 
 
 def ultimo_respaldo(directorio: Path = RUTA_RAIZ / "respaldos") -> Path:
@@ -42,9 +45,9 @@ def cargar_embeddings(ruta_modelo: str | Path) -> tuple[np.ndarray, np.ndarray, 
     :return: Tupla (W de forma (|V|, N), vocabulario, mapeo palabra -> indice).
     """
     datos = np.load(ruta_modelo, allow_pickle=True)
-    W = datos["W"].astype(np.float32)
+    W = datos["W"].astype(np.float32)        # la fila i de W es el embedding de la palabra vocabulario[i]
     vocabulario = np.array([str(palabra) for palabra in datos["vocabulario_palabras"]], dtype=object)
-    mapeo = {palabra: indice for indice, palabra in enumerate(vocabulario)}
+    mapeo = {palabra: indice for indice, palabra in enumerate(vocabulario)}   # palabra -> fila de W
 
     epoca = int(datos["epoca_actual"]) if "epoca_actual" in datos else "?"
     print(f"Modelo: {Path(ruta_modelo).name} | época {epoca} | W {W.shape}")
@@ -59,6 +62,7 @@ def interpretar_expresion(expresion: str) -> tuple[list[str], list[str]]:
     :return: Tupla (palabras positivas, palabras negativas).
     """
     positivas, negativas = [], []
+    # Cada coincidencia es (signo opcional, palabra): "madre - mujer + hombre" -> ('', 'madre'), ('-', 'mujer'), ('+', 'hombre')
     for signo, palabra in re.findall(r"([+-]?)\s*([^\s+-]+)", expresion.lower()):
         (negativas if signo == "-" else positivas).append(palabra)
     return positivas, negativas
@@ -126,15 +130,15 @@ def palabras_mas_cercanas(
     :param normas: Normas precalculadas de las filas de W (opcional, para no recalcularlas).
     :return: Lista de tuplas (palabra, producto punto o distancia coseno).
     """
-    producto = W @ vector
+    producto = W @ vector                    # (|V|,): producto punto del vector con cada embedding
     if metrica == "producto_punto":
         puntajes = producto
-        orden = np.argsort(-puntajes)
+        orden = np.argsort(-puntajes)        # de mayor a menor
     elif metrica == "coseno":
         if normas is None:
             normas = np.linalg.norm(W, axis=1)
-        puntajes = 1.0 - producto / (normas * np.linalg.norm(vector) + 1e-12)
-        orden = np.argsort(puntajes)
+        puntajes = 1.0 - producto / (normas * np.linalg.norm(vector) + 1e-12)   # 1e-12 evita dividir por 0
+        orden = np.argsort(puntajes)         # de menor a mayor distancia
     else:
         raise ValueError(f"Métrica no soportada: '{metrica}' (usar 'producto_punto' o 'coseno')")
 
@@ -181,7 +185,9 @@ def main() -> None:
 
     ruta_modelo = Path(args.modelo) if args.modelo else ultimo_respaldo()
     W, vocabulario, mapeo = cargar_embeddings(ruta_modelo)
-    normas = np.linalg.norm(W, axis=1)
+    normas = np.linalg.norm(W, axis=1)       # largo de cada embedding, se calcula una sola vez
+
+    # Sin expresiones en la linea de comandos, se corren estos ejemplos
 
     expresiones = args.expresiones or [
         "mujer",

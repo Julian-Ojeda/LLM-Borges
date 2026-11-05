@@ -1,0 +1,31 @@
+# ==============================================================================
+# PMC COMO MODELO DE LENGUAJE (scripts/entrenar_pmc_torch.py) - consignas 1 y 2 del TP2
+# Entrada: k tokens anteriores con las representaciones W del CBOW (d = 80), concatenadas. Sin capa Embedding.
+# El respaldo del CBOW solo se lee; todo se escribe en directorio_respaldos.
+# Los valores por línea de comandos (--modo, --k, --ocultas, ...) pisan los de este archivo.
+# ==============================================================================
+
+ruta_corpus: datos/corpus_ApAvAu.txt
+ruta_checkpoint: respaldos/modelo_cbow_w4_epoca_254.npz
+directorio_respaldos: respaldos/pmc/vocabulario_k8
+
+# "vocabulario": |V| unidades + softmax + entropía cruzada
+# "vector":      d = 80 unidades + activacion_salida + error cuadrático contra W escalada
+modo: vocabulario
+
+# k: tokens de contexto (la entrada tiene k x 80 componentes)
+tamanio_contexto: 8
+
+# Unidades de cada capa oculta (una lista: [512] = una capa; [256, 256] = dos capas)
+capas_ocultas: [512]
+activacion: relu            # de las capas ocultas: relu, tanh o logistica
+normalizacion: true         # normalización por capa (LayerNorm) en cada capa oculta
+activacion_salida: tanh     # solo modo vector: tanh (W escalada a [-1, 1]) o logistica (a [0, 1])
+
+tamanio_lote: 256
+optimizador: adam           # adam o sgd
+tasa_aprendizaje: 0.001     # baja linealmente hasta 0
+
+fraccion_validacion: 0.05
+cantidad_epocas: 10
+semilla_aleatoria: 26

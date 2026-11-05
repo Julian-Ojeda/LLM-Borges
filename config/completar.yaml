@@ -1,0 +1,41 @@
+# ==============================================================================
+# TRANSFORMADOR PARA COMPLETAR FRASES (scripts/entrenar_completar_torch.py)
+# Sigue el material de la cátedra (Transformadores a, b y c). La matriz E son los embeddings del CBOW.
+# Parte del CBOW entrenado (solo lectura) y escribe todo en una carpeta aparte.
+# Para deshacerlo, alcanza con borrar directorio_respaldos.
+# ==============================================================================
+
+# Corpus (el mismo con el que se construyó el vocabulario del respaldo)
+ruta_corpus: datos/corpus_ApAvAu.txt
+
+# CBOW de partida: el original (época 254). De ahí se toma E (sus embeddings W). No se modifica
+ruta_checkpoint: respaldos/modelo_cbow_w4_epoca_254.npz
+
+# Carpeta de salida
+directorio_respaldos: respaldos/transformador
+
+# N: largo de la ventana de entrada (tokens anteriores que ve el modelo para predecir el siguiente)
+tamanio_contexto: 16
+
+# h: cabezas de atención; d = 80 tiene que ser múltiplo de h (dk = dv = 80 / h)
+cantidad_cabezas: 4
+
+# L: bloques de transformación apilados
+cantidad_bloques: 1
+
+# Muestras por paso de Adam
+tamanio_lote: 256
+
+# Tasas de Adam (bajan linealmente hasta 0). 0 = congelado
+tasa_bloques: 0.001       # W_Q, W_K, W_V, W_O, normalizaciones y PMC de cada bloque
+tasa_embeddings: 0.0003   # E: se ajusta porque ahora también es el cabezal (u = h E^t)
+
+# Fracción final del corpus que no se usa para entrenar (validación, para los contadores de ranking)
+fraccion_validacion: 0.05
+
+cantidad_epocas: 30
+
+# Respaldo cada tantas épocas (y siempre la última); cada .npz ocupa ~16 MB
+frecuencia_respaldo: 5
+
+semilla_aleatoria: 26

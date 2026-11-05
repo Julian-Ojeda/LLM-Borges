@@ -13,7 +13,7 @@ from pathlib import Path
 import numpy as np
 import matplotlib
 
-matplotlib.use("Agg")
+matplotlib.use("Agg")   # dibuja directo a un archivo, sin abrir ventanas (sirve tambien sin pantalla)
 import matplotlib.pyplot as plt
 
 
@@ -23,11 +23,13 @@ def leer_metricas(ruta: Path) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     :return: Tupla (epocas, perdida, accuracy).
     """
     if ruta.suffix == ".npz":
+        # Los respaldos guardan el historial completo (una posicion por época, desde la 1)
         datos = np.load(ruta, allow_pickle=True)
         perdida = datos["historial_perdida"]
         accuracy = datos["historial_accuracy"] if "historial_accuracy" in datos else np.full(len(perdida), np.nan)
         return np.arange(1, len(perdida) + 1), perdida, accuracy
 
+    # CSV: se saltea el encabezado; columnas epoca, perdida, accuracy, segundos (ndmin=2: tabla aunque haya 1 fila)
     tabla = np.loadtxt(ruta, delimiter=",", skiprows=1, ndmin=2)
     return tabla[:, 0], tabla[:, 1], tabla[:, 2]
 
@@ -41,6 +43,7 @@ def main() -> None:
     ruta = Path(args.ruta)
     epocas, perdida, accuracy = leer_metricas(ruta)
 
+    # Dos graficos lado a lado (1 fila, 2 columnas): perdida a la izquierda, accuracy a la derecha
     fig, (eje_perdida, eje_accuracy) = plt.subplots(1, 2, figsize=(13, 4.5))
     eje_perdida.plot(epocas, perdida, color="#2b5c8f", linewidth=2)
     eje_perdida.set_title("Pérdida promedio por época")
@@ -56,7 +59,7 @@ def main() -> None:
     eje_accuracy.grid(alpha=0.3)
 
     fig.tight_layout()
-    salida = Path(args.salida) if args.salida else ruta.with_suffix(".png")
+    salida = Path(args.salida) if args.salida else ruta.with_suffix(".png")   # metricas_w4.csv -> metricas_w4.png
     fig.savefig(salida, dpi=120)
     print(f"Gráfico guardado en: '{salida}'")
 
