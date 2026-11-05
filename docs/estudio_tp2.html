@@ -29,6 +29,9 @@
   --mal: #b03a3a;
   --pendiente: #7a6a1f;
   --pendiente-fondo: #f8f2d6;
+  --g-1: #2a78d6; --g-2: #eb6834; --g-3: #1baf7a;
+  --g-r1: #86b6ef; --g-r2: #3987e5; --g-r3: #1c5cab;
+  --g-pablo: #a8641a; --g-julian: #2d4fa3;
   --fuente-titulo: "Source Serif 4", "Iowan Old Style", Georgia, serif;
   --fuente-texto: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
   --fuente-codigo: "JetBrains Mono", ui-monospace, Consolas, monospace;
@@ -39,6 +42,7 @@
     --codigo-fondo: #1e2430; --codigo-comentario: #8593a8; --acento: #8aa6ee;
     --pablo: #e3a35c; --pablo-fondo: #2e2416; --julian: #8aa6ee; --julian-fondo: #1c2541;
     --bien: #6cc391; --mal: #ec8585; --pendiente: #e2cd72; --pendiente-fondo: #2c2914;
+    --g-1: #3987e5; --g-2: #d95926; --g-3: #199e70; --g-r1: #184f95; --g-r2: #3987e5; --g-r3: #9ec5f4; --g-pablo: #c77d2e; --g-julian: #3987e5;
     color-scheme: dark;
   }
 }
@@ -47,6 +51,7 @@
   --codigo-fondo: #1e2430; --codigo-comentario: #8593a8; --acento: #8aa6ee;
   --pablo: #e3a35c; --pablo-fondo: #2e2416; --julian: #8aa6ee; --julian-fondo: #1c2541;
   --bien: #6cc391; --mal: #ec8585; --pendiente: #e2cd72; --pendiente-fondo: #2c2914;
+    --g-1: #3987e5; --g-2: #d95926; --g-3: #199e70; --g-r1: #184f95; --g-r2: #3987e5; --g-r3: #9ec5f4; --g-pablo: #c77d2e; --g-julian: #3987e5;
   color-scheme: dark;
 }
 
@@ -143,6 +148,30 @@ details[open] summary { color: var(--acento); }
 .apendice-titulo { font-family: var(--fuente-codigo); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--acento); margin: 0; }
 a { color: var(--acento); }
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+/* graficos:css:inicio */
+.g { margin: 26px 0 34px; }
+.g figcaption p { margin: 0; }
+.g-titulo { font-family: var(--fuente-titulo); font-size: 1.15rem; font-weight: 600; }
+.g-sub { font-size: 14px; color: var(--tinta-suave); margin-bottom: 8px !important; }
+.g-leyenda { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--tinta-suave); margin: 4px 0 8px; }
+.g-leyenda span { display: inline-flex; align-items: center; gap: 6px; }
+.g-leyenda i { display: inline-block; width: 14px; height: 10px; border-radius: 2px; }
+.g-lienzo { overflow-x: auto; background: var(--hoja); border: 1px solid var(--linea); border-radius: 8px; padding: 10px 8px 4px; }
+.g-lienzo svg { display: block; width: 100%; min-width: 540px; height: auto; }
+.g svg text { font-family: var(--fuente-texto); font-size: 12px; fill: var(--tinta-suave); }
+.g svg .fuerte { fill: var(--tinta); font-weight: 600; }
+.g svg .grilla { stroke: var(--linea); stroke-width: 1; }
+.g .g-fondo { fill: transparent; }
+.g .g-fila:hover .g-fondo, .g .g-fila:focus .g-fondo { fill: var(--codigo-fondo); }
+.g .g-guia { stroke: var(--tinta-suave); stroke-dasharray: 3 3; opacity: 0; }
+.g .g-col:hover .g-guia { opacity: .7; }
+.g [data-tip] { outline: none; }
+.g circle[data-tip]:focus-visible { stroke: var(--acento); }
+.g-datos { margin-top: 6px; }
+.g-datos .tabla { margin: 0 16px 14px; }
+.g-tip { position: fixed; z-index: 20; pointer-events: none; max-width: 320px; background: var(--hoja); color: var(--tinta); border: 1px solid var(--linea); border-radius: 6px; padding: 7px 10px; font-size: 13px; line-height: 1.45; box-shadow: 0 4px 14px rgb(0 0 0 / .14); font-variant-numeric: tabular-nums; }
+.g-tip .g-tip-t { font-weight: 600; }
+/* graficos:css:fin */
 </style>
 </head>
 <body>
@@ -163,6 +192,7 @@ a { color: var(--acento); }
       <li><a href="#archivos">Archivos y comandos</a></li>
       <li><a href="#autograd">Apéndice A: autograd</a></li>
       <li><a href="#microgpt-codigo">Apéndice B: microgpt</a></li>
+      <li><a href="#graficos">Comparaciones en gráficos</a></li>
     </ol>
   </nav>
 
@@ -318,13 +348,13 @@ def forward(self, contexto):                    # puntaje de cada palabra del vo
       <p class="explica">Pablo midió la pérdida sobre el mismo texto con el que entrenó. Julián separa el 5% final del corpus (52.681 predicciones) y mide ahí, sobre texto que el modelo nunca vio (ver <a href="#medir">§8</a>). En todas las corridas de Julián la ReLU es la activación de la capa oculta. La salida logística no la había probado Pablo.</p>
 
       <h3>Lote 256 contra lote 1</h3>
-      <p>Con <b>lote 1</b> los pesos se actualizan después de cada ejemplo (descenso por el gradiente estocástico «puro», como en el CBOW del TP1 y en tres de los PMC de Pablo). Con <b>lote 256</b> se promedia el gradiente de 256 ejemplos y se da un solo paso. El lote grande aprovecha la GPU: una época tarda 4 minutos. Con lote 1 la GPU procesa un ejemplo por vez y la época tarda unas 2,5 horas con SGD (8,8 con Adam, que actualiza más cosas por paso).</p>
-      <p id="lote1-explica" class="explica">Resultado: el lote 1 gana. Con la misma red y solo 2 épocas (unas 5 horas en total), la pérdida de validación baja a <b>5,48</b> (perplejidad 240, contra 420 del lote 256) y el top-5 sube de 34,6% a <b>41,1%</b> (exacta 19,4% contra 15,4%). Además no se sobreajusta: la validación baja en las dos épocas (5,65 → 5,48). Cada ejemplo mueve los pesos, así que en una época se dan un millón de pasos chicos en vez de unos 4.000 promediados; el ruido de cada paso funciona como regularización y la tasa que decae hasta 0 afina al final.</p>
+      <p>Con <b>lote 1</b> los pesos se actualizan después de cada ejemplo (descenso por el gradiente estocástico «puro», como en el CBOW del TP1 y en tres de los PMC de Pablo). Con <b>lote 256</b> se promedia el gradiente de 256 ejemplos y se da un solo paso. El lote grande aprovecha la GPU, que hace los 256 ejemplos en paralelo; con lote 1 procesa un ejemplo por vez.</p>
+      <p id="lote1-explica" class="explica">Resultado: el lote 1 gana. Con la misma red y solo 2 épocas, la pérdida de validación baja a <b>5,48</b> (perplejidad 240, contra 420 del lote 256) y el top-5 sube de 34,6% a <b>41,1%</b> (exacta 19,4% contra 15,4%). Además no se sobreajusta: la validación baja en las dos épocas (5,65 → 5,48). Cada ejemplo mueve los pesos, así que en una época se dan un millón de pasos chicos en vez de unos 4.000 promediados; el ruido de cada paso funciona como regularización y la tasa que decae hasta 0 afina al final.</p>
       <div class="tabla"><table>
-        <thead><tr><th>Época (lote 1, SGD)</th><th>Pérdida entren.</th><th>Pérdida valid.</th><th>Top-5</th><th>Top-10</th><th>Top-20</th><th>Exacta</th><th>Tiempo</th></tr></thead>
+        <thead><tr><th>Época (lote 1, SGD)</th><th>Pérdida entren.</th><th>Pérdida valid.</th><th>Top-5</th><th>Top-10</th><th>Top-20</th><th>Exacta</th></tr></thead>
         <tbody>
-          <tr class="julian"><td class="n">1</td><td class="n">5,79</td><td class="n">5,65</td><td class="n">38,5%</td><td class="n">47,7%</td><td class="n">55,6%</td><td class="n">17,2%</td><td class="n">2 h 33 min</td></tr>
-          <tr class="julian"><td class="n">2</td><td class="n">5,00</td><td class="n bien">5,48</td><td class="n">41,1%</td><td class="n">49,9%</td><td class="n">57,7%</td><td class="n">19,4%</td><td class="n">2 h 31 min</td></tr>
+          <tr class="julian"><td class="n">1</td><td class="n">5,79</td><td class="n">5,65</td><td class="n">38,5%</td><td class="n">47,7%</td><td class="n">55,6%</td><td class="n">17,2%</td></tr>
+          <tr class="julian"><td class="n">2</td><td class="n">5,00</td><td class="n bien">5,48</td><td class="n">41,1%</td><td class="n">49,9%</td><td class="n">57,7%</td><td class="n">19,4%</td></tr>
         </tbody>
       </table></div>
 
@@ -349,8 +379,8 @@ def forward(self, contexto):                    # puntaje de cada palabra del vo
           <tr class="julian"><td class="n">10</td><td class="n">0,00231</td><td class="n">0,00238</td><td class="n">20,7%</td><td class="n">24,1%</td><td class="n">27,8%</td><td class="n">4,4%</td></tr>
         </tbody>
       </table></div>
-      <p class="explica">El error cuadrático es chico porque <code>W</code> escalada tiene casi todas sus componentes cerca de 0,5. Cada época tarda unos 11 segundos: la salida tiene 80 unidades en vez de 53.409. Queda bastante por debajo de la softmax (20,7% contra 34,6% de top-5), como era de esperar por el problema del promedio.</p>
-      <p id="tanh-explica" class="explica">Salida tanh de Julián (misma red, <code>W</code> escalada a [-1, 1], 10 épocas de 10 segundos): top-5 19,8%, casi igual que la logística (20,7%), pero la exacta es mucho mejor (12,9% contra 4,4%) y, sobre todo, <b>el coseno sí discrimina</b>. Con «ella caminaba lentamente hacia la» da puerta 79%, ventana 78%, calle 71%, y con palabras al azar el coseno baja a ≈ 55%. Como [-1, 1] está centrado en 0, los vectores apuntan en direcciones distintas; en [0, 1] todos apuntan hacia el mismo lado. El defecto que queda es el de las palabras raras: en «enanos tienen una especie de» propone frolic, mesitas, prim, porque el promedio de los vectores posibles cae cerca de palabras raras que casi no se movieron. La mejor pérdida de validación fue en la época 5 (0,00953); después sube apenas.</p>
+      <p class="explica">El error cuadrático es chico porque <code>W</code> escalada tiene casi todas sus componentes cerca de 0,5. Queda bastante por debajo de la softmax (20,7% contra 34,6% de top-5), como era de esperar por el problema del promedio.</p>
+      <p id="tanh-explica" class="explica">Salida tanh de Julián (misma red, <code>W</code> escalada a [-1, 1], 10 épocas): top-5 19,8%, casi igual que la logística (20,7%), pero la exacta es mucho mejor (12,9% contra 4,4%) y, sobre todo, <b>el coseno sí discrimina</b>. Con «ella caminaba lentamente hacia la» da puerta 79%, ventana 78%, calle 71%, y con palabras al azar el coseno baja a ≈ 55%. Como [-1, 1] está centrado en 0, los vectores apuntan en direcciones distintas; en [0, 1] todos apuntan hacia el mismo lado. El defecto que queda es el de las palabras raras: en «enanos tienen una especie de» propone frolic, mesitas, prim, porque el promedio de los vectores posibles cae cerca de palabras raras que casi no se movieron. La mejor pérdida de validación fue en la época 5 (0,00953); después sube apenas.</p>
     </section>
 
     <section id="microgpt">
@@ -388,24 +418,20 @@ docs, docs_validacion = tramos(oraciones[:corte]), tramos(oraciones[corte:])</co
           <li>1% del corpus: 10.537 tokens, vocabulario 2.920</li>
           <li>d = 50 (su CBOW), H = 5 cabezas (dk = 10)</li>
           <li>N = 5 tokens de contexto</li>
-          <li>12.000 pasos: <b>25,7 horas</b></li>
+          <li>12.000 pasos</li>
           <li>Pérdida medida sobre el entrenamiento</li>
         </ul></div>
         <div class="lado julian"><h4>Julián</h4><ul>
           <li>0,3% del corpus: 3.161 tokens, vocabulario 1.158</li>
-          <li>d = 40: su W de 80 reducida con PCA (conserva el 67,6% de la varianza), H = 4 (dk = 10)</li>
+          <li>d = 80: los vectores de su CBOW tal cual, H = 4 (dk = 20)</li>
           <li>N = 6 tokens de contexto</li>
-          <li>1.500 pasos: 2 h 05 min (≈ 5 s por paso)</li>
+          <li>482 pasos: 1 época, η = 0,01</li>
           <li>Validación con el último 10% de las oraciones</li>
         </ul></div>
       </div>
 
-      <h3>Por qué es tan lento y por qué PCA</h3>
-      <p>Cada multiplicación crea un objeto <code>Value</code>. Solo la última capa (<code>lm_head</code>) hace |V| × d multiplicaciones <b>por token</b>: con |V| = 1.158 y d = 80 son 92.640 objetos por token, y todos se recorren otra vez en <code>backward()</code>. Medido en la computadora de Julián, un paso tardaba 17 s con d = 80 y 0,5% del corpus, y baja a 4,2 s con d = 40 y 0,3%.</p>
-      <p>Para no perder el vínculo con el TP1, <code>wte</code> sigue saliendo del CBOW, reducido con <b>PCA</b>: se centra <code>W</code> y se proyecta sobre las 40 direcciones de mayor varianza. Es la mejor aproximación de 40 dimensiones a las distancias entre palabras.</p>
-<pre><code>W_centrada = W_cbow - W_cbow.mean(axis=0)
-_, valores_singulares, Vt = np.linalg.svd(W_centrada, full_matrices=False)
-W_cbow = W_centrada @ Vt[:40].T                 # (|V|, 80) -> (|V|, 40)</code></pre>
+      <h3>Por qué es tan lento</h3>
+      <p>Cada multiplicación crea un objeto <code>Value</code>. Solo la última capa (<code>lm_head</code>) hace |V| × d multiplicaciones <b>por token</b>: con |V| = 1.158 y d = 80 son 92.640 objetos por token, y todos se recorren otra vez en <code>backward()</code>. Por eso se usa una fracción chica del corpus (0,3%) y una sola época.</p>
 
       <h3>Verificación del funcionamiento</h3>
       <p><code>scripts/probar_microgpt.py</code> rehace la misma cuenta de <code>gpt()</code> con matrices de NumPy para evaluar rápido. Para comprobar que es idéntica, se entrenó un paso, se guardaron los pesos y se calculó la pérdida del paso 2 de las dos formas: <b>7,271666</b> con <code>Value</code> y <b>7,271666</b> con NumPy.</p>
@@ -413,20 +439,10 @@ W_cbow = W_centrada @ Vt[:40].T                 # (|V|, 80) -> (|V|, 40)</code><
         <thead><tr><th>microgpt</th><th>Validación: pérdida</th><th>Top-5</th><th>Top-10</th><th>Top-20</th></tr></thead>
         <tbody>
           <tr class="pablo"><td>Pablo (1%, d50, N5, 12.000 pasos)</td><td colspan="4">no medido (sin texto separado)</td></tr>
-          <tr class="julian"><td>Julián (0,3%, d40, N6, 1.500 pasos)</td><td class="n">6,35 (exacta 10,9%)</td><td class="n">29,6%</td><td class="n">39,0%</td><td class="n">47,9%</td></tr>
+          <tr class="julian"><td>Julián (0,3%, d80, N6, 1 época)</td><td colspan="4">pendiente: se está entrenando</td></tr>
         </tbody>
       </table></div>
       <p class="explica">Son 551 predicciones de validación (96 tramos del último 10% de las oraciones). El vocabulario es de solo 1.158 palabras, así que estos porcentajes no se comparan directamente con los del PMC, que elige entre 53.409.</p>
-
-      <h3>Curva de pérdida (promedio cada 100 pasos)</h3>
-      <div class="tabla"><table>
-        <thead><tr><th>Pasos</th><th>1–100</th><th>401–500</th><th>501–600</th><th>901–1000</th><th>1001–1100</th><th>1401–1500</th></tr></thead>
-        <tbody>
-          <tr class="julian"><td>Pérdida de entrenamiento</td><td class="n">6,28</td><td class="n">5,74</td><td class="n">4,52</td><td class="n">4,26</td><td class="n">3,67</td><td class="n">3,48</td></tr>
-        </tbody>
-      </table></div>
-      <p class="explica">Un paso es un solo tramo, así que la pérdida por paso salta mucho (de 0,09 a 4,9 en los últimos 20 pasos); por eso se promedia. Los saltos entre los pasos 500 y 600 y entre 1000 y 1100 coinciden con el momento en que el recorrido (<code>docs[step % len(docs)]</code>) vuelve a empezar por los mismos 482 tramos de entrenamiento: la pérdida promedio por vuelta es 6,15 → 4,55 → 3,66. Al final la pérdida de entrenamiento queda en 3,5 y la de validación en 6,35: con 3.161 tokens el modelo ya empieza a memorizar (<b>sobreajuste</b>), igual que el PMC.</p>
-      <p>Muestras generadas al final del entrenamiento (desde BOS, con temperatura): «de los colores de un suelo», «en la selva , y se», «los otros días , su estatura». Respetan la gramática local (artículo + sustantivo, «, y se») pero no tienen sentido global, como es de esperar con 6 tokens de contexto.</p>
     </section>
 
     <section id="frases">
@@ -443,12 +459,11 @@ W_cbow = W_centrada @ Vt[:40].T                 # (|V|, 80) -> (|V|, 40)</code><
           <tr class="julian"><td>PMC k8 512 LN lote 1</td><td id="f-lote1-1">puerta 24%, cara 7,8%, ventana 3,6%</td><td id="f-lote1-2">el 26%, la 21%, su 8,4%</td><td id="f-lote1-3">los 5,0%, ellos 3,6%, que 2,2% (no memorizó «sexto»)</td></tr>
           <tr class="julian"><td>PMC vector tanh k8</td><td id="f-tanh-1">puerta, ventana, calle (coseno 79%, 78%, 71%)</td><td id="f-tanh-2">adorándome, reestrenos, el (≈ 57%)</td><td id="f-tanh-3">frolic, mesitas, prim (≈ 59%)</td></tr>
           <tr class="julian"><td>PMC vector logística k8</td><td>philosophie, cara, noche (coseno ≈ 99,8%)</td><td>ahora, ella, el (≈ 99,9%)</td><td>sujet, ella, lui (≈ 99,9%)</td></tr>
-          <tr class="julian"><td>microgpt (0,3%)</td><td>vida 9,7%, selva 6,1%, hora 4,2% (ve solo «ella la»: el resto no está en su vocabulario)</td><td>la 12%, que 11%, el 11% (sin «pensaba»)</td><td>los 6,4%, su 5,0%, las 3,7%</td></tr>
         </tbody>
       </table></div>
-      <p class="explica">«los enanos tienen una especie» → «de»: 82% en el mejor PMC de Pablo, 38% en su microgpt, 29% en el PMC de Julián con lote 256, 35% con lote 1, y <b>94%</b> en el microgpt de Julián (esa frase está en su 0,3% del corpus).</p>
-      <p class="explica">Generación continua ansiosa (siempre la más probable). El PMC de Julián da «ella caminaba lentamente hacia la <b>puerta , y el hombre</b>» y «el viejo escritor pensaba en <b>el fondo de la casa</b>». Su microgpt se repite: «el viejo escritor pensaba en <b>la selva de los indígenas</b>», porque con un vocabulario y un corpus tan chicos cae enseguida en las mismas palabras frecuentes. La salida logística casi solo genera comas y «ahora» («el viejo escritor pensaba en <b>ahora , , pero ahora</b>»): como el coseno no discrimina, gana siempre lo que está más cerca del centro.</p>
-      <p class="explica">Con el orden invertido («especie una tienen enanos los») ninguno da algo sensato (el microgpt de Julián: indígenas 3,4%, tío 1,0%). Eso muestra que los modelos usan el orden de las palabras y no solo cuáles aparecen.</p>
+      <p class="explica">«los enanos tienen una especie» → «de»: 82% en el mejor PMC de Pablo, 38% en su microgpt, 29% en el PMC de Julián con lote 256 y 35% con lote 1.</p>
+      <p class="explica">Generación continua ansiosa (siempre la más probable). El PMC de Julián da «ella caminaba lentamente hacia la <b>puerta , y el hombre</b>» y «el viejo escritor pensaba en <b>el fondo de la casa</b>». La salida logística casi solo genera comas y «ahora» («el viejo escritor pensaba en <b>ahora , , pero ahora</b>»): como el coseno no discrimina, gana siempre lo que está más cerca del centro.</p>
+      <p class="explica">Con el orden invertido («especie una tienen enanos los») ninguno da algo sensato. Eso muestra que los modelos usan el orden de las palabras y no solo cuáles aparecen.</p>
     </section>
 
     <section id="medir">
@@ -469,7 +484,7 @@ indices_validacion = np.arange(corte + k, T)     # k ventanas de separación</co
       <p class="explica">Ejemplo: si la correcta tiene el 3.er puntaje más alto, su puesto es 3 y cuenta como acierto para los cortes 5, 10 y 20.</p>
 
       <h3>Perplejidad</h3>
-      <p>La perplejidad es <code>exp(pérdida)</code>: entre cuántas palabras «duda» el modelo en promedio. La pérdida de validación 6,04 del PMC de Julián con lote 256 equivale a una perplejidad de 420, y la de 5,48 con lote 1 a 240; la de su microgpt (6,35) a 572, pero sobre un vocabulario mucho más chico.</p>
+      <p>La perplejidad es <code>exp(pérdida)</code>: entre cuántas palabras «duda» el modelo en promedio. La pérdida de validación 6,04 del PMC de Julián con lote 256 equivale a una perplejidad de 420, y la de 5,48 con lote 1 a 240.</p>
     </section>
 
     <section id="repaso">
@@ -480,15 +495,14 @@ indices_validacion = np.arange(corte + k, T)     # k ventanas de separación</co
       <details><summary>¿Por qué hay que escalar W en la salida «vector»?</summary><div>Porque tanh solo produce valores en [−1, 1] y la logística en [0, 1]. Si el objetivo tiene componentes fuera de ese rango, el modelo nunca lo puede alcanzar. Con min-max global se lleva todo W a la imagen de la activación.</div></details>
       <details><summary>¿Por qué la salida «vector» termina prediciendo palabras raras?</summary><div>Porque el error cuadrático premia predecir el promedio de las palabras posibles, y ese promedio cae cerca del centro del espacio, donde están las palabras poco frecuentes (sus vectores casi no se movieron en el CBOW). La softmax no tiene ese problema: reparte probabilidad entre las candidatas.</div></details>
       <details><summary>¿Por qué con la logística todas las palabras salen con coseno ≈ 99,8%?</summary><div>Porque al escalar W a [0, 1] todos los vectores quedan con componentes positivas cerca de 0,5: apuntan casi en la misma dirección, y el coseno mide dirección. Con tanh, W queda en [−1, 1] centrada en 0 y los vectores apuntan en direcciones distintas.</div></details>
-      <details><summary>¿Qué cambia entre entrenar con lote 1 y con lote 256?</summary><div>Con lote 1 se actualizan los pesos después de cada ejemplo: más pasos y más ruidosos. Con lote 256 se promedia el gradiente de 256 ejemplos y se da un paso por lote: menos pasos, más estables y mucho más rápidos en GPU (4 minutos por época contra unas 2,5 horas).</div></details>
+      <details><summary>¿Qué cambia entre entrenar con lote 1 y con lote 256?</summary><div>Con lote 1 se actualizan los pesos después de cada ejemplo: más pasos y más ruidosos. Con lote 256 se promedia el gradiente de 256 ejemplos y se da un paso por lote: menos pasos, más estables y mucho más rápidos en GPU.</div></details>
       <details><summary>¿Por qué el PMC de Pablo dice «sexto» con 99% y el de Julián no?</summary><div>«los enanos tienen una especie de sexto» son las primeras palabras del corpus. Con k = 5, la ventana «enanos tienen una especie de» → «sexto» es un ejemplo de entrenamiento y Pablo la memorizó. Con k = 8, el primer ejemplo predice el 9.º token, así que «sexto» (el 7.º) nunca fue objetivo del PMC de Julián.</div></details>
       <details><summary>¿Qué hace Value.backward() en microgpt?</summary><div>Ordena todos los nodos del grafo de forma topológica y recorre desde la pérdida hacia atrás, sumando a cada hijo derivada_local × gradiente_del_nodo (regla de la cadena). Se usa += porque un nodo puede influir en la pérdida por varios caminos.</div></details>
       <details><summary>¿Por qué la atención de microgpt es causal si no tiene una máscara?</summary><div>Porque procesa un token por vez y solo agrega a keys/values las posiciones ya procesadas. Cuando está en la posición t, las posiciones futuras todavía no existen. Un modelo que procesa las N posiciones juntas (como los de PyTorch) necesita en cambio una máscara con −∞ arriba de la diagonal.</div></details>
       <details><summary>¿Para qué sirve el token BOS?</summary><div>Marca el comienzo y el final de cada documento. Al principio es la entrada que no tiene nada antes; al final es el objetivo que enseña al modelo cuándo cortar. En la generación se arranca con BOS y se para cuando el modelo elige BOS.</div></details>
-      <details><summary>¿Qué es PCA y por qué se usó en microgpt?</summary><div>Es proyectar los vectores sobre las direcciones de mayor varianza (los primeros vectores singulares de W centrada). Se usó para pasar de d = 80 a d = 40 y que microgpt entrenara en horas, conservando el 67,6% de la varianza y la información del CBOW del TP1.</div></details>
-      <details><summary>¿Por qué microgpt tarda horas y el PMC minutos?</summary><div>microgpt hace cada multiplicación como un objeto de Python (Value) y recorre ese grafo en el backward; PyTorch hace las mismas cuentas como multiplicaciones de matrices en la GPU. El algoritmo de gradiente es el mismo; cambia la eficiencia.</div></details>
+      <details><summary>¿Por qué microgpt es mucho más lento que el PMC?</summary><div>microgpt hace cada multiplicación como un objeto de Python (Value) y recorre ese grafo en el backward; PyTorch hace las mismas cuentas como multiplicaciones de matrices en la GPU. El algoritmo de gradiente es el mismo; cambia la eficiencia.</div></details>
       <details><summary>¿Qué mide el contador «top-5»?</summary><div>El porcentaje de predicciones de validación en las que la palabra correcta quedó entre las 5 con mayor puntaje. Es más justo que el acierto exacto porque después de un contexto suelen caber varias palabras.</div></details>
-      <details><summary>¿Cómo se detecta el sobreajuste?</summary><div>La pérdida de entrenamiento baja mientras la de validación sube. En el PMC de Julián con lote 256 pasa desde la época 2 (validación 6,04 → 6,47; con lote 1 no pasó en 2 épocas) y en su microgpt al final (entrenamiento 3,5, validación 6,35). Por eso se guarda el modelo de menor pérdida de validación.</div></details>
+      <details><summary>¿Cómo se detecta el sobreajuste?</summary><div>La pérdida de entrenamiento baja mientras la de validación sube. En el PMC de Julián con lote 256 pasa desde la época 2 (validación 6,04 → 6,47; con lote 1 no pasó en 2 épocas). Por eso se guarda el modelo de menor pérdida de validación.</div></details>
     </section>
 
     <section id="archivos">
@@ -497,7 +511,7 @@ indices_validacion = np.arange(corte + k, T)     # k ventanas de separación</co
         <div><code>codigo/modelo_pmc_torch.py</code><span>PMC: entrada concatenada, salidas vocabulario y vector, ranking</span></div>
         <div><code>scripts/entrenar_pmc_torch.py</code><span>Entrena el PMC. <code>--modo --salida --k --ocultas --lote --optimizador --epocas</code> pisan <code>config/pmc.yaml</code></span></div>
         <div><code>scripts/probar_pmc.py</code><span>Tablas top 5 y generación continua con las frases de la presentación</span></div>
-        <div><code>scripts/microgpt_palabras.py</code><span>microgpt adaptado a palabras: <code>--fraccion --dimension --bloque --cabezas --pasos</code></span></div>
+        <div><code>scripts/microgpt_palabras.py</code><span>microgpt adaptado a palabras: <code>--fraccion --bloque --cabezas --pasos --tasa</code></span></div>
         <div><code>scripts/probar_microgpt.py</code><span>Validación (top-5/10/20) y tablas del microgpt, con NumPy</span></div>
         <div><code>material/autograd/microgpt.py</code><span>microgpt original de Karpathy, con anotaciones en español</span></div>
         <div><code>respaldos/pmc/*/</code><span>Métricas por época (<code>metricas.csv</code>) y tablas (<code>predicciones.md</code>) de cada PMC</span></div>
@@ -511,8 +525,8 @@ python scripts/entrenar_pmc_torch.py --modo vector --salida tanh --directorio re
 python scripts/entrenar_pmc_torch.py --modo vector --salida logistica --directorio respaldos/pmc/vector_k8_logistica
 python scripts/probar_pmc.py respaldos/pmc/vocabulario_k8
 <span class="c"># consigna 3</span>
-python scripts/microgpt_palabras.py --fraccion 0.003 --dimension 40 --bloque 6 --cabezas 4 --pasos 1500
-python scripts/probar_microgpt.py respaldos/microgpt/f0.003_d40_N6_H4_L1_pasos1500</code></pre>
+python scripts/microgpt_palabras.py --fraccion 0.003 --bloque 6 --cabezas 4 --pasos 482 --tasa 0.01
+python scripts/probar_microgpt.py respaldos/microgpt/f0.003_d80_N6_H4_L1_pasos482</code></pre>
     </section>
 
     <section id="autograd">
@@ -612,7 +626,7 @@ for i in range(n_layer):
     state_dict[f'layer{i}.mlp_fc1'] = matrix(4 * n_embd, n_embd) # MLP: d -> 4d
     state_dict[f'layer{i}.mlp_fc2'] = matrix(n_embd, 4 * n_embd) # MLP: 4d -> d
 params = [p for mat in state_dict.values() for row in mat for p in row]   # lista plana para Adam</code></pre>
-      <p class="explica">En la versión de palabras de Julián, <code>wte</code> no arranca al azar: cada fila es el vector de esa palabra en el CBOW del TP1 (reducido a 40 con PCA).</p>
+      <p class="explica">En la versión de palabras de Julián, <code>wte</code> no arranca al azar: cada fila es el vector de esa palabra en el CBOW del TP1.</p>
 
       <h3>3. Las piezas: linear, softmax y rmsnorm</h3>
 <pre><code>def linear(x, w):                   # w (A x B) por x (B) -> vector de A
@@ -706,6 +720,52 @@ for pos_id in range(block_size):
     sample.append(uchars[token_id])</code></pre>
       <p class="explica">La temperatura divide los logits antes de la softmax: con temperatura baja las diferencias se agrandan y casi siempre sale la palabra más probable; con temperatura alta la distribución se aplana y el texto es más variado (y más disparatado). La generación «ansiosa» de las tablas equivale a temperatura → 0: siempre la más probable.</p>
     </section>
+<!-- graficos:inicio -->
+    <section id="graficos">
+      <div class="cabecera"><span class="num">§11</span><h2>Comparaciones en gráficos</h2></div>
+      <p>Los mismos resultados de las secciones anteriores, puestos uno al lado del otro. Pasando el mouse (o tocando) sobre una barra, un punto o una época se ven los valores exactos, y debajo de cada gráfico está la tabla con los datos.</p>
+      
+      <figure class="g">
+        <figcaption><p class="g-titulo">Cuánto acierta cada modelo</p><p class="g-sub">Predicciones de validación (texto que el modelo no vio) con la palabra correcta en el top-1, top-5 y top-20.</p></figcaption>
+        <div class="g-leyenda"><span><i style="background:var(--g-r3)"></i>exacta (top-1)</span><span><i style="background:var(--g-r2)"></i>top-5</span><span><i style="background:var(--g-r1)"></i>top-20</span></div>
+        <div class="g-lienzo"><svg viewBox="0 0 720 224" role="img" aria-label="Aciertos exacta, top-5 y top-20 de cada modelo"><line class="grilla" x1="190.0" x2="190.0" y1="4" y2="200"/><text x="190.0" y="216" text-anchor="middle">0%</text><line class="grilla" x1="340.0" x2="340.0" y1="4" y2="200"/><text x="340.0" y="216" text-anchor="middle">20%</text><line class="grilla" x1="490.0" x2="490.0" y1="4" y2="200"/><text x="490.0" y="216" text-anchor="middle">40%</text><line class="grilla" x1="640.0" x2="640.0" y1="4" y2="200"/><text x="640.0" y="216" text-anchor="middle">60%</text><g class="g-fila" tabindex="0" data-tip="PMC softmax · lote 1|exacta 19,4%|top-5 41,1%|top-10 49,9%|top-20 57,7%"><rect class="g-fondo" x="0" y="8.0" width="720" height="38" rx="4"/><text class="fuerte" x="178" y="31.0" text-anchor="end">PMC softmax · lote 1</text><rect x="190" y="19.0" width="144.6" height="16" fill="var(--g-r3)"/><rect x="336.6" y="19.0" width="160.6" height="16" fill="var(--g-r2)"/><path d="M499.2,19.0 H619.0 Q623.0,19.0 623.0,23.0 V31.0 Q623.0,35.0 619.0,35.0 H499.2 Z" fill="var(--g-r1)"/><text x="631.0" y="31.0"><tspan class="fuerte">41,1%</tspan> en top-5</text></g><g class="g-fila" tabindex="0" data-tip="PMC softmax · lote 256|exacta 15,4%|top-5 34,6%|top-10 43,0%|top-20 51,1%"><rect class="g-fondo" x="0" y="46.0" width="720" height="38" rx="4"/><text class="fuerte" x="178" y="69.0" text-anchor="end">PMC softmax · lote 256</text><rect x="190" y="57.0" width="114.8" height="16" fill="var(--g-r3)"/><rect x="306.8" y="57.0" width="142.0" height="16" fill="var(--g-r2)"/><path d="M450.8,57.0 H569.3 Q573.3,57.0 573.3,61.0 V69.0 Q573.3,73.0 569.3,73.0 H450.8 Z" fill="var(--g-r1)"/><text x="581.3" y="69.0"><tspan class="fuerte">34,6%</tspan> en top-5</text></g><g class="g-fila" tabindex="0" data-tip="PMC vector · logística|exacta 4,4%|top-5 20,7%|top-10 24,1%|top-20 27,8%"><rect class="g-fondo" x="0" y="122.0" width="720" height="38" rx="4"/><text class="fuerte" x="178" y="145.0" text-anchor="end">PMC vector · logística</text><rect x="190" y="133.0" width="32.0" height="16" fill="var(--g-r3)"/><rect x="224.0" y="133.0" width="120.4" height="16" fill="var(--g-r2)"/><path d="M346.4,133.0 H394.4 Q398.4,133.0 398.4,137.0 V145.0 Q398.4,149.0 394.4,149.0 H346.4 Z" fill="var(--g-r1)"/><text x="406.4" y="145.0"><tspan class="fuerte">20,7%</tspan> en top-5</text></g><g class="g-fila" tabindex="0" data-tip="PMC vector · tanh|exacta 12,9%|top-5 19,8%|top-10 22,5%|top-20 25,4%"><rect class="g-fondo" x="0" y="160.0" width="720" height="38" rx="4"/><text class="fuerte" x="178" y="183.0" text-anchor="end">PMC vector · tanh</text><rect x="190" y="171.0" width="95.5" height="16" fill="var(--g-r3)"/><rect x="287.5" y="171.0" width="49.7" height="16" fill="var(--g-r2)"/><path d="M339.2,171.0 H376.2 Q380.2,171.0 380.2,175.0 V183.0 Q380.2,187.0 376.2,187.0 H339.2 Z" fill="var(--g-r1)"/><text x="388.2" y="183.0"><tspan class="fuerte">19,8%</tspan> en top-5</text></g></svg></div>
+        <p class="explica">Cada barra se lee de izquierda a derecha: el tramo oscuro es el acierto exacto, hasta el medio es el top-5 y la barra entera es el top-20. La salida softmax le gana a la salida vector en todos los cortes, y con la softmax el lote 1 le gana al lote 256.</p>
+        <details class="g-datos"><summary>Ver los datos</summary><div class="tabla"><table><thead><tr><th>Modelo</th><th>Exacta</th><th>Top-5</th><th>Top-10</th><th>Top-20</th></tr></thead><tbody><tr><td>PMC softmax · lote 1</td><td class="n">19,4%</td><td class="n">41,1%</td><td class="n">49,9%</td><td class="n">57,7%</td></tr><tr><td>PMC softmax · lote 256</td><td class="n">15,4%</td><td class="n">34,6%</td><td class="n">43,0%</td><td class="n">51,1%</td></tr><tr><td>PMC vector · logística</td><td class="n">4,4%</td><td class="n">20,7%</td><td class="n">24,1%</td><td class="n">27,8%</td></tr><tr><td>PMC vector · tanh</td><td class="n">12,9%</td><td class="n">19,8%</td><td class="n">22,5%</td><td class="n">25,4%</td></tr></tbody></table></div></details>
+      </figure>
+      
+      <figure class="g">
+        <figcaption><p class="g-titulo">Lote 256 contra lote 1: pérdida por época</p><p class="g-sub">Misma red (k = 8, 512 + LN, salida softmax). Línea llena: validación; punteada: entrenamiento.</p></figcaption>
+        <div class="g-leyenda"><span><i style="background:var(--g-1)"></i>lote 256</span><span><i style="background:var(--g-3)"></i>lote 1</span><span><i style="background:none;height:0;width:18px;border-radius:0;border-top:2px solid var(--tinta-suave)"></i>validación</span><span><i style="background:none;height:0;width:18px;border-radius:0;border-top:2px dashed var(--tinta-suave)"></i>entrenamiento</span></div>
+        <div class="g-lienzo"><svg viewBox="0 0 720 334" role="img" aria-label="Pérdida por época con lote 256 y con lote 1"><text x="12" y="14">pérdida (entropía cruzada)</text><line class="grilla" x1="56" x2="590" y1="245.2" y2="245.2"/><text x="48" y="249.2" text-anchor="end">5,0</text><line class="grilla" x1="56" x2="590" y1="176.7" y2="176.7"/><text x="48" y="180.7" text-anchor="end">5,5</text><line class="grilla" x1="56" x2="590" y1="108.2" y2="108.2"/><text x="48" y="112.2" text-anchor="end">6,0</text><line class="grilla" x1="56" x2="590" y1="39.7" y2="39.7"/><text x="48" y="43.7" text-anchor="end">6,5</text><text x="56.0" y="318" text-anchor="middle">1</text><text x="115.3" y="318" text-anchor="middle">2</text><text x="174.7" y="318" text-anchor="middle">3</text><text x="234.0" y="318" text-anchor="middle">4</text><text x="293.3" y="318" text-anchor="middle">5</text><text x="352.7" y="318" text-anchor="middle">6</text><text x="412.0" y="318" text-anchor="middle">7</text><text x="471.3" y="318" text-anchor="middle">8</text><text x="530.7" y="318" text-anchor="middle">9</text><text x="590.0" y="318" text-anchor="middle">10</text><text x="590" y="332" text-anchor="end">época</text><g class="g-col" data-tip="Época 1|lote 256: validación 6,04 · entrenamiento 6,04|lote 1: validación 5,65 · entrenamiento 5,79"><rect x="26.3" y="26" width="59.3" height="274" fill="transparent"/><line class="g-guia" x1="56.0" x2="56.0" y1="26" y2="300"/></g><g class="g-col" data-tip="Época 2|lote 256: validación 6,06 · entrenamiento 5,46|lote 1: validación 5,48 · entrenamiento 5,00"><rect x="85.7" y="26" width="59.3" height="274" fill="transparent"/><line class="g-guia" x1="115.3" x2="115.3" y1="26" y2="300"/></g><g class="g-col" data-tip="Época 3|lote 256: validación 6,13 · entrenamiento 5,27"><rect x="145.0" y="26" width="59.3" height="274" fill="transparent"/><line class="g-guia" x1="174.7" x2="174.7" y1="26" y2="300"/></g><g class="g-col" data-tip="Época 4|lote 256: validación 6,22 · entrenamiento 5,15"><rect x="204.3" y="26" width="59.3" height="274" fill="transparent"/><line class="g-guia" x1="234.0" x2="234.0" y1="26" y2="300"/></g><g class="g-col" data-tip="Época 5|lote 256: validación 6,30 · entrenamiento 5,05"><rect x="263.7" y="26" width="59.3" height="274" fill="transparent"/><line class="g-guia" x1="293.3" x2="293.3" y1="26" y2="300"/></g><g class="g-col" data-tip="Época 6|lote 256: validación 6,35 · entrenamiento 4,97"><rect x="323.0" y="26" width="59.3" height="274" fill="transparent"/><line class="g-guia" x1="352.7" x2="352.7" y1="26" y2="300"/></g><g class="g-col" data-tip="Época 7|lote 256: validación 6,40 · entrenamiento 4,91"><rect x="382.3" y="26" width="59.3" height="274" fill="transparent"/><line class="g-guia" x1="412.0" x2="412.0" y1="26" y2="300"/></g><g class="g-col" data-tip="Época 8|lote 256: validación 6,44 · entrenamiento 4,85"><rect x="441.7" y="26" width="59.3" height="274" fill="transparent"/><line class="g-guia" x1="471.3" x2="471.3" y1="26" y2="300"/></g><g class="g-col" data-tip="Época 9|lote 256: validación 6,46 · entrenamiento 4,80"><rect x="501.0" y="26" width="59.3" height="274" fill="transparent"/><line class="g-guia" x1="530.7" x2="530.7" y1="26" y2="300"/></g><g class="g-col" data-tip="Época 10|lote 256: validación 6,47 · entrenamiento 4,76"><rect x="560.3" y="26" width="59.3" height="274" fill="transparent"/><line class="g-guia" x1="590.0" x2="590.0" y1="26" y2="300"/></g><polyline points="56.0,102.6 115.3,182.7 174.7,208.5 234.0,225.3 293.3,238.2 352.7,248.9 412.0,258.0 471.3,266.0 530.7,272.8 590.0,278.6" fill="none" stroke="var(--g-1)" stroke-width="2" stroke-dasharray="5 4" pointer-events="none"/><polyline points="56.0,102.4 115.3,100.0 174.7,89.9 234.0,77.9 293.3,67.4 352.7,59.7 412.0,52.9 471.3,47.8 530.7,45.1 590.0,43.6" fill="none" stroke="var(--g-1)" stroke-width="2" pointer-events="none"/><circle cx="56.0" cy="102.4" r="4" fill="var(--g-1)" stroke="var(--hoja)" stroke-width="2" pointer-events="none"/><circle cx="115.3" cy="100.0" r="4" fill="var(--g-1)" stroke="var(--hoja)" stroke-width="2" pointer-events="none"/><circle cx="174.7" cy="89.9" r="4" fill="var(--g-1)" stroke="var(--hoja)" stroke-width="2" pointer-events="none"/><circle cx="234.0" cy="77.9" r="4" fill="var(--g-1)" stroke="var(--hoja)" stroke-width="2" pointer-events="none"/><circle cx="293.3" cy="67.4" r="4" fill="var(--g-1)" stroke="var(--hoja)" stroke-width="2" pointer-events="none"/><circle cx="352.7" cy="59.7" r="4" fill="var(--g-1)" stroke="var(--hoja)" stroke-width="2" pointer-events="none"/><circle cx="412.0" cy="52.9" r="4" fill="var(--g-1)" stroke="var(--hoja)" stroke-width="2" pointer-events="none"/><circle cx="471.3" cy="47.8" r="4" fill="var(--g-1)" stroke="var(--hoja)" stroke-width="2" pointer-events="none"/><circle cx="530.7" cy="45.1" r="4" fill="var(--g-1)" stroke="var(--hoja)" stroke-width="2" pointer-events="none"/><circle cx="590.0" cy="43.6" r="4" fill="var(--g-1)" stroke="var(--hoja)" stroke-width="2" pointer-events="none"/><polyline points="56.0,136.8 115.3,245.7" fill="none" stroke="var(--g-3)" stroke-width="2" stroke-dasharray="5 4" pointer-events="none"/><polyline points="56.0,156.5 115.3,179.6" fill="none" stroke="var(--g-3)" stroke-width="2" pointer-events="none"/><circle cx="56.0" cy="156.5" r="4" fill="var(--g-3)" stroke="var(--hoja)" stroke-width="2" pointer-events="none"/><circle cx="115.3" cy="179.6" r="4" fill="var(--g-3)" stroke="var(--hoja)" stroke-width="2" pointer-events="none"/><text class="fuerte" x="600" y="47.6">lote 256 · valid.</text><text x="600" y="282.6">lote 256 · entren.</text><text class="fuerte" x="125.3" y="152.2">lote 1 · valid. 5,48</text><text x="125.3" y="261.7">lote 1 · entren.</text></svg></div>
+        <p class="explica">Con lote 256 la validación es mínima en la época 1 (6,04) y después sube mientras el entrenamiento sigue bajando: eso es el sobreajuste. Con lote 1 la validación baja en las dos épocas hasta 5,48, por debajo de cualquier época del lote 256.</p>
+        <details class="g-datos"><summary>Ver los datos</summary><div class="tabla"><table><thead><tr><th>Época</th><th>lote 256 (valid. / entren.)</th><th>lote 1 (valid. / entren.)</th></tr></thead><tbody><tr><td>1</td><td class="n">6,04 / 6,04</td><td class="n">5,65 / 5,79</td></tr><tr><td>2</td><td class="n">6,06 / 5,46</td><td class="n">5,48 / 5,00</td></tr><tr><td>3</td><td class="n">6,13 / 5,27</td><td class="n">—</td></tr><tr><td>4</td><td class="n">6,22 / 5,15</td><td class="n">—</td></tr><tr><td>5</td><td class="n">6,30 / 5,05</td><td class="n">—</td></tr><tr><td>6</td><td class="n">6,35 / 4,97</td><td class="n">—</td></tr><tr><td>7</td><td class="n">6,40 / 4,91</td><td class="n">—</td></tr><tr><td>8</td><td class="n">6,44 / 4,85</td><td class="n">—</td></tr><tr><td>9</td><td class="n">6,46 / 4,80</td><td class="n">—</td></tr><tr><td>10</td><td class="n">6,47 / 4,76</td><td class="n">—</td></tr></tbody></table></div></details>
+      </figure>
+      
+      <figure class="g">
+        <figcaption><p class="g-titulo">Salida vector: tanh contra logística</p><p class="g-sub">Misma red y mismas 10 épocas; solo cambia la activación de salida (y la escala de W).</p></figcaption>
+        <div class="g-leyenda"><span><i style="background:var(--g-1)"></i>tanh</span><span><i style="background:var(--g-3)"></i>logística</span></div>
+        <div class="g-lienzo"><svg viewBox="0 0 720 262" role="img" aria-label="Top-5 y acierto exacto por época, salidas tanh y logística"><text class="fuerte" x="44" y="16">Top-5</text><line class="grilla" x1="44" x2="329" y1="230.0" y2="230.0"/><text x="38" y="234.0" text-anchor="end">0%</text><line class="grilla" x1="44" x2="329" y1="190.0" y2="190.0"/><text x="38" y="194.0" text-anchor="end">5%</text><line class="grilla" x1="44" x2="329" y1="150.0" y2="150.0"/><text x="38" y="154.0" text-anchor="end">10%</text><line class="grilla" x1="44" x2="329" y1="110.0" y2="110.0"/><text x="38" y="114.0" text-anchor="end">15%</text><line class="grilla" x1="44" x2="329" y1="70.0" y2="70.0"/><text x="38" y="74.0" text-anchor="end">20%</text><line class="grilla" x1="44" x2="329" y1="30.0" y2="30.0"/><text x="38" y="34.0" text-anchor="end">25%</text><text x="44.0" y="248" text-anchor="middle">1</text><text x="170.7" y="248" text-anchor="middle">5</text><text x="329.0" y="248" text-anchor="middle">10</text><text x="329" y="260" text-anchor="end">época</text><g class="g-col" data-tip="Top-5, época 1|tanh: 15,8%|logística: 18,2%"><rect x="28.2" y="30" width="31.7" height="200" fill="transparent"/><line class="g-guia" x1="44.0" x2="44.0" y1="30" y2="230"/></g><g class="g-col" data-tip="Top-5, época 2|tanh: 17,5%|logística: 19,3%"><rect x="59.8" y="30" width="31.7" height="200" fill="transparent"/><line class="g-guia" x1="75.7" x2="75.7" y1="30" y2="230"/></g><g class="g-col" data-tip="Top-5, época 3|tanh: 18,1%|logística: 19,6%"><rect x="91.5" y="30" width="31.7" height="200" fill="transparent"/><line class="g-guia" x1="107.3" x2="107.3" y1="30" y2="230"/></g><g class="g-col" data-tip="Top-5, época 4|tanh: 18,6%|logística: 19,8%"><rect x="123.2" y="30" width="31.7" height="200" fill="transparent"/><line class="g-guia" x1="139.0" x2="139.0" y1="30" y2="230"/></g><g class="g-col" data-tip="Top-5, época 5|tanh: 19,7%|logística: 20,5%"><rect x="154.8" y="30" width="31.7" height="200" fill="transparent"/><line class="g-guia" x1="170.7" x2="170.7" y1="30" y2="230"/></g><g class="g-col" data-tip="Top-5, época 6|tanh: 19,2%|logística: 20,2%"><rect x="186.5" y="30" width="31.7" height="200" fill="transparent"/><line class="g-guia" x1="202.3" x2="202.3" y1="30" y2="230"/></g><g class="g-col" data-tip="Top-5, época 7|tanh: 19,4%|logística: 20,4%"><rect x="218.2" y="30" width="31.7" height="200" fill="transparent"/><line class="g-guia" x1="234.0" x2="234.0" y1="30" y2="230"/></g><g class="g-col" data-tip="Top-5, época 8|tanh: 19,6%|logística: 20,5%"><rect x="249.8" y="30" width="31.7" height="200" fill="transparent"/><line class="g-guia" x1="265.7" x2="265.7" y1="30" y2="230"/></g><g class="g-col" data-tip="Top-5, época 9|tanh: 19,9%|logística: 20,8%"><rect x="281.5" y="30" width="31.7" height="200" fill="transparent"/><line class="g-guia" x1="297.3" x2="297.3" y1="30" y2="230"/></g><g class="g-col" data-tip="Top-5, época 10|tanh: 19,8%|logística: 20,7%"><rect x="313.2" y="30" width="31.7" height="200" fill="transparent"/><line class="g-guia" x1="329.0" x2="329.0" y1="30" y2="230"/></g><polyline points="44.0,103.9 75.7,89.7 107.3,85.4 139.0,81.1 170.7,72.3 202.3,76.4 234.0,74.7 265.7,73.5 297.3,70.9 329.0,71.9" fill="none" stroke="var(--g-1)" stroke-width="2" pointer-events="none"/><circle cx="329.0" cy="71.9" r="4" fill="var(--g-1)" stroke="var(--hoja)" stroke-width="2" pointer-events="none"/><polyline points="44.0,84.0 75.7,75.9 107.3,73.4 139.0,71.4 170.7,66.3 202.3,68.4 234.0,66.4 265.7,66.0 297.3,63.5 329.0,64.3" fill="none" stroke="var(--g-3)" stroke-width="2" pointer-events="none"/><circle cx="329.0" cy="64.3" r="4" fill="var(--g-3)" stroke="var(--hoja)" stroke-width="2" pointer-events="none"/><text class="fuerte" x="321.0" y="54.3" text-anchor="end">19,8% y 20,7%</text><text class="fuerte" x="419" y="16">Exacta (top-1)</text><line class="grilla" x1="419" x2="704" y1="230.0" y2="230.0"/><text x="413" y="234.0" text-anchor="end">0%</text><line class="grilla" x1="419" x2="704" y1="190.0" y2="190.0"/><text x="413" y="194.0" text-anchor="end">5%</text><line class="grilla" x1="419" x2="704" y1="150.0" y2="150.0"/><text x="413" y="154.0" text-anchor="end">10%</text><line class="grilla" x1="419" x2="704" y1="110.0" y2="110.0"/><text x="413" y="114.0" text-anchor="end">15%</text><line class="grilla" x1="419" x2="704" y1="70.0" y2="70.0"/><text x="413" y="74.0" text-anchor="end">20%</text><line class="grilla" x1="419" x2="704" y1="30.0" y2="30.0"/><text x="413" y="34.0" text-anchor="end">25%</text><text x="419.0" y="248" text-anchor="middle">1</text><text x="545.7" y="248" text-anchor="middle">5</text><text x="704.0" y="248" text-anchor="middle">10</text><text x="704" y="260" text-anchor="end">época</text><g class="g-col" data-tip="Exacta (top-1), época 1|tanh: 10,0%|logística: 2,0%"><rect x="403.2" y="30" width="31.7" height="200" fill="transparent"/><line class="g-guia" x1="419.0" x2="419.0" y1="30" y2="230"/></g><g class="g-col" data-tip="Exacta (top-1), época 2|tanh: 11,2%|logística: 2,7%"><rect x="434.8" y="30" width="31.7" height="200" fill="transparent"/><line class="g-guia" x1="450.7" x2="450.7" y1="30" y2="230"/></g><g class="g-col" data-tip="Exacta (top-1), época 3|tanh: 11,6%|logística: 3,0%"><rect x="466.5" y="30" width="31.7" height="200" fill="transparent"/><line class="g-guia" x1="482.3" x2="482.3" y1="30" y2="230"/></g><g class="g-col" data-tip="Exacta (top-1), época 4|tanh: 12,0%|logística: 3,3%"><rect x="498.2" y="30" width="31.7" height="200" fill="transparent"/><line class="g-guia" x1="514.0" x2="514.0" y1="30" y2="230"/></g><g class="g-col" data-tip="Exacta (top-1), época 5|tanh: 12,6%|logística: 3,9%"><rect x="529.8" y="30" width="31.7" height="200" fill="transparent"/><line class="g-guia" x1="545.7" x2="545.7" y1="30" y2="230"/></g><g class="g-col" data-tip="Exacta (top-1), época 6|tanh: 12,5%|logística: 3,8%"><rect x="561.5" y="30" width="31.7" height="200" fill="transparent"/><line class="g-guia" x1="577.3" x2="577.3" y1="30" y2="230"/></g><g class="g-col" data-tip="Exacta (top-1), época 7|tanh: 12,6%|logística: 4,0%"><rect x="593.2" y="30" width="31.7" height="200" fill="transparent"/><line class="g-guia" x1="609.0" x2="609.0" y1="30" y2="230"/></g><g class="g-col" data-tip="Exacta (top-1), época 8|tanh: 12,6%|logística: 4,1%"><rect x="624.8" y="30" width="31.7" height="200" fill="transparent"/><line class="g-guia" x1="640.7" x2="640.7" y1="30" y2="230"/></g><g class="g-col" data-tip="Exacta (top-1), época 9|tanh: 13,0%|logística: 4,4%"><rect x="656.5" y="30" width="31.7" height="200" fill="transparent"/><line class="g-guia" x1="672.3" x2="672.3" y1="30" y2="230"/></g><g class="g-col" data-tip="Exacta (top-1), época 10|tanh: 12,9%|logística: 4,4%"><rect x="688.2" y="30" width="31.7" height="200" fill="transparent"/><line class="g-guia" x1="704.0" x2="704.0" y1="30" y2="230"/></g><polyline points="419.0,150.1 450.7,140.4 482.3,136.8 514.0,134.1 545.7,129.2 577.3,130.1 609.0,129.2 640.7,129.3 672.3,126.1 704.0,127.0" fill="none" stroke="var(--g-1)" stroke-width="2" pointer-events="none"/><circle cx="704.0" cy="127.0" r="4" fill="var(--g-1)" stroke="var(--hoja)" stroke-width="2" pointer-events="none"/><polyline points="419.0,214.2 450.7,208.8 482.3,205.7 514.0,203.2 545.7,198.7 577.3,199.6 609.0,198.2 640.7,196.8 672.3,195.2 704.0,194.8" fill="none" stroke="var(--g-3)" stroke-width="2" pointer-events="none"/><circle cx="704.0" cy="194.8" r="4" fill="var(--g-3)" stroke="var(--hoja)" stroke-width="2" pointer-events="none"/><text class="fuerte" x="696.0" y="118.0" text-anchor="end">tanh 12,9%</text><text class="fuerte" x="696.0" y="185.8" text-anchor="end">logística 4,4%</text></svg></div>
+        <p class="explica">En top-5 las dos salidas quedan casi empatadas, pero el acierto exacto de tanh triplica al de la logística. Con la logística todos los vectores escalados a [0, 1] apuntan para el mismo lado, así que el coseno casi no separa la primera palabra de las siguientes.</p>
+        <details class="g-datos"><summary>Ver los datos</summary><div class="tabla"><table><thead><tr><th>Época</th><th>tanh top-5</th><th>logística top-5</th><th>tanh exacta</th><th>logística exacta</th></tr></thead><tbody><tr><td>1</td><td class="n">15,8%</td><td class="n">18,2%</td><td class="n">10,0%</td><td class="n">2,0%</td></tr><tr><td>2</td><td class="n">17,5%</td><td class="n">19,3%</td><td class="n">11,2%</td><td class="n">2,7%</td></tr><tr><td>3</td><td class="n">18,1%</td><td class="n">19,6%</td><td class="n">11,6%</td><td class="n">3,0%</td></tr><tr><td>4</td><td class="n">18,6%</td><td class="n">19,8%</td><td class="n">12,0%</td><td class="n">3,3%</td></tr><tr><td>5</td><td class="n">19,7%</td><td class="n">20,5%</td><td class="n">12,6%</td><td class="n">3,9%</td></tr><tr><td>6</td><td class="n">19,2%</td><td class="n">20,2%</td><td class="n">12,5%</td><td class="n">3,8%</td></tr><tr><td>7</td><td class="n">19,4%</td><td class="n">20,4%</td><td class="n">12,6%</td><td class="n">4,0%</td></tr><tr><td>8</td><td class="n">19,6%</td><td class="n">20,5%</td><td class="n">12,6%</td><td class="n">4,1%</td></tr><tr><td>9</td><td class="n">19,9%</td><td class="n">20,8%</td><td class="n">13,0%</td><td class="n">4,4%</td></tr><tr><td>10</td><td class="n">19,8%</td><td class="n">20,7%</td><td class="n">12,9%</td><td class="n">4,4%</td></tr></tbody></table></div></details>
+      </figure>
+      
+      <figure class="g">
+        <figcaption><p class="g-titulo">El coseno con tanh separa las palabras; con logística no</p><p class="g-sub">Las 5 palabras propuestas para «ella caminaba lentamente hacia la» y su coseno con el vector que predice la red.</p></figcaption>
+        
+        <div class="g-lienzo"><svg viewBox="0 0 720 160" role="img" aria-label="Coseno de las 5 palabras propuestas con tanh y con logística"><line class="grilla" x1="110.0" x2="110.0" y1="16" y2="134"/><text x="110.0" y="152" text-anchor="middle">50%</text><line class="grilla" x1="226.0" x2="226.0" y1="16" y2="134"/><text x="226.0" y="152" text-anchor="middle">60%</text><line class="grilla" x1="342.0" x2="342.0" y1="16" y2="134"/><text x="342.0" y="152" text-anchor="middle">70%</text><line class="grilla" x1="458.0" x2="458.0" y1="16" y2="134"/><text x="458.0" y="152" text-anchor="middle">80%</text><line class="grilla" x1="574.0" x2="574.0" y1="16" y2="134"/><text x="574.0" y="152" text-anchor="middle">90%</text><line class="grilla" x1="690.0" x2="690.0" y1="16" y2="134"/><text x="690.0" y="152" text-anchor="middle">100%</text><text class="fuerte" x="96" y="52" text-anchor="end">tanh</text><circle tabindex="0" data-tip="tanh · 1.ª: puerta|coseno 79,49%" cx="452.1" cy="48" r="7" fill="var(--g-1)" fill-opacity=".8" stroke="var(--hoja)" stroke-width="2"/><circle tabindex="0" data-tip="tanh · 2.ª: ventana|coseno 77,90%" cx="433.6" cy="48" r="7" fill="var(--g-1)" fill-opacity=".8" stroke="var(--hoja)" stroke-width="2"/><circle tabindex="0" data-tip="tanh · 3.ª: calle|coseno 70,92%" cx="352.7" cy="48" r="7" fill="var(--g-1)" fill-opacity=".8" stroke="var(--hoja)" stroke-width="2"/><circle tabindex="0" data-tip="tanh · 4.ª: cara|coseno 70,18%" cx="344.1" cy="48" r="7" fill="var(--g-1)" fill-opacity=".8" stroke="var(--hoja)" stroke-width="2"/><circle tabindex="0" data-tip="tanh · 5.ª: pared|coseno 68,84%" cx="328.5" cy="48" r="7" fill="var(--g-1)" fill-opacity=".8" stroke="var(--hoja)" stroke-width="2"/><text class="fuerte" x="96" y="116" text-anchor="end">logística</text><circle tabindex="0" data-tip="logística · 1.ª: philosophie|coseno 99,84%" cx="688.1" cy="112" r="7" fill="var(--g-1)" fill-opacity=".8" stroke="var(--hoja)" stroke-width="2"/><circle tabindex="0" data-tip="logística · 2.ª: cara|coseno 99,83%" cx="688.0" cy="112" r="7" fill="var(--g-1)" fill-opacity=".8" stroke="var(--hoja)" stroke-width="2"/><circle tabindex="0" data-tip="logística · 3.ª: noche|coseno 99,83%" cx="688.0" cy="112" r="7" fill="var(--g-1)" fill-opacity=".8" stroke="var(--hoja)" stroke-width="2"/><circle tabindex="0" data-tip="logística · 4.ª: casa|coseno 99,82%" cx="687.9" cy="112" r="7" fill="var(--g-1)" fill-opacity=".8" stroke="var(--hoja)" stroke-width="2"/><circle tabindex="0" data-tip="logística · 5.ª: calle|coseno 99,82%" cx="687.9" cy="112" r="7" fill="var(--g-1)" fill-opacity=".8" stroke="var(--hoja)" stroke-width="2"/><text class="fuerte" x="452.1" y="34" text-anchor="middle">puerta 79%</text><text x="328.5" y="74" text-anchor="middle">pared 69%</text><text class="fuerte" x="675.9" y="98" text-anchor="end">las 5 entre 99,82% y 99,84%</text></svg></div>
+        <p class="explica">Con tanh hay 11 puntos de diferencia entre la primera palabra y la quinta, y el ranking tiene sentido (puerta, ventana, calle). Con la logística las cinco quedan pegadas en 99,8%: el orden lo deciden diferencias de centésimas, y por eso aparecen palabras como «philosophie».</p>
+        <details class="g-datos"><summary>Ver los datos</summary><div class="tabla"><table><thead><tr><th>Puesto</th><th>tanh</th><th>logística</th></tr></thead><tbody><tr><td>1</td><td class="n">puerta 79,49%</td><td class="n">philosophie 99,84%</td></tr><tr><td>2</td><td class="n">ventana 77,90%</td><td class="n">cara 99,83%</td></tr><tr><td>3</td><td class="n">calle 70,92%</td><td class="n">noche 99,83%</td></tr><tr><td>4</td><td class="n">cara 70,18%</td><td class="n">casa 99,82%</td></tr><tr><td>5</td><td class="n">pared 68,84%</td><td class="n">calle 99,82%</td></tr></tbody></table></div></details>
+      </figure>
+      
+      <figure class="g">
+        <figcaption><p class="g-titulo">«los enanos tienen una especie» → «de»</p><p class="g-sub">Probabilidad que le da cada modelo a la palabra correcta.</p></figcaption>
+        <div class="g-leyenda"><span><i style="background:var(--g-pablo)"></i>Pablo</span><span><i style="background:var(--g-julian)"></i>Julián</span></div>
+        <div class="g-lienzo"><svg viewBox="0 0 720 214" role="img" aria-label="Probabilidad de la palabra de en cada modelo"><line class="grilla" x1="200.0" x2="200.0" y1="4" y2="190"/><text x="200.0" y="206" text-anchor="middle">0%</text><line class="grilla" x1="312.5" x2="312.5" y1="4" y2="190"/><text x="312.5" y="206" text-anchor="middle">25%</text><line class="grilla" x1="425.0" x2="425.0" y1="4" y2="190"/><text x="425.0" y="206" text-anchor="middle">50%</text><line class="grilla" x1="537.5" x2="537.5" y1="4" y2="190"/><text x="537.5" y="206" text-anchor="middle">75%</text><line class="grilla" x1="650.0" x2="650.0" y1="4" y2="190"/><text x="650.0" y="206" text-anchor="middle">100%</text><g class="g-fila" tabindex="0" data-tip="PMC de Pablo|P(«de») = 82%"><rect class="g-fondo" x="0" y="44.0" width="720" height="36" rx="4"/><text class="fuerte" x="188" y="66.0" text-anchor="end">PMC de Pablo</text><path d="M200.0,54.0 H565.0 Q569.0,54.0 569.0,58.0 V66.0 Q569.0,70.0 565.0,70.0 H200.0 Z" fill="var(--g-pablo)"/><text class="fuerte" x="577.0" y="66.0">82%</text></g><g class="g-fila" tabindex="0" data-tip="microgpt de Pablo|P(«de») = 38%"><rect class="g-fondo" x="0" y="80.0" width="720" height="36" rx="4"/><text class="fuerte" x="188" y="102.0" text-anchor="end">microgpt de Pablo</text><path d="M200.0,90.0 H367.0 Q371.0,90.0 371.0,94.0 V102.0 Q371.0,106.0 367.0,106.0 H200.0 Z" fill="var(--g-pablo)"/><text class="fuerte" x="379.0" y="102.0">38%</text></g><g class="g-fila" tabindex="0" data-tip="PMC de Julián · lote 1|P(«de») = 35%"><rect class="g-fondo" x="0" y="116.0" width="720" height="36" rx="4"/><text class="fuerte" x="188" y="138.0" text-anchor="end">PMC de Julián · lote 1</text><path d="M200.0,126.0 H355.3 Q359.3,126.0 359.3,130.0 V138.0 Q359.3,142.0 355.3,142.0 H200.0 Z" fill="var(--g-julian)"/><text class="fuerte" x="367.3" y="138.0">35%</text></g><g class="g-fila" tabindex="0" data-tip="PMC de Julián · lote 256|P(«de») = 29%"><rect class="g-fondo" x="0" y="152.0" width="720" height="36" rx="4"/><text class="fuerte" x="188" y="174.0" text-anchor="end">PMC de Julián · lote 256</text><path d="M200.0,162.0 H326.5 Q330.5,162.0 330.5,166.0 V174.0 Q330.5,178.0 326.5,178.0 H200.0 Z" fill="var(--g-julian)"/><text class="fuerte" x="338.5" y="174.0">29%</text></g></svg></div>
+        <p class="explica">Es una frase del corpus, así que mide cuánto recuerda cada modelo. Los PMC de Julián reparten más la probabilidad porque nunca vieron «sexto» como objetivo (con k = 8 el primer ejemplo predice el 9.º token).</p>
+        <details class="g-datos"><summary>Ver los datos</summary><div class="tabla"><table><thead><tr><th>Modelo</th><th>P(«de»)</th></tr></thead><tbody><tr><td>PMC de Pablo</td><td class="n">82%</td></tr><tr><td>microgpt de Pablo</td><td class="n">38%</td></tr><tr><td>PMC de Julián · lote 1</td><td class="n">35%</td></tr><tr><td>PMC de Julián · lote 256</td><td class="n">29%</td></tr></tbody></table></div></details>
+      </figure>
+    </section>
+<!-- graficos:fin -->
   </main>
 </div>
 
@@ -721,5 +781,35 @@ for pos_id in range(block_size):
     bloque.innerHTML = html;
   });
 </script>
+<!-- graficos:js:inicio -->
+<script>
+(function () {
+  var tip = document.createElement("div");
+  tip.className = "g-tip"; tip.hidden = true; document.body.appendChild(tip);
+  function mover(x, y) {
+    var r = tip.getBoundingClientRect(), px = x + 14, py = y + 14;
+    if (px + r.width > innerWidth - 8) px = x - r.width - 14;
+    if (py + r.height > innerHeight - 8) py = y - r.height - 14;
+    tip.style.left = Math.max(8, px) + "px"; tip.style.top = Math.max(8, py) + "px";
+  }
+  function mostrar(el, x, y) {
+    tip.textContent = "";
+    el.getAttribute("data-tip").split("|").forEach(function (linea, i) {
+      var d = document.createElement("div"); d.textContent = linea;
+      if (i === 0) d.className = "g-tip-t";
+      tip.appendChild(d);
+    });
+    tip.hidden = false; mover(x, y);
+  }
+  document.querySelectorAll(".g [data-tip]").forEach(function (el) {
+    el.addEventListener("pointerenter", function (ev) { mostrar(el, ev.clientX, ev.clientY); });
+    el.addEventListener("pointermove", function (ev) { mover(ev.clientX, ev.clientY); });
+    el.addEventListener("pointerleave", function () { tip.hidden = true; });
+    el.addEventListener("focus", function () { var b = el.getBoundingClientRect(); mostrar(el, b.left + b.width / 2, b.top); });
+    el.addEventListener("blur", function () { tip.hidden = true; });
+  });
+})();
+</script>
+<!-- graficos:js:fin -->
 </body>
 </html>

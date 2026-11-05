@@ -8,8 +8,7 @@ causal, MLP con ReLU, Adam con decaimiento lineal). Los cambios estan marcados c
        del TP1. Cada oracion (termina en . ? !) es un "documento" que empieza con BOS, y se corta en tramos de
        block_size + 1 tokens (block_size predicciones por tramo).
     2. Vocabulario: las palabras distintas de esa fraccion + BOS.
-    3. wte: se inicializa con las representaciones W del CBOW del TP1 (época 254, d = 80), reducidas con PCA
-       a n_embd = --dimension (por defecto 40; la consigna sugiere alrededor de 50) para que entrene en horas.
+    3. wte: se inicializa con las representaciones W del CBOW del TP1 (época 254), tal cual: n_embd = d = 80.
        BOS (y una palabra que no estuviera en el CBOW) recibe un vector al azar como los de microgpt.
     4. Validacion: el ultimo 10% de las oraciones de la fraccion no se usa para entrenar.
     5. Se guardan los pesos cada tanto (y se puede reanudar) y la perdida de cada paso en un CSV.
@@ -39,7 +38,6 @@ from codigo.tokenizador import tokenizar_corpus
 parser = argparse.ArgumentParser(description="microgpt adaptado a palabras del corpus del TP1.")
 parser.add_argument("--fraccion", type=float, default=0.005, help="Fraccion del comienzo del corpus (0.01 = 1%%).")
 parser.add_argument("--bloque", type=int, default=8, help="block_size N: tokens de contexto.")
-parser.add_argument("--dimension", type=int, default=40, help="n_embd d: W del CBOW (80) se reduce con PCA a esta dimension.")
 parser.add_argument("--cabezas", type=int, default=4, help="n_head H (d tiene que ser multiplo).")
 parser.add_argument("--capas", type=int, default=1, help="n_layer.")
 parser.add_argument("--pasos", type=int, default=3000, help="num_steps: un tramo de oracion por paso.")
@@ -133,17 +131,9 @@ sys.setrecursionlimit(100000)   # CAMBIO: el grafo es mucho mas profundo que con
 
 # ===== 3. PARAMETROS =====
 
-# CAMBIO: n_embd sale del CBOW del TP1 (d = 80, o menos con --dimension)
+# CAMBIO: n_embd sale del CBOW del TP1 (d = 80)
 cbow = np.load(ruta_raiz / args.checkpoint, allow_pickle=True)   # respaldo propio (el vocabulario es un arreglo de objetos)
 W_cbow = cbow["W"]
-if args.dimension and args.dimension < W_cbow.shape[1]:
-    # CAMBIO: W (d = 80) se reduce a las `dimension` direcciones de mayor varianza (PCA): se centra W y se
-    # proyecta sobre los primeros vectores singulares. Conserva lo mas posible de las distancias entre palabras.
-    W_centrada = W_cbow - W_cbow.mean(axis=0)
-    _, valores_singulares, Vt = np.linalg.svd(W_centrada, full_matrices=False)
-    varianza = (valores_singulares[:args.dimension] ** 2).sum() / (valores_singulares ** 2).sum()
-    W_cbow = W_centrada @ Vt[:args.dimension].T
-    print(f"W del CBOW reducida de {W_centrada.shape[1]} a {args.dimension} dimensiones (PCA, {varianza:.1%} de la varianza)")
 indice_cbow = {str(p): i for i, p in enumerate(cbow["vocabulario_palabras"])}
 n_layer = args.capas
 n_embd = W_cbow.shape[1]

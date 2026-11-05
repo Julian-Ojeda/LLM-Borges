@@ -175,9 +175,9 @@ python scripts/entrenar_pmc_torch.py --modo vector --salida logistica --director
 python scripts/entrenar_pmc_torch.py --lote 1 --optimizador sgd --tasa 0.01 --epocas 2 --directorio respaldos/pmc/vocabulario_k8_lote1_sgd
 python scripts/probar_pmc.py respaldos/pmc/vocabulario_k8                               # tablas de predicciones
 
-# Consigna 3: microgpt con palabras (autograd escalar: tarda horas)
-python scripts/microgpt_palabras.py --fraccion 0.003 --dimension 40 --bloque 6 --cabezas 4 --pasos 1500
-python scripts/probar_microgpt.py respaldos/microgpt/f0.003_d40_N6_H4_L1_pasos1500
+# Consigna 3: microgpt con palabras (autograd escalar)
+python scripts/microgpt_palabras.py --fraccion 0.003 --bloque 6 --cabezas 4 --pasos 482 --tasa 0.01   # 1 época, d = 80
+python scripts/probar_microgpt.py respaldos/microgpt/f0.003_d80_N6_H4_L1_pasos482
 ```
 
 Los pesos del PMC pesan más de 100 MB y no están en el repositorio (GitHub no los acepta); sus métricas y tablas sí (`respaldos/pmc/*/metricas.csv` y `predicciones.md`).
