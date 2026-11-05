@@ -310,8 +310,8 @@ def forward(self, contexto):                    # puntaje de cada palabra del vo
           <tr class="pablo"><td>Pablo</td><td>vector (tanh)</td><td class="n">10</td><td>100 – 100 + LN</td><td class="n">64</td><td>η 0,05</td><td class="n">50</td><td class="n">MSE</td><td>no medido</td></tr>
           <tr class="pablo"><td>Pablo</td><td>vector (tanh)</td><td class="n">5</td><td>1000</td><td class="n">1</td><td>η 0,01</td><td class="n">50</td><td class="n">MSE</td><td>no medido</td></tr>
           <tr class="julian"><td>Julián</td><td>vocabulario</td><td class="n">8</td><td>512 + LN</td><td class="n">256</td><td>Adam 0,001</td><td class="n">10</td><td class="n">6,04 (valid.)</td><td class="bien">34,6% <small>(top-10 43,0%, top-20 51,1%)</small></td></tr>
-          <tr class="julian"><td>Julián</td><td>vocabulario</td><td class="n">8</td><td>512 + LN</td><td class="n">1</td><td>SGD 0,01</td><td class="n">2</td><td class="n" id="lote1-perdida"><span class="chip pend">entrenando</span></td><td id="lote1-top5">—</td></tr>
-          <tr class="julian"><td>Julián</td><td>vector (tanh)</td><td class="n">8</td><td>512 + LN</td><td class="n">256</td><td>Adam 0,001</td><td class="n">10</td><td class="n" id="tanh-perdida"><span class="chip pend">en cola</span></td><td id="tanh-top5">—</td></tr>
+          <tr class="julian"><td>Julián</td><td>vocabulario</td><td class="n">8</td><td>512 + LN</td><td class="n">1</td><td>SGD 0,01</td><td class="n">2</td><td class="n" id="lote1-perdida">5,48 (valid.)</td><td id="lote1-top5" class="bien">41,1% <small>(top-10 49,9%, top-20 57,7%)</small></td></tr>
+          <tr class="julian"><td>Julián</td><td>vector (tanh)</td><td class="n">8</td><td>512 + LN</td><td class="n">256</td><td>Adam 0,001</td><td class="n">10</td><td class="n" id="tanh-perdida">0,00954 (MSE valid.)</td><td id="tanh-top5">19,8% <small>(top-10 22,5%, top-20 25,4%)</small></td></tr>
           <tr class="julian"><td>Julián</td><td>vector (logística)</td><td class="n">8</td><td>512 + LN</td><td class="n">256</td><td>Adam 0,001</td><td class="n">10</td><td class="n">0,00238 (MSE valid.)</td><td>20,7% <small>(top-10 24,1%, top-20 27,8%)</small></td></tr>
         </tbody>
       </table></div>
@@ -319,7 +319,14 @@ def forward(self, contexto):                    # puntaje de cada palabra del vo
 
       <h3>Lote 256 contra lote 1</h3>
       <p>Con <b>lote 1</b> los pesos se actualizan después de cada ejemplo (descenso por el gradiente estocástico «puro», como en el CBOW del TP1 y en tres de los PMC de Pablo). Con <b>lote 256</b> se promedia el gradiente de 256 ejemplos y se da un solo paso. El lote grande aprovecha la GPU: una época tarda 4 minutos. Con lote 1 la GPU procesa un ejemplo por vez y la época tarda unas 2,5 horas con SGD (8,8 con Adam, que actualiza más cosas por paso).</p>
-      <p id="lote1-explica" class="explica">Resultado del lote 1: <span class="chip pend">entrenando</span></p>
+      <p id="lote1-explica" class="explica">Resultado: el lote 1 gana. Con la misma red y solo 2 épocas (unas 5 horas en total), la pérdida de validación baja a <b>5,48</b> (perplejidad 240, contra 420 del lote 256) y el top-5 sube de 34,6% a <b>41,1%</b> (exacta 19,4% contra 15,4%). Además no se sobreajusta: la validación baja en las dos épocas (5,65 → 5,48). Cada ejemplo mueve los pesos, así que en una época se dan un millón de pasos chicos en vez de unos 4.000 promediados; el ruido de cada paso funciona como regularización y la tasa que decae hasta 0 afina al final.</p>
+      <div class="tabla"><table>
+        <thead><tr><th>Época (lote 1, SGD)</th><th>Pérdida entren.</th><th>Pérdida valid.</th><th>Top-5</th><th>Top-10</th><th>Top-20</th><th>Exacta</th><th>Tiempo</th></tr></thead>
+        <tbody>
+          <tr class="julian"><td class="n">1</td><td class="n">5,79</td><td class="n">5,65</td><td class="n">38,5%</td><td class="n">47,7%</td><td class="n">55,6%</td><td class="n">17,2%</td><td class="n">2 h 33 min</td></tr>
+          <tr class="julian"><td class="n">2</td><td class="n">5,00</td><td class="n bien">5,48</td><td class="n">41,1%</td><td class="n">49,9%</td><td class="n">57,7%</td><td class="n">19,4%</td><td class="n">2 h 31 min</td></tr>
+        </tbody>
+      </table></div>
 
       <h3>Cómo evolucionó el PMC de Julián (vocabulario, lote 256)</h3>
       <div class="tabla"><table>
@@ -343,7 +350,7 @@ def forward(self, contexto):                    # puntaje de cada palabra del vo
         </tbody>
       </table></div>
       <p class="explica">El error cuadrático es chico porque <code>W</code> escalada tiene casi todas sus componentes cerca de 0,5. Cada época tarda unos 11 segundos: la salida tiene 80 unidades en vez de 53.409. Queda bastante por debajo de la softmax (20,7% contra 34,6% de top-5), como era de esperar por el problema del promedio.</p>
-      <p id="tanh-explica" class="explica">Salida tanh de Julián: <span class="chip pend">en cola</span></p>
+      <p id="tanh-explica" class="explica">Salida tanh de Julián (misma red, <code>W</code> escalada a [-1, 1], 10 épocas de 10 segundos): top-5 19,8%, casi igual que la logística (20,7%), pero la exacta es mucho mejor (12,9% contra 4,4%) y, sobre todo, <b>el coseno sí discrimina</b>. Con «ella caminaba lentamente hacia la» da puerta 79%, ventana 78%, calle 71%, y con palabras al azar el coseno baja a ≈ 55%. Como [-1, 1] está centrado en 0, los vectores apuntan en direcciones distintas; en [0, 1] todos apuntan hacia el mismo lado. El defecto que queda es el de las palabras raras: en «enanos tienen una especie de» propone frolic, mesitas, prim, porque el promedio de los vectores posibles cae cerca de palabras raras que casi no se movieron. La mejor pérdida de validación fue en la época 5 (0,00953); después sube apenas.</p>
     </section>
 
     <section id="microgpt">
@@ -433,13 +440,13 @@ W_cbow = W_centrada @ Vt[:40].T                 # (|V|, 80) -> (|V|, 40)</code><
           <tr class="pablo"><td>PMC vector tanh k5 1000</td><td>sala, ventana, esclava (coseno ≈ 80%)</td><td>reprochara, su, obediente</td><td>choya, exornador, anaquel</td></tr>
           <tr class="pablo"><td>microgpt (1%)</td><td>selva 2,8%, hora 1,2%, noche 0,9%</td><td>que 17%, la 15%, el 12%</td><td>que 7%, su 6%, la 5%</td></tr>
           <tr class="julian"><td>PMC k8 512 LN lote 256</td><td>puerta 5,5%, casa 4,8%, mano 3,5%</td><td>el 23%, la 19%, su 5%</td><td>la 2,7%, los 2,2%, que 1,7% (no memorizó «sexto»)</td></tr>
-          <tr class="julian"><td>PMC k8 512 LN lote 1</td><td id="f-lote1-1"><span class="chip pend">entrenando</span></td><td id="f-lote1-2"><span class="chip pend">entrenando</span></td><td id="f-lote1-3"><span class="chip pend">entrenando</span></td></tr>
-          <tr class="julian"><td>PMC vector tanh k8</td><td id="f-tanh-1"><span class="chip pend">en cola</span></td><td id="f-tanh-2"><span class="chip pend">en cola</span></td><td id="f-tanh-3"><span class="chip pend">en cola</span></td></tr>
+          <tr class="julian"><td>PMC k8 512 LN lote 1</td><td id="f-lote1-1">puerta 24%, cara 7,8%, ventana 3,6%</td><td id="f-lote1-2">el 26%, la 21%, su 8,4%</td><td id="f-lote1-3">los 5,0%, ellos 3,6%, que 2,2% (no memorizó «sexto»)</td></tr>
+          <tr class="julian"><td>PMC vector tanh k8</td><td id="f-tanh-1">puerta, ventana, calle (coseno 79%, 78%, 71%)</td><td id="f-tanh-2">adorándome, reestrenos, el (≈ 57%)</td><td id="f-tanh-3">frolic, mesitas, prim (≈ 59%)</td></tr>
           <tr class="julian"><td>PMC vector logística k8</td><td>philosophie, cara, noche (coseno ≈ 99,8%)</td><td>ahora, ella, el (≈ 99,9%)</td><td>sujet, ella, lui (≈ 99,9%)</td></tr>
           <tr class="julian"><td>microgpt (0,3%)</td><td>vida 9,7%, selva 6,1%, hora 4,2% (ve solo «ella la»: el resto no está en su vocabulario)</td><td>la 12%, que 11%, el 11% (sin «pensaba»)</td><td>los 6,4%, su 5,0%, las 3,7%</td></tr>
         </tbody>
       </table></div>
-      <p class="explica">«los enanos tienen una especie» → «de»: 82% en el mejor PMC de Pablo, 38% en su microgpt, 29% en el PMC de Julián (lote 256) y <b>94%</b> en el microgpt de Julián (esa frase está en su 0,3% del corpus).</p>
+      <p class="explica">«los enanos tienen una especie» → «de»: 82% en el mejor PMC de Pablo, 38% en su microgpt, 29% en el PMC de Julián con lote 256, 35% con lote 1, y <b>94%</b> en el microgpt de Julián (esa frase está en su 0,3% del corpus).</p>
       <p class="explica">Generación continua ansiosa (siempre la más probable). El PMC de Julián da «ella caminaba lentamente hacia la <b>puerta , y el hombre</b>» y «el viejo escritor pensaba en <b>el fondo de la casa</b>». Su microgpt se repite: «el viejo escritor pensaba en <b>la selva de los indígenas</b>», porque con un vocabulario y un corpus tan chicos cae enseguida en las mismas palabras frecuentes. La salida logística casi solo genera comas y «ahora» («el viejo escritor pensaba en <b>ahora , , pero ahora</b>»): como el coseno no discrimina, gana siempre lo que está más cerca del centro.</p>
       <p class="explica">Con el orden invertido («especie una tienen enanos los») ninguno da algo sensato (el microgpt de Julián: indígenas 3,4%, tío 1,0%). Eso muestra que los modelos usan el orden de las palabras y no solo cuáles aparecen.</p>
     </section>
@@ -462,7 +469,7 @@ indices_validacion = np.arange(corte + k, T)     # k ventanas de separación</co
       <p class="explica">Ejemplo: si la correcta tiene el 3.er puntaje más alto, su puesto es 3 y cuenta como acierto para los cortes 5, 10 y 20.</p>
 
       <h3>Perplejidad</h3>
-      <p>La perplejidad es <code>exp(pérdida)</code>: entre cuántas palabras «duda» el modelo en promedio. La pérdida de validación 6,04 del PMC de Julián equivale a una perplejidad de 420; la de su microgpt (6,35) a 572, pero sobre un vocabulario mucho más chico.</p>
+      <p>La perplejidad es <code>exp(pérdida)</code>: entre cuántas palabras «duda» el modelo en promedio. La pérdida de validación 6,04 del PMC de Julián con lote 256 equivale a una perplejidad de 420, y la de 5,48 con lote 1 a 240; la de su microgpt (6,35) a 572, pero sobre un vocabulario mucho más chico.</p>
     </section>
 
     <section id="repaso">
@@ -481,7 +488,7 @@ indices_validacion = np.arange(corte + k, T)     # k ventanas de separación</co
       <details><summary>¿Qué es PCA y por qué se usó en microgpt?</summary><div>Es proyectar los vectores sobre las direcciones de mayor varianza (los primeros vectores singulares de W centrada). Se usó para pasar de d = 80 a d = 40 y que microgpt entrenara en horas, conservando el 67,6% de la varianza y la información del CBOW del TP1.</div></details>
       <details><summary>¿Por qué microgpt tarda horas y el PMC minutos?</summary><div>microgpt hace cada multiplicación como un objeto de Python (Value) y recorre ese grafo en el backward; PyTorch hace las mismas cuentas como multiplicaciones de matrices en la GPU. El algoritmo de gradiente es el mismo; cambia la eficiencia.</div></details>
       <details><summary>¿Qué mide el contador «top-5»?</summary><div>El porcentaje de predicciones de validación en las que la palabra correcta quedó entre las 5 con mayor puntaje. Es más justo que el acierto exacto porque después de un contexto suelen caber varias palabras.</div></details>
-      <details><summary>¿Cómo se detecta el sobreajuste?</summary><div>La pérdida de entrenamiento baja mientras la de validación sube. En el PMC de Julián pasa desde la época 2 (validación 6,04 → 6,47) y en su microgpt al final (entrenamiento 3,5, validación 6,35). Por eso se guarda el modelo de menor pérdida de validación.</div></details>
+      <details><summary>¿Cómo se detecta el sobreajuste?</summary><div>La pérdida de entrenamiento baja mientras la de validación sube. En el PMC de Julián con lote 256 pasa desde la época 2 (validación 6,04 → 6,47; con lote 1 no pasó en 2 épocas) y en su microgpt al final (entrenamiento 3,5, validación 6,35). Por eso se guarda el modelo de menor pérdida de validación.</div></details>
     </section>
 
     <section id="archivos">
