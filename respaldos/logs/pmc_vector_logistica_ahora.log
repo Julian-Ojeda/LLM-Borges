@@ -1,0 +1,41 @@
+Modelo cargado exitosamente desde: 'respaldos\modelo_cbow_w4_epoca_254.npz' (Epoca cargada: 254)
+
+================ PMC COMO MODELO DE LENGUAJE (PyTorch) ================
+Respaldo del CBOW: respaldos\modelo_cbow_w4_epoca_254.npz (W fija, d = 80)
+Directorio de salida: respaldos\pmc\vector_k8_logistica
+Entrada: k = 8 tokens concatenados -> 640 componentes (sin capa Embedding)
+Capas ocultas: [512] relu + normalización por capa
+Salida: 80 unidades + logistica (error cuadrático, W escalada min-max)
+Parámetros entrenables: 370,256
+Muestras: 1,001,091 de entrenamiento, 52,681 de validación (final del corpus)
+Lote / optimizador / tasa: 256 / adam / 0.001 (decae linealmente a 0)
+Épocas: 10
+=================================================================
+
+Época 0: entrenamiento nan | validación 0.0128 | top-5 0.0034 | top-10 0.0073 | top-20 0.0173 (exacta 0.0005)
+Epoca 1/10:   0%|          | 0/3911 [00:00<?, ?lote/s]Epoca 1/10: 100%|██████████| 3911/3911 [00:11<00:00, 352.07lote/s]
+Época 1: entrenamiento 0.0025 | validación 0.0024 | top-5 0.1825 | top-10 0.2139 | top-20 0.2493 (exacta 0.0197)
+  (mejor validación hasta ahora: guardada la época 1)
+Epoca 2/10:   0%|          | 0/3911 [00:00<?, ?lote/s]Epoca 2/10: 100%|██████████| 3911/3911 [00:10<00:00, 356.08lote/s]
+Época 2: entrenamiento 0.0024 | validación 0.0024 | top-5 0.1926 | top-10 0.2269 | top-20 0.2630 (exacta 0.0266)
+  (mejor validación hasta ahora: guardada la época 2)
+Epoca 3/10:   0%|          | 0/3911 [00:00<?, ?lote/s]Epoca 3/10: 100%|██████████| 3911/3911 [00:13<00:00, 291.42lote/s]
+Época 3: entrenamiento 0.0024 | validación 0.0024 | top-5 0.1958 | top-10 0.2286 | top-20 0.2662 (exacta 0.0304)
+  (mejor validación hasta ahora: guardada la época 3)
+Epoca 4/10:   0%|          | 0/3911 [00:00<?, ?lote/s]Epoca 4/10: 100%|██████████| 3911/3911 [00:10<00:00, 361.68lote/s]
+Época 4: entrenamiento 0.0024 | validación 0.0024 | top-5 0.1982 | top-10 0.2308 | top-20 0.2674 (exacta 0.0335)
+  (mejor validación hasta ahora: guardada la época 4)
+Epoca 5/10:   0%|          | 0/3911 [00:00<?, ?lote/s]Epoca 5/10: 100%|██████████| 3911/3911 [00:12<00:00, 310.25lote/s]
+Época 5: entrenamiento 0.0023 | validación 0.0024 | top-5 0.2046 | top-10 0.2383 | top-20 0.2753 (exacta 0.0391)
+  (mejor validación hasta ahora: guardada la época 5)
+Epoca 6/10:   0%|          | 0/3911 [00:00<?, ?lote/s]Epoca 6/10: 100%|██████████| 3911/3911 [00:12<00:00, 322.40lote/s]
+Época 6: entrenamiento 0.0023 | validación 0.0024 | top-5 0.2020 | top-10 0.2352 | top-20 0.2735 (exacta 0.0379)
+Epoca 7/10:   0%|          | 0/3911 [00:00<?, ?lote/s]Epoca 7/10: 100%|██████████| 3911/3911 [00:10<00:00, 356.49lote/s]
+Época 7: entrenamiento 0.0023 | validación 0.0024 | top-5 0.2045 | top-10 0.2374 | top-20 0.2745 (exacta 0.0397)
+Epoca 8/10:   0%|          | 0/3911 [00:00<?, ?lote/s]Epoca 8/10: 100%|██████████| 3911/3911 [00:10<00:00, 363.15lote/s]
+Época 8: entrenamiento 0.0023 | validación 0.0024 | top-5 0.2050 | top-10 0.2393 | top-20 0.2759 (exacta 0.0415)
+Epoca 9/10:   0%|          | 0/3911 [00:00<?, ?lote/s]Epoca 9/10: 100%|██████████| 3911/3911 [00:11<00:00, 347.35lote/s]
+Época 9: entrenamiento 0.0023 | validación 0.0024 | top-5 0.2081 | top-10 0.2407 | top-20 0.2781 (exacta 0.0435)
+Epoca 10/10:   0%|          | 0/3911 [00:00<?, ?lote/s]Epoca 10/10: 100%|██████████| 3911/3911 [00:11<00:00, 344.69lote/s]
+Época 10: entrenamiento 0.0023 | validación 0.0024 | top-5 0.2072 | top-10 0.2407 | top-20 0.2778 (exacta 0.0440)
+ENTRENAMIENTO FINALIZADO

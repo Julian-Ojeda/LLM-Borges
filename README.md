@@ -1,10 +1,12 @@
-# TP1: Representación Contextual de Palabras con CBOW
+# TP1 y TP2: CBOW y modelos de lenguaje
 
 **Asignatura**: Aprendizaje Automático Avanzado  
 **Carrera**: Tecnicatura Universitaria en Inteligencia Artificial (UNAHUR)  
 **Profesor**: Juan Miguel Santos (LIDEC)  
 
-Este repositorio contiene la implementación del modelo de redes neuronales **CBOW (Continuous Bag-of-Words)** para Procesamiento de Lenguaje Natural (PLN), acelerado por GPU NVIDIA mediante **Python, CuPy y NumPy**.
+Este repositorio contiene la implementación del modelo de redes neuronales **CBOW (Continuous Bag-of-Words)** para Procesamiento de Lenguaje Natural (PLN), acelerado por GPU NVIDIA mediante **Python, CuPy y NumPy** (TP1), y los modelos de lenguaje del **TP2** que usan sus representaciones: un perceptrón multicapa y microgpt adaptado a palabras.
+
+> **Guía de estudio del TP2**: abrir [`docs/estudio_tp2.html`](docs/estudio_tp2.html) con doble clic (o arrastrándolo al navegador). Es un solo archivo, funciona sin internet y explica las tres consignas, el código y los resultados de Pablo y de Julián.
 
 ---
 
@@ -14,8 +16,8 @@ El proyecto utiliza el gestor de paquetes de alto rendimiento **`uv`**.
 
 ### 1. Clonar el Repositorio
 ```bash
-git clone https://github.com/opablon/cbow_nlp.git
-cd cbow_nlp
+git clone https://github.com/Julian-Ojeda/LLM-Borges.git
+cd LLM-Borges
 ```
 
 ### 2. Crear e Instalar el Entorno Virtual
@@ -45,10 +47,15 @@ cbow_nlp/
 │   ├── entrenar.py                         # Entrenamiento por consola (CuPy / NumPy)
 │   ├── entrenar_cuda.py                    # Mismo entrenamiento con kernels CUDA propios (pesos intercambiables)
 │   ├── graficar_metricas.py                # Grafica perdida y accuracy desde el CSV o un .npz
-│   └── pruebas.py                          # Vecinos y analogias con los embeddings entrenados
+│   ├── pruebas.py                          # Vecinos y analogias con los embeddings entrenados
+│   ├── entrenar_pmc_torch.py               # TP2 consignas 1 y 2: entrena el PMC (salida softmax o vector)
+│   ├── probar_pmc.py                       # TP2: tablas de predicciones y generacion del PMC
+│   ├── microgpt_palabras.py                # TP2 consigna 3: microgpt adaptado a palabras
+│   └── probar_microgpt.py                  # TP2: validacion y tablas del microgpt
 ├── config/
 │   ├── configuracion.yaml                  # Hiperparametros para entrenar.py
-│   └── configuracion_cuda.yaml             # Hiperparametros para entrenar_cuda.py
+│   ├── configuracion_cuda.yaml             # Hiperparametros para entrenar_cuda.py
+│   └── pmc.yaml                            # TP2: hiperparametros del PMC
 ├── notebooks/
 │   └── TP1_CBOW_Procesamiento_Lenguaje_Natural.ipynb  # Notebook interactivo para analisis y evaluacion
 ├── codigo/                                 # Modulos Python reutilizables
@@ -56,10 +63,16 @@ cbow_nlp/
 │   ├── tokenizador.py                      # Tokenizacion por Palabra (Regex)
 │   ├── generador_vocabulario.py            # Construccion del vocabulario
 │   ├── modelo_cbow_cupy.py                 # Red CBOW (softmax completo y muestreo negativo)
-│   └── entrenador_cbow.py                  # Bucle de entrenamiento muestra a muestra y resguardos
+│   ├── entrenador_cbow.py                  # Bucle de entrenamiento muestra a muestra y resguardos
+│   └── modelo_pmc_torch.py                 # TP2: perceptron multicapa sobre W del CBOW (sin capa Embedding)
 ├── graficos/                               # Scripts de graficos y las imagenes generadas
 ├── datos/                                  # corpus_ApAvAu.txt (corpus de entrenamiento) y corpus_prueba.txt
-├── respaldos/                              # Checkpoints .npz y metricas_w*.csv (no se sube al repo)
+├── docs/estudio_tp2.html                   # TP2: guia de estudio (abrir con doble clic)
+├── modelo_de_pablo/TP_2.pptx               # TP2: presentacion de Pablo
+├── respaldos/                              # Checkpoints .npz y metricas (se suben solo los livianos)
+│   ├── modelo_cbow_w4_epoca_254.npz        # CBOW usado en el TP2 (d = 80)
+│   ├── pmc/                                # TP2: metricas y predicciones de cada corrida del PMC
+│   ├── microgpt/                           # TP2: pesos, perdidas y predicciones del microgpt
 │   └── logs/                               # Logs de cada corrida de entrenamiento
 └── material/                               # Material de la catedra
     ├── cbow/                               # Calculo de representacion contextual, codificacion, fragmentacion
@@ -146,3 +159,25 @@ uv run python scripts/entrenar.py --reanudar --checkpoint respaldos/modelo_cbow_
 ```
 
 Al reanudar, se restaurarán las matrices de pesos $W$ y $W'$, el vocabulario de palabras, la época actual y el historial de pérdida acumulado.
+
+
+---
+
+## 🧠 TP2: Modelos de lenguaje
+
+Todo está explicado en [`docs/estudio_tp2.html`](docs/estudio_tp2.html). Los comandos (desde la raíz del proyecto):
+
+```bash
+# Consignas 1 y 2: PMC sin capa Embedding sobre W del CBOW (época 254, d = 80)
+python scripts/entrenar_pmc_torch.py                                                    # softmax, config/pmc.yaml
+python scripts/entrenar_pmc_torch.py --modo vector --salida tanh --directorio respaldos/pmc/vector_k8_tanh
+python scripts/entrenar_pmc_torch.py --modo vector --salida logistica --directorio respaldos/pmc/vector_k8_logistica
+python scripts/entrenar_pmc_torch.py --lote 1 --optimizador sgd --tasa 0.01 --epocas 2 --directorio respaldos/pmc/vocabulario_k8_lote1_sgd
+python scripts/probar_pmc.py respaldos/pmc/vocabulario_k8                               # tablas de predicciones
+
+# Consigna 3: microgpt con palabras (autograd escalar: tarda horas)
+python scripts/microgpt_palabras.py --fraccion 0.003 --dimension 40 --bloque 6 --cabezas 4 --pasos 1500
+python scripts/probar_microgpt.py respaldos/microgpt/f0.003_d40_N6_H4_L1_pasos1500
+```
+
+Los pesos del PMC pesan más de 100 MB y no están en el repositorio (GitHub no los acepta); sus métricas y tablas sí (`respaldos/pmc/*/metricas.csv` y `predicciones.md`).

@@ -24,6 +24,17 @@ respaldos/**
 !respaldos/modelo_cbow_w4_epoca_254.npz
 !respaldos/microgpt/**/*.npz
 
+# Experimentos fuera de las consignas del TP2 (su código está en la rama extras-tp2): quedan solo en la computadora
+respaldos/ajuste_puntuacion/
+respaldos/atencion/
+respaldos/atencion_control/
+respaldos/completar/
+respaldos/transformador/
+respaldos/logs/ajuste_puntuacion*
+respaldos/logs/atencion*
+respaldos/logs/completar*
+respaldos/logs/transformador*
+
 # Documentos locales de desarrollo solicitados para ignorar
 rules.md
 bitacora.md

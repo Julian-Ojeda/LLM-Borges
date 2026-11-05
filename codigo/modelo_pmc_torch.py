@@ -14,14 +14,51 @@ Dos variantes de salida (consigna 2):
                    Para saber "que palabra predijo" se buscan las filas de W escalada mas parecidas (coseno).
 
 En las dos variantes se obtiene un puntaje por palabra del vocabulario (u), asi los contadores de ranking
-(top-5, top-10, top-20) se calculan igual que para el transformador.
+(top-5, top-10, top-20) se calculan igual en las dos.
 """
 
+import ast
+from pathlib import Path
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 ACTIVACIONES = {"relu": nn.ReLU, "tanh": nn.Tanh, "logistica": nn.Sigmoid}
+CORTES_RANKING = (5, 10, 20)     # contadores de acierto: la palabra correcta quedo entre las primeras 5, 10 o 20
+
+
+def cargar_respaldo(ruta_archivo: str | Path) -> dict:
+    """Lee un respaldo .npz del CBOW del TP1 (el formato de guardar_modelo) con NumPy."""
+    datos = np.load(ruta_archivo, allow_pickle=True)   # allow_pickle: el vocabulario es un arreglo de cadenas (archivo propio)
+    respaldo = {
+        "W": datos["W"],
+        "W_prima": datos["W_prima"],
+        "vocabulario_palabras": datos["vocabulario_palabras"],
+        "epoca_actual": int(datos.get("epoca_actual", 0)),
+        "configuracion": {},
+    }
+    if "configuracion_json" in datos:
+        # La configuracion se guardo como texto (str de un diccionario); literal_eval la vuelve diccionario
+        respaldo["configuracion"] = ast.literal_eval(str(datos["configuracion_json"]))
+    print(f"Modelo cargado exitosamente desde: '{ruta_archivo}' (Epoca cargada: {respaldo['epoca_actual']})", flush=True)
+    return respaldo
+
+
+def puesto_en_ranking(u: torch.Tensor, objetivo: torch.Tensor) -> torch.Tensor:
+    """
+    Puesto de la palabra correcta en el ranking de cada prediccion (1 = la mas probable).
+    Es la cantidad de palabras con un puntaje u mayor o igual que el de la correcta (la correcta incluida).
+    Ejemplo: si la correcta tiene el 3er puntaje mas alto, su puesto es 3 y cuenta como acierto
+    en los cortes 5, 10 y 20 (pero no como acierto exacto).
+    Ante un empate se cuenta el peor puesto (si todas empatan, el puesto es |V| y no un acierto falso).
+
+    :param u: Puntajes (B x |V|).
+    :param objetivo: Indice de la palabra correcta de cada prediccion (B).
+    :return: Puesto de cada prediccion (B), entre 1 y |V|.
+    """
+    u_correcta = u.gather(1, objetivo[:, None])                     # (B, 1) puntaje de la palabra correcta
+    return (u >= u_correcta).sum(dim=1)
 
 
 def construir_entrada(W: torch.Tensor, contexto: torch.Tensor) -> torch.Tensor:

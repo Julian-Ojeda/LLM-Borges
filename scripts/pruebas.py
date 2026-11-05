@@ -11,9 +11,6 @@ Uso:
     python scripts/pruebas.py "madre - mujer + hombre"          # una combinacion
     python scripts/pruebas.py "casa" --k 15                     # vecinos de una palabra
     python scripts/pruebas.py "rey - hombre + mujer" --modelo respaldos/modelo_cbow_w4_epoca_70.npz
-
-Tambien sirve con los respaldos del ajuste y de la atencion (guardan W con la misma clave), por ejemplo:
-    python scripts/pruebas.py "casa" --modelo respaldos/ajuste_puntuacion/modelo_cbow_w4_ajuste_epoca_289.npz
 """
 
 import argparse

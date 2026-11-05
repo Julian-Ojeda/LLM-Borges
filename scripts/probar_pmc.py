@@ -26,8 +26,7 @@ ruta_raiz = Path(__file__).resolve().parent.parent
 if str(ruta_raiz) not in sys.path:
     sys.path.append(str(ruta_raiz))
 
-from codigo.modelo_atencion_torch import cargar_respaldo
-from codigo.modelo_pmc_torch import ModeloLenguajePMC
+from codigo.modelo_pmc_torch import ModeloLenguajePMC, cargar_respaldo
 
 # Las frases de la presentacion del TP2 (corpus / fuera del corpus) y las dos pruebas de orden
 FRASES = [

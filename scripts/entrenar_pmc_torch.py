@@ -19,6 +19,8 @@ Cada .npz guarda solo los pesos del PMC y la configuracion (W se vuelve a leer d
 Uso:
     python scripts/entrenar_pmc_torch.py                                    # config/pmc.yaml
     python scripts/entrenar_pmc_torch.py --modo vector --k 8 --ocultas 256,256 --directorio respaldos/pmc/vector_k8
+    python scripts/entrenar_pmc_torch.py --modo vector --salida logistica --directorio respaldos/pmc/vector_k8_logistica
+    python scripts/entrenar_pmc_torch.py --lote 1 --optimizador sgd --tasa 0.01 --epocas 2 --directorio respaldos/pmc/vocabulario_k8_lote1_sgd
     python scripts/entrenar_pmc_torch.py --epocas 1 --max-muestras 100000 --directorio <carpeta>   # prueba corta
 """
 
@@ -41,8 +43,7 @@ os.chdir(ruta_raiz)
 from codigo.configuracion import cargar_configuracion
 from codigo.tokenizador import tokenizar_corpus
 from codigo.entrenador_cbow import imprimir_resumen
-from codigo.modelo_atencion_torch import cargar_respaldo
-from codigo.modelo_completar_torch import CORTES_RANKING, puesto_en_ranking
+from codigo.modelo_pmc_torch import CORTES_RANKING, cargar_respaldo, puesto_en_ranking
 
 
 def evitar_suspension() -> None:
@@ -188,6 +189,8 @@ def main() -> None:
     parser.add_argument("--ocultas", default=None, help="Unidades de las capas ocultas separadas por coma, ej. 512 o 256,256.")
     parser.add_argument("--lote", type=int, default=None)
     parser.add_argument("--tasa", type=float, default=None)
+    parser.add_argument("--optimizador", choices=["adam", "sgd"], default=None)
+    parser.add_argument("--salida", choices=["tanh", "logistica"], default=None, help="Activacion de salida (modo vector).")
     parser.add_argument("--epocas", type=int, default=None)
     parser.add_argument("--directorio", default=None)
     parser.add_argument("--max-muestras", type=int, default=None, help="Limita las muestras por época (prueba corta).")
@@ -195,7 +198,8 @@ def main() -> None:
 
     configuracion = cargar_configuracion(args.config)
     for clave, valor in [("modo", args.modo), ("tamanio_contexto", args.k), ("tamanio_lote", args.lote),
-                         ("tasa_aprendizaje", args.tasa), ("cantidad_epocas", args.epocas),
+                         ("tasa_aprendizaje", args.tasa), ("optimizador", args.optimizador),
+                         ("activacion_salida", args.salida), ("cantidad_epocas", args.epocas),
                          ("directorio_respaldos", args.directorio)]:
         if valor is not None:
             configuracion[clave] = valor

@@ -2,8 +2,8 @@
 Modulo de configuracion del modelo CBOW.
 Permite cargar y guardar hiperparametros desde y hacia archivos YAML.
 
-Rol en el proyecto: todos los scripts (entrenar.py, entrenar_cuda.py, ajustar_puntuacion_cuda.py,
-entrenar_atencion_torch.py) arrancan llamando a cargar_configuracion(...) con su YAML de config/.
+Rol en el proyecto: los scripts de entrenamiento (entrenar.py, entrenar_cuda.py, entrenar_pmc_torch.py)
+arrancan llamando a cargar_configuracion(...) con su YAML de config/.
 El resultado es un diccionario comun {nombre_parametro: valor} que despues se pasa al entrenamiento.
 Los argumentos de consola (--epocas, --tasa, ...) pisan valores de ese diccionario.
 """
